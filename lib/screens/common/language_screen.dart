@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
+import 'mobile_number_screen.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({super.key});
@@ -52,6 +53,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
     );
   }
 
+  void _goToMobileScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MobileNumberScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,9 +85,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               _buildLanguageOption('english', AppStrings.english),
               const Spacer(),
               ElevatedButton(
-                onPressed: () {
-                  // Navigate to mobile number / OTP screen
-                },
+                onPressed: _goToMobileScreen,
                 child: const Text(AppStrings.continueText),
               ),
               const SizedBox(height: 16),
