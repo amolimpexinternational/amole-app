@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
+import 'language_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -42,6 +43,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     super.dispose();
   }
 
+  void _goToLanguageScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LanguageScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,9 +62,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextButton(
-                  onPressed: () {
-                    // Skip to language selection
-                  },
+                  onPressed: _goToLanguageScreen,
                   child: const Text(
                     AppStrings.skipText,
                     style: TextStyle(color: AppColors.textLight, fontSize: 16),
@@ -136,7 +142,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       curve: Curves.easeInOut,
                     );
                   } else {
-                    // Navigate to language selection screen
+                    _goToLanguageScreen();
                   }
                 },
                 child: Text(
