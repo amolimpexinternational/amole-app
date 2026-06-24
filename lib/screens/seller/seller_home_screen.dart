@@ -41,19 +41,85 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
                     ),
                     Row(
                       children: [
-                        // Loyalty Points
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade600,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.stars, color: Colors.white, size: 16),
-                              SizedBox(width: 4),
-                              Text('120 pts', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                            ],
+                        // माझी कमाई — पैसे + पॉईंट एकत्र
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                              builder: (_) => Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('माझी कमाई', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                                    const SizedBox(height: 20),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12)),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Row(children: [
+                                            Icon(Icons.currency_rupee, color: Colors.green, size: 22),
+                                            SizedBox(width: 8),
+                                            Text('एकूण पैसे', style: TextStyle(fontSize: 16, color: AppColors.textDark)),
+                                          ]),
+                                          Text('₹18,450', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green.shade700)),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(color: Colors.amber.shade50, borderRadius: BorderRadius.circular(12)),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Row(children: [
+                                            Icon(Icons.stars, color: Colors.amber, size: 22),
+                                            SizedBox(width: 8),
+                                            Text('Loyalty Points', style: TextStyle(fontSize: 16, color: AppColors.textDark)),
+                                          ]),
+                                          Text('120 pts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber.shade700)),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Row(children: [
+                                            Icon(Icons.account_balance_wallet_outlined, color: AppColors.primaryBlue, size: 22),
+                                            SizedBox(width: 8),
+                                            Text('एकूण (पैसे + पॉईंट)', style: TextStyle(fontSize: 15, color: AppColors.textDark)),
+                                          ]),
+                                          const Text('₹18,570', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade600,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 16),
+                                SizedBox(width: 4),
+                                Text('₹18,570', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -97,34 +163,57 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
 
           const SizedBox(height: 16),
 
-          // Pending Orders Alert
+          // Pending Orders Alert — Buyer Banner च्या 25% आकाराचा (150*0.25 = 38)
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            height: 48,
             decoration: BoxDecoration(
               color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.red.shade200),
             ),
             child: Row(
               children: [
-                Icon(Icons.pending_actions, color: Colors.red.shade600, size: 28),
-                const SizedBox(width: 12),
+                Icon(Icons.pending_actions, color: Colors.red.shade600, size: 20),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 15)),
-                      Text('लवकर स्वीकार करा', style: TextStyle(color: Colors.red.shade400, fontSize: 12)),
-                    ],
-                  ),
+                  child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13)),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
+                TextButton(
+                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
                   onPressed: () {},
-                  child: const Text('बघा', style: TextStyle(fontSize: 13)),
+                  child: Text('बघा →', style: TextStyle(color: Colors.red.shade600, fontWeight: FontWeight.bold)),
                 ),
               ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Banner Ad — जाहिराती Seller ला पण दिसतात
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            height: 150,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('📢 AMOLE जाहिरात', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 6),
+                  Text('तुमच्या परिसरातील ग्राहकांपर्यंत पोहोचा', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  SizedBox(height: 8),
+                  Text('जाहिरात करा — फक्त ₹100 पासून 🚀', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                ],
+              ),
             ),
           ),
 
@@ -246,7 +335,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), activeIcon: Icon(Icons.shopping_bag), label: 'ऑर्डर'),
           BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), activeIcon: Icon(Icons.inventory_2), label: 'Products'),
           BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), activeIcon: Icon(Icons.chat_bubble), label: 'Community'),
-          BottomNavigationBarItem(icon: Icon(Icons.qr_code_outlined), activeIcon: Icon(Icons.qr_code), label: 'QR Code'),
+          BottomNavigationBarItem(icon: Icon(Icons.people_outline), activeIcon: Icon(Icons.people), label: 'परिसर'),
         ],
       ),
     );
