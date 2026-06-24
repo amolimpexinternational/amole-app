@@ -13,9 +13,7 @@ class NotificationScreen extends StatelessWidget {
   Future<void> _goToHome(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     final role = prefs.getString('selected_role') ?? 'buyer';
-
     if (!context.mounted) return;
-
     Widget homeScreen;
     switch (role) {
       case 'seller':
@@ -30,7 +28,6 @@ class NotificationScreen extends StatelessWidget {
       default:
         homeScreen = const BuyerHomeScreen();
     }
-
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => homeScreen),
