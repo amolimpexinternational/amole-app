@@ -47,19 +47,48 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('नमस्कार! 👋', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                        Text('AMOLE', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
+                    // App Name
+                    const Text('AMOLE', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                     Row(
                       children: [
+                        // Loyalty Points — ठळकपणे
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade600,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.stars, color: Colors.white, size: 16),
+                              SizedBox(width: 4),
+                              Text('245 pts', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        // QR Scan Button
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppColors.cyan,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            children: [
+                              Icon(Icons.qr_code_scanner, color: AppColors.royalBlue, size: 16),
+                              SizedBox(width: 4),
+                              Text('QR Pay', style: TextStyle(color: AppColors.royalBlue, fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        // Notification
                         IconButton(
                           icon: const Icon(Icons.notifications_outlined, color: Colors.white),
                           onPressed: () {},
                         ),
+                        // Profile
                         IconButton(
                           icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
                           onPressed: () {},
@@ -88,10 +117,10 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // Ad Block 1
+          // Banner Ad — 25% मोठा (120 → 150)
           Container(
             margin: const EdgeInsets.all(16),
-            height: 120,
+            height: 150,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
@@ -104,9 +133,11 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 4),
-                  Text('माझा पैसा माझ्या खिशात', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 6),
+                  Text('माझा पैसा माझ्या खिशात', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  SizedBox(height: 8),
+                  Text('आपल्या लोकांचा आपला बाजार 🛒', style: TextStyle(color: Colors.white70, fontSize: 13)),
                 ],
               ),
             ),
@@ -219,7 +250,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             },
           ),
 
-          // Ad Block 2
+          // Ad Block 2 — Lucky Draw
           Container(
             margin: const EdgeInsets.all(16),
             height: 100,
@@ -262,8 +293,8 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'होम'),
           BottomNavigationBarItem(icon: Icon(Icons.search_outlined), activeIcon: Icon(Icons.search), label: 'शोध'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), activeIcon: Icon(Icons.shopping_bag), label: 'ऑर्डर'),
-          BottomNavigationBarItem(icon: Icon(Icons.stars_outlined), activeIcon: Icon(Icons.stars), label: 'रिवॉर्ड'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'प्रोफाइल'),
+          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), activeIcon: Icon(Icons.chat_bubble), label: 'माझे मेसेज'),
+          BottomNavigationBarItem(icon: Icon(Icons.people_outline), activeIcon: Icon(Icons.people), label: 'परिसर'),
         ],
       ),
     );
