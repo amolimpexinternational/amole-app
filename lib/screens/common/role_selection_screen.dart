@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
 import 'terms_screen.dart';
@@ -14,7 +15,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   String? _selectedRole;
 
   Widget _buildRoleCard(String code, String title, String subtitle, IconData icon) {
-    final bool isSelected = _selectedRole == code;
+    final isSelected = _selectedRole == code;
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -36,35 +37,17 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: isSelected
-                  ? AppColors.primaryBlue
-                  : AppColors.lightGrey,
-              child: Icon(
-                icon,
-                color: isSelected ? AppColors.white : AppColors.textLight,
-              ),
+              backgroundColor: isSelected ? AppColors.primaryBlue : AppColors.lightGrey,
+              child: Icon(icon, color: isSelected ? AppColors.white : AppColors.textLight),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textLight,
-                    ),
-                  ),
+                  Text(subtitle, style: const TextStyle(fontSize: 14, color: AppColors.textLight)),
                 ],
               ),
             ),
@@ -74,11 +57,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     );
   }
 
-  void _goToTerms() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const TermsScreen()),
-    );
+  Future<void> _goToTerms() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selected_role', _selectedRole!);
+    if (mounted) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const TermsScreen()));
+    }
   }
 
   @override
@@ -92,14 +76,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              const Text(
-                AppStrings.selectRole,
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
-                ),
-              ),
+              const Text(AppStrings.selectRole, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.textDark)),
               const SizedBox(height: 28),
               _buildRoleCard('buyer', AppStrings.buyer, AppStrings.buyerSub, Icons.shopping_bag_outlined),
               _buildRoleCard('seller', AppStrings.seller, AppStrings.sellerSub, Icons.storefront_outlined),
