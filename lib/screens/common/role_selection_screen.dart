@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
+import 'terms_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -73,6 +74,13 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     );
   }
 
+  void _goToTerms() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const TermsScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,11 +107,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               _buildRoleCard('channel_partner', AppStrings.channelPartner, AppStrings.channelPartnerSub, Icons.handshake_outlined),
               const Spacer(),
               ElevatedButton(
-                onPressed: _selectedRole == null
-                    ? null
-                    : () {
-                        // Navigate based on selected role
-                      },
+                onPressed: _selectedRole == null ? null : _goToTerms,
                 child: const Text(AppStrings.continueText),
               ),
               const SizedBox(height: 16),
