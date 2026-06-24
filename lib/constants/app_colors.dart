@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primaryBlue = Color(0xFF1565C0);
+  static const Color royalBlue = Color(0xFF0D47A1);
+  static const Color cyan = Color(0xFF00E5FF);
   static const Color primaryOrange = Color(0xFFFF8F00);
   static const Color successGreen = Color(0xFF43A047);
   static const Color errorRed = Color(0xFFC62828);
