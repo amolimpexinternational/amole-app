@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
 import 'terms_screen.dart';
+import 'contact_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -14,14 +15,55 @@ class RoleSelectionScreen extends StatefulWidget {
 class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   String? _selectedRole;
 
+  // ⚠️ हे allowed numbers — नंतर Firebase मधून येतील
+  // सध्या test साठी hardcoded आहेत
+  final List<String> _allowedFranchiseNumbers = [
+    '9999999999',
+    '8888888888',
+  ];
+  final List<String> _allowedChannelPartnerNumbers = [
+    '7777777777',
+    '6666666666',
+  ];
+
+  Future<void> _goToTerms() async {
+    final prefs = await SharedPreferences.getInstance();
+    final phone = prefs.getString('phone_number') ?? '';
+
+    // Franchise आणि Channel Partner साठी number check
+    if (_selectedRole == 'franchise') {
+      if (!_allowedFranchiseNumbers.contains(phone)) {
+        if (mounted) {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (_) => const ContactScreen(role: 'franchise'),
+          ));
+        }
+        return;
+      }
+    }
+
+    if (_selectedRole == 'channel_partner') {
+      if (!_allowedChannelPartnerNumbers.contains(phone)) {
+        if (mounted) {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (_) => const ContactScreen(role: 'channel_partner'),
+          ));
+        }
+        return;
+      }
+    }
+
+    await prefs.setString('selected_role', _selectedRole!);
+    if (mounted) {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const TermsScreen()));
+    }
+  }
+
   Widget _buildRoleCard(String code, String title, String subtitle, IconData icon) {
     final isSelected = _selectedRole == code;
+    final isRestricted = code == 'franchise' || code == 'channel_partner';
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedRole = code;
-        });
-      },
+      onTap: () => setState(() => _selectedRole = code),
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(18),
@@ -51,18 +93,12 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 ],
               ),
             ),
+            if (isRestricted)
+              const Icon(Icons.lock_outline, color: AppColors.textLight, size: 20),
           ],
         ),
       ),
     );
-  }
-
-  Future<void> _goToTerms() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_role', _selectedRole!);
-    if (mounted) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const TermsScreen()));
-    }
   }
 
   @override
@@ -77,6 +113,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             children: [
               const SizedBox(height: 24),
               const Text(AppStrings.selectRole, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+              const SizedBox(height: 8),
+              const Text('Franchise आणि Channel Partner साठी अधिकृत नंबर आवश्यक आहे 🔒', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
               const SizedBox(height: 28),
               _buildRoleCard('buyer', AppStrings.buyer, AppStrings.buyerSub, Icons.shopping_bag_outlined),
               _buildRoleCard('seller', AppStrings.seller, AppStrings.sellerSub, Icons.storefront_outlined),
