@@ -21,14 +21,18 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
     super.dispose();
   }
 
-  void _sendOTP() {
+  Future<void> _sendOTP() async {
     if (_isValid) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => OTPScreen(phoneNumber: _phoneController.text.trim()),
-        ),
-      );
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('phone_number', _phoneController.text.trim());
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => OTPScreen(phoneNumber: _phoneController.text.trim()),
+          ),
+        );
+      }
     }
   }
 
@@ -43,37 +47,18 @@ class _MobileNumberScreenState extends State<MobileNumberScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              const Text(
-                AppStrings.welcomeTo,
-                style: TextStyle(fontSize: 18, color: AppColors.textLight),
-              ),
-              const Text(
-                AppStrings.appName,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryBlue,
-                ),
-              ),
+              const Text(AppStrings.welcomeTo, style: TextStyle(fontSize: 18, color: AppColors.textLight)),
+              const Text(AppStrings.appName, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
               const SizedBox(height: 40),
-              const Text(
-                AppStrings.mobileNumber,
-                style: TextStyle(fontSize: 16, color: AppColors.textDark),
-              ),
+              const Text(AppStrings.mobileNumber, style: TextStyle(fontSize: 16, color: AppColors.textDark)),
               const SizedBox(height: 8),
               Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.lightGrey),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                decoration: BoxDecoration(border: Border.all(color: AppColors.lightGrey), borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        '+91',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
+                      child: Text('+91', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                     ),
                     Container(width: 1, height: 28, color: AppColors.lightGrey),
                     Expanded(
