@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
 import 'my_wall_screen.dart';
+import 'seller_profile_screen.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -207,7 +208,14 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 {'name': 'राज इलेक्ट्रॉनिक्स', 'category': 'इलेक्ट्रॉनिक्स', 'distance': '1.2 km', 'rating': '4.5'},
               ];
               final seller = sellers[index];
-              return Container(
+              return GestureDetector(
+                onTap: () => Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => SellerProfileScreen(
+                    sellerName: seller['name']!,
+                    category: seller['category']!,
+                  ),
+                )),
+                child: Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -247,6 +255,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                       ],
                     ),
                   ],
+                ),
                 ),
               );
             },
