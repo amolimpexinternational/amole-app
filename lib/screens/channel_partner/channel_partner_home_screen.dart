@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'cp_franchise_screen.dart';
+import 'cp_ads_screen.dart';
+import 'cp_revenue_screen.dart';
+import 'cp_profile_screen.dart';
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
   const ChannelPartnerHomeScreen({super.key});
@@ -207,6 +211,17 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
         selectedItemColor: AppColors.primaryBlue,
         unselectedItemColor: AppColors.textLight,
         currentIndex: 0,
+        onTap: (index) {
+          if (index == 1) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen()));
+          } else if (index == 2) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()));
+          } else if (index == 3) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const CpRevenueScreen()));
+          } else if (index == 4) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const CpProfileScreen()));
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'डॅशबोर्ड'),
           BottomNavigationBarItem(icon: Icon(Icons.business_outlined), label: 'Franchise'),
