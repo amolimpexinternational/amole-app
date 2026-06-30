@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'add_product_screen.dart';
+import 'edit_product_screen.dart';
+import 'stock_management_screen.dart';
 
 class SellerProductsScreen extends StatefulWidget {
   const SellerProductsScreen({super.key});
@@ -69,9 +72,15 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
         backgroundColor: AppColors.primaryBlue,
         title: const Text('माझे Products', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.inventory_outlined, color: Colors.white),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StockManagementScreen())),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddProductDialog,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddProductScreen())),
         backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text('Product टाका', style: TextStyle(color: Colors.white)),
@@ -124,7 +133,7 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
                   ],
                 ),
                 const SizedBox(width: 8),
-                IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.textLight), onPressed: () {}),
+                IconButton(icon: const Icon(Icons.edit_outlined, color: AppColors.textLight), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProductScreen()))),
               ],
             ),
           );

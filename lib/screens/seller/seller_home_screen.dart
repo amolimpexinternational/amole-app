@@ -7,6 +7,7 @@ import 'seller_analytics_screen.dart';
 import 'seller_notification_screen.dart';
 import 'seller_revenue_detail_screen.dart';
 import 'seller_support_screen.dart';
+import 'seller_profile_detail_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -139,7 +140,7 @@ class _SellerDashboard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))),
-                        IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSupportScreen()))),
+                        IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))),
                       ],
                     ),
                   ],
