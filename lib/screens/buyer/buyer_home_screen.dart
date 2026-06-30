@@ -102,18 +102,26 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 ),
                 const SizedBox(height: 12),
                 // Search Bar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.search, color: AppColors.primaryBlue),
-                      SizedBox(width: 10),
-                      Text('दुकान, वस्तू, सेवा शोधा...', style: TextStyle(color: AppColors.textLight, fontSize: 15)),
-                    ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.search, color: AppColors.primaryBlue),
+                        SizedBox(width: 10),
+                        Text('दुकान, वस्तू, सेवा शोधा...', style: TextStyle(color: AppColors.textLight, fontSize: 15)),
+                      ],
+                    ),
                   ),
                 ),
               ],
