@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'seller_support_screen.dart';
 
 class SellerProfileDetailScreen extends StatelessWidget {
   const SellerProfileDetailScreen({super.key});
@@ -43,6 +44,20 @@ class SellerProfileDetailScreen extends StatelessWidget {
                     subtitle: Text('Pune, Maharashtra'),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.help_outline, color: AppColors.primaryBlue),
+                title: const Text('Help & Support'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SellerSupportScreen()),
+                  );
+                },
               ),
             ),
           ],
