@@ -3,6 +3,8 @@ import '../../constants/app_colors.dart';
 import 'franchise_kyc_screen.dart';
 import 'franchise_ad_screen.dart';
 import 'franchise_revenue_screen.dart';
+import 'franchise_notification_screen.dart';
+import 'franchise_profile_screen.dart';
 
 class FranchiseHomeScreen extends StatefulWidget {
   const FranchiseHomeScreen({super.key});
@@ -86,8 +88,8 @@ class _FranchiseDashboard extends StatelessWidget {
                         ]),
                       ),
                       const SizedBox(width: 6),
-                      IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () {}),
-                      IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () {}),
+                      IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseNotificationScreen()))),
+                      IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseProfileScreen()))),
                     ]),
                   ],
                 ),
