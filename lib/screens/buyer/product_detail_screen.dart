@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key});
@@ -123,7 +124,12 @@ class _ProductDetailScreenState
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const CartScreen()),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 AppColors.primaryOrange,
@@ -140,7 +146,12 @@ class _ProductDetailScreenState
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const CartScreen()),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 AppColors.primaryBlue,
