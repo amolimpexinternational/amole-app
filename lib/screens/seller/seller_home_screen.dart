@@ -4,6 +4,9 @@ import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
 import 'seller_analytics_screen.dart';
+import 'seller_notification_screen.dart';
+import 'seller_revenue_detail_screen.dart';
+import 'seller_support_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -135,8 +138,8 @@ class _SellerDashboard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () {}),
-                        IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () {}),
+                        IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))),
+                        IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSupportScreen()))),
                       ],
                     ),
                   ],
@@ -173,7 +176,7 @@ class _SellerDashboard extends StatelessWidget {
                 Expanded(child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13))),
                 TextButton(
                   style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
-                  onPressed: () {},
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen())),
                   child: Text('बघा →', style: TextStyle(color: Colors.red.shade600, fontWeight: FontWeight.bold)),
                 ),
               ],
