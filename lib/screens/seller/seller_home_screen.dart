@@ -8,6 +8,9 @@ import 'seller_notification_screen.dart';
 import 'seller_revenue_detail_screen.dart';
 import 'seller_support_screen.dart';
 import 'seller_profile_detail_screen.dart';
+import 'seller_advertisements_screen.dart';
+import 'seller_subscription_screen.dart';
+import 'seller_loyalty_setup_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -184,21 +187,61 @@ class _SellerDashboard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            height: 150,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF00E5FF), Color(0xFF1565C0)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-              borderRadius: BorderRadius.circular(14),
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen())),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              height: 150,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFF00E5FF), Color(0xFF1565C0)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Center(
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text('📢 AMOLE जाहिरात', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 6),
+                  Text('तुमच्या परिसरातील ग्राहकांपर्यंत पोहोचा', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                  SizedBox(height: 8),
+                  Text('जाहिरात करा — फक्त ₹100 पासून 🚀', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                ]),
+              ),
             ),
-            child: const Center(
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text('📢 AMOLE जाहिरात', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 6),
-                Text('तुमच्या परिसरातील ग्राहकांपर्यंत पोहोचा', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                SizedBox(height: 8),
-                Text('जाहिरात करा — फक्त ₹100 पासून 🚀', style: TextStyle(color: Colors.white70, fontSize: 12)),
-              ]),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+                      child: Column(children: const [
+                        Icon(Icons.workspace_premium_outlined, color: AppColors.primaryBlue, size: 24),
+                        SizedBox(height: 6),
+                        Text('Subscription', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+                      ]),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerLoyaltySetupScreen())),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                      child: Column(children: const [
+                        Icon(Icons.stars_outlined, color: Colors.amber, size: 24),
+                        SizedBox(height: 6),
+                        Text('Loyalty Setup', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+                      ]),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 20),
