@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'product_detail_screen.dart';
 
 class SellerProfileScreen extends StatelessWidget {
   final String sellerName;
@@ -24,8 +25,15 @@ class SellerProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductCard(String name, String price) {
-    return Container(
+  Widget _buildProductCard(BuildContext context, String name, String price) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProductDetailScreen()),
+        );
+      },
+      child: Container(
       width: 130,
       margin: const EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
@@ -57,6 +65,7 @@ class SellerProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -179,10 +188,10 @@ class SellerProfileScreen extends StatelessWidget {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        _buildProductCard('तांदूळ 5kg', '₹250'),
-                        _buildProductCard('गहू 5kg', '₹180'),
-                        _buildProductCard('तेल 1L', '₹140'),
-                        _buildProductCard('साखर 1kg', '₹45'),
+                        _buildProductCard(context, 'तांदूळ 5kg', '₹250'),
+                        _buildProductCard(context, 'गहू 5kg', '₹180'),
+                        _buildProductCard(context, 'तेल 1L', '₹140'),
+                        _buildProductCard(context, 'साखर 1kg', '₹45'),
                       ],
                     ),
                   ),

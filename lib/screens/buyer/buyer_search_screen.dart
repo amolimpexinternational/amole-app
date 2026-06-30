@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'seller_profile_screen.dart';
 
 class BuyerSearchScreen extends StatefulWidget {
   const BuyerSearchScreen({super.key});
@@ -42,7 +43,19 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
   }
 
   Widget _buildResultCard(Map<String, String> item) {
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SellerProfileScreen(
+              sellerName: item['name']!,
+              category: item['category']!,
+            ),
+          ),
+        );
+      },
+      child: Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -90,6 +103,7 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
           const Icon(Icons.chevron_right, color: AppColors.textLight),
         ],
       ),
+    ),
     );
   }
 
