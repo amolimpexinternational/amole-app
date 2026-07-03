@@ -11,27 +11,26 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
-  final _name = TextEditingController();
-  final _price = TextEditingController();
-  final _stock = TextEditingController();
-  final _category = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final TextEditingController stockController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   void dispose() {
-    _name.dispose();
-    _price.dispose();
-    _stock.dispose();
-    _category.dispose();
+    nameController.dispose();
+    priceController.dispose();
+    stockController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
   void _saveProduct() {
-    if (_name.text.isEmpty ||
-        _price.text.isEmpty ||
-        _stock.text.isEmpty ||
-        _category.text.isEmpty) {
+    if (nameController.text.trim().isEmpty ||
+        priceController.text.trim().isEmpty ||
+        stockController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
+        const SnackBar(content: Text('Please fill all required fields')),
       );
       return;
     }
@@ -39,36 +38,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
     ProductDatabase.products.add(
       ProductModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: _name.text,
-        price: double.tryParse(_price.text) ?? 0,
-        stock: int.tryParse(_stock.text) ?? 0,
-        category: _category.text,
+        name: nameController.text.trim(),
+        price: double.tryParse(priceController.text) ?? 0,
+        stock: int.tryParse(stockController.text) ?? 0,
+        category: "General",
+        image: "",
       ),
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Product Added Successfully')),
+      const SnackBar(content: Text('Product Saved Successfully')),
     );
 
-    Navigator.pop(context, true);
-  }
-
-  Widget _field(
-    TextEditingController controller,
-    String label, {
-    TextInputType type = TextInputType.text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
-        controller: controller,
-        keyboardType: type,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-      ),
-    );
+    Navigator.pop(context);
   }
 
   @override
@@ -80,24 +62,81 @@ class _AddProductScreenState extends State<AddProductScreen> {
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: AppColors.white,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: ListView(
+        child: Column(
           children: [
-            _field(_name, 'Product Name'),
-            _field(_price, 'Price', type: TextInputType.number),
-            _field(_stock, 'Stock', type: TextInputType.number),
-            _field(_category, 'Category'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveProduct,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                padding: const EdgeInsets.symmetric(vertical: 15),
+            Container(
+              height: 160,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Save Product',
-                style: TextStyle(color: Colors.white),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_a_photo_outlined,
+                      size: 60,
+                      color: AppColors.primaryBlue),
+                  SizedBox(height: 10),
+                  Text('Upload Product Image'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Product Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: priceController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Price',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: stockController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Stock Quantity',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            TextField(
+              controller: descriptionController,
+              maxLines: 4,
+              decoration: const InputDecoration(
+                labelText: 'Description',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _saveProduct,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+                child: const Text(
+                  'Save Product',
+                  style: TextStyle(color: AppColors.white),
+                ),
               ),
             ),
           ],
