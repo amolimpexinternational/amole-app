@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'product_detail_screen.dart';
+import 'qr_payment_screen.dart';
 
 class SellerProfileScreen extends StatelessWidget {
   final String sellerName;
@@ -152,7 +153,14 @@ class SellerProfileScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => QrPaymentScreen(sellerName: sellerName),
+                              ),
+                            );
+                          },
                           icon: const Icon(Icons.qr_code, size: 18),
                           label: const Text('QR Pay करा'),
                           style: ElevatedButton.styleFrom(backgroundColor: AppColors.cyan, foregroundColor: AppColors.textDark),
