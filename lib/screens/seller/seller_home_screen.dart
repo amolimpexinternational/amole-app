@@ -10,7 +10,7 @@ import 'seller_support_screen.dart';
 import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
 import 'seller_subscription_screen.dart';
-import 'seller_loyalty_setup_screen.dart';
+import 'seller_discount_offer_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -229,14 +229,14 @@ class _SellerDashboard extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerLoyaltySetupScreen())),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerDiscountOfferScreen())),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
                       child: Column(children: const [
                         Icon(Icons.stars_outlined, color: Colors.amber, size: 24),
                         SizedBox(height: 6),
-                        Text('Loyalty Setup', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+                        Text('Discount Offer', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
                       ]),
                     ),
                   ),
