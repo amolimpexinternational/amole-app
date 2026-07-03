@@ -157,7 +157,7 @@ class _QrPaymentScreenState extends State<QrPaymentScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text('रक्कम:', style: TextStyle(color: AppColors.textLight)),
-                    Text('₹${amount.toStringAsFixed(0)}',
+                    Text('₹${(double.tryParse(_amountController.text) ?? 0).toStringAsFixed(0)}',
                         style: const TextStyle(color: AppColors.textDark)),
                   ],
                 ),
