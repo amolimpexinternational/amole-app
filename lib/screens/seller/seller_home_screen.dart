@@ -168,22 +168,21 @@ class _SellerDashboard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            height: 48,
-            decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.red.shade200)),
-            child: Row(
-              children: [
-                Icon(Icons.pending_actions, color: Colors.red.shade600, size: 20),
-                const SizedBox(width: 10),
-                Expanded(child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13))),
-                TextButton(
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen())),
-                  child: Text('बघा →', style: TextStyle(color: Colors.red.shade600, fontWeight: FontWeight.bold)),
-                ),
-              ],
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen())),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              height: 48,
+              decoration: BoxDecoration(color: Colors.red.shade50, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.red.shade200)),
+              child: Row(
+                children: [
+                  Icon(Icons.pending_actions, color: Colors.red.shade600, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13))),
+                  Icon(Icons.chevron_right,color: Colors.red),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16),

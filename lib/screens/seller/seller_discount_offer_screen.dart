@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 
 class SellerDiscountOfferScreen extends StatefulWidget {
- const SellerDiscountOfferScreen({super.key});
+  const SellerDiscountOfferScreen({super.key});
 
   @override
   State<SellerDiscountOfferScreen> createState() =>
@@ -19,11 +19,6 @@ class _SellerDiscountOfferScreenState
       TextEditingController(text: "0");
 
   final double companyFee = 10.0;
-
-  final double buyerReward = 2.00;
-  final double referrerReward = 0.25;
-  final double cpReward = 0.25;
-  final double franchiseReward = 1.00;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +58,7 @@ class _SellerDiscountOfferScreenState
             onChanged: (_) => setState(() {}),
           ),
 
-          const SizedBox(height:16),
+          const SizedBox(height: 16),
 
           TextField(
             controller: discountController,
@@ -74,41 +69,24 @@ class _SellerDiscountOfferScreenState
             onChanged: (_) => setState(() {}),
           ),
 
-          const SizedBox(height:25),
+          const SizedBox(height: 25),
 
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
                   Text("Customer Pays : ₹${customerPay.toStringAsFixed(2)}"),
 
                   Text("Seller Receives : ₹${seller.toStringAsFixed(2)}"),
 
-                  Text("Company Fee (10%) : ₹${company.toStringAsFixed(2)}"),
-
-                  const Divider(),
+                  const SizedBox(height: 10),
 
                   const Text(
-                    "Reward Distribution",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold),
-                  ),
-
-                  Text("Buyer : $buyerReward %"),
-                  Text("Referrer : $referrerReward %"),
-                  Text("Channel Partner : $cpReward %"),
-                  Text("Franchise : $franchiseReward %"),
-
-                  const SizedBox(height:20),
-
-                  const Text(
-                    "Reward percentages are controlled by AMOLE Admin.",
-                    style: TextStyle(
-                        color: Colors.grey),
+                    "Reward distribution hidden from seller view",
+                    style: TextStyle(color: Colors.grey),
                   ),
 
                 ],
@@ -116,7 +94,7 @@ class _SellerDiscountOfferScreenState
             ),
           ),
 
-          const SizedBox(height:25),
+          const SizedBox(height: 25),
 
           ElevatedButton(
             onPressed: () {},

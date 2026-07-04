@@ -14,13 +14,7 @@ class SellerProductsScreen extends StatefulWidget {
 }
 
 class _SellerProductsScreenState extends State<SellerProductsScreen> {
-  final List<Map<String, dynamic>> _products = [
-    {'name': 'तांदूळ 5kg', 'price': '₹250', 'stock': '45 kg', 'status': 'active'},
-    {'name': 'गहू 5kg', 'price': '₹180', 'stock': '30 kg', 'status': 'active'},
-    {'name': 'तेल 1L', 'price': '₹140', 'stock': '20 bottles', 'status': 'active'},
-    {'name': 'साखर 1kg', 'price': '₹45', 'stock': '0', 'status': 'outofstock'},
-    {'name': 'डाळ 1kg', 'price': '₹120', 'stock': '15 kg', 'status': 'active'},
-  ];
+  
 
   void _showAddProductDialog() {
     showModalBottomSheet(
@@ -89,10 +83,10 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: _products.length,
+        itemCount: ProductDatabase.products.length,
         itemBuilder: (context, index) {
-          final p = _products[index];
-          final isOutOfStock = p['status'] == 'outofstock';
+          final p = ProductDatabase.products[index];
+          final isOutOfStock = p.stock <= 0;
           return Container(
             margin: const EdgeInsets.only(bottom: 12),
             padding: const EdgeInsets.all(14),
@@ -113,16 +107,16 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(p['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                      Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
                       const SizedBox(height: 3),
-                      Text('Stock: ${p['stock']}', style: TextStyle(fontSize: 13, color: isOutOfStock ? Colors.red : AppColors.textLight)),
+                      Text('Stock: ${p.stock.toString()}', style: TextStyle(fontSize: 13, color: isOutOfStock ? Colors.red : AppColors.textLight)),
                     ],
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(p['price'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.primaryBlue)),
+                    Text('₹${p.price.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.primaryBlue)),
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

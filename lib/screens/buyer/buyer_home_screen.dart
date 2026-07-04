@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
+import 'buyer_profile_screen.dart';
 import 'my_wall_screen.dart';
 import 'seller_profile_screen.dart';
 
@@ -94,7 +95,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                         // Profile
                         IconButton(
                           icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerProfileScreen()));
+                          },
                         ),
                       ],
                     ),
@@ -199,7 +202,12 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('जवळचे दुकानदार', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                TextButton(onPressed: () {}, child: const Text('सर्व बघा', style: TextStyle(color: AppColors.primaryBlue))),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen()));
+                  },
+                  child: const Text('सर्व बघा', style: TextStyle(color: AppColors.primaryBlue)),
+                ),
               ],
             ),
           ),

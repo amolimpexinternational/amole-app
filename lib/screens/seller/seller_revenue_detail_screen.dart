@@ -1,20 +1,93 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 
-class SellerRevenueDetailScreen extends StatelessWidget {
+class SellerRevenueDetailScreen extends StatefulWidget {
   const SellerRevenueDetailScreen({super.key});
 
-  Widget revenueTile(String month, String amount) {
+  @override
+  State<SellerRevenueDetailScreen> createState() =>
+      _SellerRevenueDetailScreenState();
+}
+
+class _SellerRevenueDetailScreenState
+    extends State<SellerRevenueDetailScreen> {
+
+  String filter = "Last 30 Days";
+
+  Widget summaryCard(
+      String title,
+      String value,
+      IconData icon,
+      Color color) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: color.withOpacity(.12),
+            child: Icon(icon, color: color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(title),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget paymentTile(
+      String date,
+      String gross,
+      String fee,
+      String net,
+      bool settled) {
     return Card(
       child: ListTile(
-        leading: const Icon(Icons.currency_rupee),
-        title: Text(month),
-        trailing: Text(
-          amount,
-          style: const TextStyle(
-            color: AppColors.successGreen,
-            fontWeight: FontWeight.bold,
-          ),
+        leading: Icon(
+          settled
+              ? Icons.check_circle
+              : Icons.pending,
+          color: settled
+              ? Colors.green
+              : Colors.orange,
+        ),
+        title: Text(date),
+        subtitle: Text(
+          "Gross : $gross\nFee : $fee",
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              net,
+              style: const TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              settled ? "Settled" : "Pending",
+              style: TextStyle(
+                fontSize: 11,
+                color: settled
+                    ? Colors.green
+                    : Colors.orange,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -22,19 +95,131 @@ class SellerRevenueDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
+
       appBar: AppBar(
-        title: const Text('Revenue Details'),
+        title: const Text("Wallet & Income"),
         backgroundColor: AppColors.primaryBlue,
-        foregroundColor: AppColors.white,
+        foregroundColor: Colors.white,
       ),
+
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          revenueTile('April 2026', '₹24,500'),
-          revenueTile('May 2026', '₹31,800'),
-          revenueTile('June 2026', '₹38,400'),
+
+          DropdownButtonFormField<String>(
+            value: filter,
+            decoration: const InputDecoration(
+              labelText: "Income Period",
+            ),
+            items: const [
+              DropdownMenuItem(
+                value: "Today",
+                child: Text("Today"),
+              ),
+              DropdownMenuItem(
+                value: "Last 7 Days",
+                child: Text("Last 7 Days"),
+              ),
+              DropdownMenuItem(
+                value: "Last 30 Days",
+                child: Text("Last 30 Days"),
+              ),
+              DropdownMenuItem(
+                value: "Custom Date",
+                child: Text("Custom Date"),
+              ),
+            ],
+            onChanged: (v) {
+              setState(() {
+                filter = v!;
+              });
+            },
+          ),
+
+          const SizedBox(height: 18),
+
+          summaryCard(
+            "Gross Sales",
+            "₹52,000",
+            Icons.shopping_cart,
+            Colors.blue,
+          ),
+
+          const SizedBox(height: 10),
+
+          summaryCard(
+            "Company Fee",
+            "₹5,200",
+            Icons.account_balance,
+            Colors.red,
+          ),
+
+          const SizedBox(height: 10),
+
+          summaryCard(
+            "Seller Received",
+            "₹46,800",
+            Icons.account_balance_wallet,
+            Colors.green,
+          ),
+
+          const SizedBox(height: 10),
+
+          summaryCard(
+            "Pending Settlement",
+            "₹4,200",
+            Icons.pending_actions,
+            Colors.orange,
+          ),
+
+          const SizedBox(height: 24),
+
+          const Text(
+            "Payment History",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          paymentTile(
+            "04 Jul 2026",
+            "₹8,500",
+            "₹850",
+            "₹7,650",
+            true,
+          ),
+
+          paymentTile(
+            "03 Jul 2026",
+            "₹12,400",
+            "₹1,240",
+            "₹11,160",
+            true,
+          ),
+
+          paymentTile(
+            "02 Jul 2026",
+            "₹4,800",
+            "₹480",
+            "₹4,320",
+            false,
+          ),
+
+          const SizedBox(height: 20),
+
+          OutlinedButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.download),
+            label: const Text("Export Statement"),
+          ),
+
+          const SizedBox(height: 30),
         ],
       ),
     );

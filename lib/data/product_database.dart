@@ -1,7 +1,7 @@
 import '../models/product_model.dart';
 
 class ProductDatabase {
-  static List<ProductModel> products = [
+  static final List<ProductModel> products = [
     ProductModel(
       id: '1',
       name: 'Organic Mango',
@@ -24,4 +24,29 @@ class ProductDatabase {
       category: 'Spices',
     ),
   ];
+
+  static void addProduct(ProductModel product) {
+    products.add(product);
+  }
+
+  static void deleteProduct(String id) {
+    products.removeWhere((p) => p.id == id);
+  }
+
+  static void updateProduct(ProductModel updatedProduct) {
+    final index =
+        products.indexWhere((p) => p.id == updatedProduct.id);
+
+    if (index != -1) {
+      products[index] = updatedProduct;
+    }
+  }
+
+  static ProductModel? getProduct(String id) {
+    try {
+      return products.firstWhere((p) => p.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
 }
