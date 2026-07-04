@@ -20,6 +20,10 @@ class StockManagementScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text('Stock Management'),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: AppColors.white,

@@ -125,7 +125,7 @@ class _SellerOrdersScreenState extends State<SellerOrdersScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         title: const Text('ऑर्डर्स', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        automaticallyImplyLeading: false,
+
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 12),

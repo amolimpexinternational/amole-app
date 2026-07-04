@@ -14,6 +14,10 @@ class SellerNotificationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text("Notifications"),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: Colors.white,

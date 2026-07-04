@@ -134,24 +134,24 @@ class _SellerRevenueDetailScreenState
                 child: Text("Custom Date"),
               ),
             ],
-            onChanged: (v) async {
+            onChanged: (v) {
+              setState(() { filter = v!; selectedDate = null; selectedDateStr = ""; });
               if (v == "Custom Date") {
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(DateTime.now().year - 3),
-                  lastDate: DateTime.now(),
-                  helpText: 'दिवस निवडा',
-                );
-                if (picked != null) {
-                  setState(() {
-                    filter = v!;
-                    selectedDate = picked;
-                    selectedDateStr = "\${picked.day}/\${picked.month}/\${picked.year}";
-                  });
-                }
-              } else {
-                setState(() { filter = v!; selectedDate = null; selectedDateStr = ""; });
+                Future.microtask(() async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(DateTime.now().year - 3),
+                    lastDate: DateTime.now(),
+                    helpText: 'दिवस निवडा',
+                  );
+                  if (picked != null && mounted) {
+                    setState(() {
+                      selectedDate = picked;
+                      selectedDateStr = "\${picked.day}/\${picked.month}/\${picked.year}";
+                    });
+                  }
+                });
               }
             },
           ),
