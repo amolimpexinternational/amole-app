@@ -42,7 +42,12 @@ class EditProductScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Product Update झाला!'), backgroundColor: Colors.green),
+                  );
+                  Navigator.pop(context);
+                },
                 child: const Text('Update Product'),
               ),
             ),

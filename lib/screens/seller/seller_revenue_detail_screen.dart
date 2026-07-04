@@ -13,6 +13,8 @@ class _SellerRevenueDetailScreenState
     extends State<SellerRevenueDetailScreen> {
 
   String filter = "Last 30 Days";
+  DateTime? selectedDate;
+  String selectedDateStr = "";
 
   Widget summaryCard(
       String title,
@@ -132,14 +134,44 @@ class _SellerRevenueDetailScreenState
                 child: Text("Custom Date"),
               ),
             ],
-            onChanged: (v) {
-              setState(() {
-                filter = v!;
-              });
+            onChanged: (v) async {
+              if (v == "Custom Date") {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(DateTime.now().year - 3),
+                  lastDate: DateTime.now(),
+                  helpText: 'दिवस निवडा',
+                );
+                if (picked != null) {
+                  setState(() {
+                    filter = v!;
+                    selectedDate = picked;
+                    selectedDateStr = "\${picked.day}/\${picked.month}/\${picked.year}";
+                  });
+                }
+              } else {
+                setState(() { filter = v!; selectedDate = null; selectedDateStr = ""; });
+              }
             },
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 8),
+
+          if (filter == "Custom Date" && selectedDateStr.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  const Icon(Icons.calendar_today, color: AppColors.primaryBlue, size: 16),
+                  const SizedBox(width: 8),
+                  Text("निवडलेला दिवस: \$selectedDateStr",
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.primaryBlue)),
+                ],
+              ),
+            ),
+
+          const SizedBox(height: 10),
 
           summaryCard(
             "Gross Sales",
@@ -214,7 +246,11 @@ class _SellerRevenueDetailScreenState
           const SizedBox(height: 20),
 
           OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Statement Export झाले!'), backgroundColor: Colors.green),
+              );
+            },
             icon: const Icon(Icons.download),
             label: const Text("Export Statement"),
           ),

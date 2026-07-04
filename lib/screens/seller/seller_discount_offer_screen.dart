@@ -78,15 +78,20 @@ class _SellerDiscountOfferScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  Text("Customer Pays : ₹${customerPay.toStringAsFixed(2)}"),
-
-                  Text("Seller Receives : ₹${seller.toStringAsFixed(2)}"),
-
-                  const SizedBox(height: 10),
-
-                  const Text(
-                    "Reward distribution hidden from seller view",
-                    style: TextStyle(color: Colors.grey),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("ग्राहक देईल:", style: TextStyle(fontSize: 15, color: AppColors.textLight)),
+                      Text("₹\${customerPay.toStringAsFixed(0)}", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                    ],
+                  ),
+                  const Divider(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text("तुम्हाला मिळेल:", style: TextStyle(fontSize: 15, color: AppColors.textLight)),
+                      Text("₹\${seller.toStringAsFixed(0)}", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.successGreen)),
+                    ],
                   ),
 
                 ],
@@ -97,7 +102,12 @@ class _SellerDiscountOfferScreenState
           const SizedBox(height: 25),
 
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Offer Save झाला!'), backgroundColor: Colors.green),
+              );
+              Navigator.pop(context);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,
             ),

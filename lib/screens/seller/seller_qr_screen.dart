@@ -65,7 +65,11 @@ class SellerQrScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('QR Code Download झाला!'), backgroundColor: Colors.green),
+                      );
+                    },
                     icon: const Icon(Icons.download_outlined),
                     label: const Text('Download करा'),
                   ),
@@ -73,7 +77,11 @@ class SellerQrScreen extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('QR Code Share होत आहे...'), backgroundColor: Colors.blue),
+                      );
+                    },
                     icon: const Icon(Icons.share_outlined),
                     label: const Text('Share करा'),
                   ),

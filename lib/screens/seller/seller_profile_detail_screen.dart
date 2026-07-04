@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'registration/seller_registration_screen.dart';
 import 'seller_support_screen.dart';
 
 class SellerProfileDetailScreen extends StatelessWidget {
@@ -166,7 +167,9 @@ class SellerProfileDetailScreen extends StatelessWidget {
             ),
             icon: const Icon(Icons.edit),
             label: const Text("Edit Business Profile"),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRegistrationScreen()));
+            },
           ),
 
           const SizedBox(height: 12),
