@@ -127,6 +127,23 @@ class _SellerDashboard extends StatelessWidget {
                                         Text('₹18,570', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
                                       ]),
                                     ),
+                                    const SizedBox(height: 20),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()));
+                                        },
+                                        icon: const Icon(Icons.bar_chart, color: Colors.white),
+                                        label: const Text('पूर्ण तपशील बघा', style: TextStyle(color: Colors.white, fontSize: 15)),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.primaryBlue,
+                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
