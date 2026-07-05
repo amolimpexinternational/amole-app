@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../constants/app_colors.dart';
+import '../constants/app_colors.dart';
 
 class AdFeedWidget extends StatefulWidget {
   final bool compact;
-  const AdFeedWidget({super.key, this.compact = false});
+  final bool isSeller;
+  const AdFeedWidget({super.key, this.compact = false, this.isSeller = false});
 
   @override
   State<AdFeedWidget> createState() => _AdFeedWidgetState();
@@ -12,6 +13,7 @@ class AdFeedWidget extends StatefulWidget {
 class _AdFeedWidgetState extends State<AdFeedWidget> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  int _selectedTab = 0;
 
   final List<Map<String, dynamic>> _ads = [
     {
@@ -20,7 +22,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'avatar': 'G',
       'avatarColor': Colors.orange,
       'type': 'photo',
-      'title': '🎉 दिवाळी धमाका ऑफर!',
+      'title': 'दिवाळी धमाका ऑफर!',
       'desc': 'सर्व किराणा मालावर 20% सूट — फक्त आजपुरता!',
       'bgColor1': Color(0xFFFF6B35),
       'bgColor2': Color(0xFFFF8F00),
@@ -34,8 +36,8 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'avatar': 'R',
       'avatarColor': Colors.blue,
       'type': 'video',
-      'title': '📱 नवीन Mobile आला!',
-      'desc': 'Samsung Galaxy A55 — ₹32,999 मध्ये. EMI उपलब्ध.',
+      'title': 'नवीन Mobile आला!',
+      'desc': 'Samsung Galaxy A55 — Rs.32,999 मध्ये. EMI उपलब्ध.',
       'bgColor1': Color(0xFF1565C0),
       'bgColor2': Color(0xFF00E5FF),
       'likes': '256',
@@ -48,8 +50,8 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'avatar': 'S',
       'avatarColor': Colors.green,
       'type': 'photo',
-      'title': '🍱 जेवण घरपोच!',
-      'desc': 'ताजे, घरगुती जेवण — ₹80 पासून. Free Delivery ₹200 वर.',
+      'title': 'जेवण घरपोच!',
+      'desc': 'ताजे, घरगुती जेवण — Rs.80 पासून. Free Delivery Rs.200 वर.',
       'bgColor1': Color(0xFF2E7D32),
       'bgColor2': Color(0xFF66BB6A),
       'likes': '89',
@@ -62,7 +64,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'avatar': 'F',
       'avatarColor': Colors.pink,
       'type': 'photo',
-      'title': '👗 नवीन Collection आली!',
+      'title': 'नवीन Collection आली!',
       'desc': 'Ladies & Gents कपडे — Buy 2 Get 1 Free. आजच या!',
       'bgColor1': Color(0xFFAD1457),
       'bgColor2': Color(0xFFEC407A),
@@ -70,6 +72,12 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'comments': '67',
       'tag': 'Ad',
     },
+  ];
+
+  final List<Map<String, dynamic>> _myOffers = [
+    {'title': 'किराणा 10% Off', 'seller': 'श्री गणेश किराणा', 'validity': '31 July पर्यंत', 'color': Colors.orange, 'saved': false},
+    {'title': 'Free Delivery', 'seller': 'स्वाद हॉटेल', 'validity': 'आठवडाभर', 'color': Colors.green, 'saved': false},
+    {'title': 'Mobile Cashback Rs.500', 'seller': 'राज इलेक्ट्रॉनिक्स', 'validity': '5 Aug पर्यंत', 'color': Colors.blue, 'saved': false},
   ];
 
   @override
@@ -80,16 +88,12 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
 
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 4), () {
-      if (mounted && _pageController.hasClients) {
+      if (mounted && _pageController.hasClients && _selectedTab == 0) {
         final next = (_currentPage + 1) % _ads.length;
-        _pageController.animateToPage(
-          next,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
+        _pageController.animateToPage(next, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
         setState(() => _currentPage = next);
-        _startAutoScroll();
       }
+      _startAutoScroll();
     });
   }
 
@@ -100,6 +104,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   }
 
   Widget _buildAdCard(Map<String, dynamic> ad) {
+    final double mediaHeight = widget.compact ? 180 : 220;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -110,7 +115,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
@@ -146,10 +150,9 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
               ],
             ),
           ),
-          // Media
           Container(
             width: double.infinity,
-            height: widget.compact ? 160 : 200,
+            height: mediaHeight,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [ad['bgColor1'] as Color, ad['bgColor2'] as Color],
@@ -166,20 +169,20 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
                       Icon(
                         ad['type'] == 'video' ? Icons.play_circle_filled : Icons.image_outlined,
                         color: Colors.white.withOpacity(0.3),
-                        size: 60,
+                        size: 70,
                       ),
                       const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(ad['title'],
-                            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center),
                       ),
                       const SizedBox(height: 8),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(ad['desc'],
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                            style: const TextStyle(color: Colors.white, fontSize: 13),
                             textAlign: TextAlign.center),
                       ),
                     ],
@@ -201,7 +204,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
               ],
             ),
           ),
-          // Engagement
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
             child: Row(
@@ -215,32 +217,13 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             ),
           ),
           const Divider(height: 1),
-          // Action buttons
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Row(
               children: [
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.thumb_up_outlined, size: 16, color: AppColors.textLight),
-                    label: const Text('आवडले', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.chat_bubble_outline, size: 16, color: AppColors.textLight),
-                    label: const Text('Comment', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.share_outlined, size: 16, color: AppColors.textLight),
-                    label: const Text('Share', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                  ),
-                ),
+                Expanded(child: TextButton.icon(onPressed: () {}, icon: const Icon(Icons.thumb_up_outlined, size: 16, color: AppColors.textLight), label: const Text('आवडले', style: TextStyle(color: AppColors.textLight, fontSize: 12)))),
+                Expanded(child: TextButton.icon(onPressed: () {}, icon: const Icon(Icons.chat_bubble_outline, size: 16, color: AppColors.textLight), label: const Text('Comment', style: TextStyle(color: AppColors.textLight, fontSize: 12)))),
+                Expanded(child: TextButton.icon(onPressed: () {}, icon: const Icon(Icons.share_outlined, size: 16, color: AppColors.textLight), label: const Text('Share', style: TextStyle(color: AppColors.textLight, fontSize: 12)))),
               ],
             ),
           ),
@@ -249,33 +232,174 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
     );
   }
 
+  Widget _buildMyOffersTab() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: _myOffers.length,
+      itemBuilder: (context, index) {
+        final offer = _myOffers[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: (offer['color'] as Color).withOpacity(0.3)),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 50, height: 50,
+                decoration: BoxDecoration(
+                  color: (offer['color'] as Color).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.local_offer, color: offer['color'] as Color, size: 26),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(offer['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
+                    const SizedBox(height: 3),
+                    Text(offer['seller'], style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                    const SizedBox(height: 3),
+                    Row(children: [
+                      const Icon(Icons.access_time, size: 12, color: AppColors.textLight),
+                      const SizedBox(width: 3),
+                      Text(offer['validity'], style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                    ]),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => setState(() => _myOffers[index]['saved'] = !_myOffers[index]['saved']),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: offer['saved'] ? Colors.grey : offer['color'] as Color,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  minimumSize: Size.zero,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text(offer['saved'] ? 'Saved' : 'Save', style: const TextStyle(color: Colors.white, fontSize: 12)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCreateOfferTab(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('नवीन Offer तयार करा', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+              const SizedBox(height: 16),
+              const TextField(decoration: InputDecoration(labelText: 'Offer Title', hintText: 'उदा. दिवाळी 20% सूट', border: OutlineInputBorder())),
+              const SizedBox(height: 12),
+              const TextField(decoration: InputDecoration(labelText: 'Discount %', hintText: '10', border: OutlineInputBorder()), keyboardType: TextInputType.number),
+              const SizedBox(height: 12),
+              const TextField(decoration: InputDecoration(labelText: 'Validity (दिवस)', hintText: '7', border: OutlineInputBorder()), keyboardType: TextInputType.number),
+              const SizedBox(height: 12),
+              const TextField(decoration: InputDecoration(labelText: 'Description', hintText: 'Offer बद्दल सांगा...', border: OutlineInputBorder()), maxLines: 3),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(color: AppColors.primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                child: const Row(children: [
+                  Icon(Icons.info_outline, color: AppColors.primaryOrange, size: 18),
+                  SizedBox(width: 8),
+                  Expanded(child: Text('Offer Franchise कडून approve झाल्यावर Buyers ला दिसेल', style: TextStyle(fontSize: 12, color: AppColors.textDark))),
+                ]),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Offer Approval साठी पाठवला!'), backgroundColor: Colors.green)),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  child: const Text('Approve साठी Submit करा', style: TextStyle(color: Colors.white, fontSize: 15)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tabs = widget.isSeller
+        ? ['📢 जाहिराती', '🎯 Create Offer']
+        : ['📢 जाहिराती', '🎁 My Offers'];
+
     return Column(
       children: [
-        SizedBox(
-          height: widget.compact ? 320 : 360,
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (i) => setState(() => _currentPage = i),
-            itemCount: _ads.length,
-            itemBuilder: (context, index) => _buildAdCard(_ads[index]),
+        // Tab Bar
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(10)),
+          child: Row(
+            children: List.generate(tabs.length, (i) => Expanded(
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedTab = i),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _selectedTab == i ? AppColors.primaryBlue : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(tabs[i], textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: _selectedTab == i ? Colors.white : AppColors.textLight,
+                        fontWeight: _selectedTab == i ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 13,
+                      )),
+                ),
+              ),
+            )),
           ),
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_ads.length, (i) => Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: _currentPage == i ? 16 : 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: _currentPage == i ? AppColors.primaryBlue : AppColors.lightGrey,
-              borderRadius: BorderRadius.circular(3),
+        // Content
+        if (_selectedTab == 0) ...[
+          SizedBox(
+            height: widget.compact ? 340 : 400,
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (i) => setState(() => _currentPage = i),
+              itemCount: _ads.length,
+              itemBuilder: (context, index) => _buildAdCard(_ads[index]),
             ),
-          )),
-        ),
-        const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(_ads.length, (i) => Container(
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: _currentPage == i ? 16 : 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: _currentPage == i ? AppColors.primaryBlue : AppColors.lightGrey,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            )),
+          ),
+          const SizedBox(height: 8),
+        ] else if (_selectedTab == 1 && !widget.isSeller)
+          SizedBox(height: 340, child: _buildMyOffersTab())
+        else if (_selectedTab == 1 && widget.isSeller)
+          SizedBox(height: 420, child: _buildCreateOfferTab(context)),
       ],
     );
   }

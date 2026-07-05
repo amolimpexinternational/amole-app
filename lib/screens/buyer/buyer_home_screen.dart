@@ -174,7 +174,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemCount: _categories.length,
+            itemCount: 8,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -200,7 +200,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             child: Text('जाहिराती', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 8),
-          const AdFeedWidget(compact: true),
+          const AdFeedWidget(),
           const SizedBox(height: 8),
           const SizedBox(height: 20),
 

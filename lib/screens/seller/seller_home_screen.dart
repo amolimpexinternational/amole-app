@@ -192,7 +192,7 @@ class _SellerDashboard extends StatelessWidget {
             child: Text('जाहिराती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 8),
-          const AdFeedWidget(compact: true),
+          const AdFeedWidget(compact: true, isSeller: true),
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
