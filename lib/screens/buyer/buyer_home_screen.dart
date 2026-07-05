@@ -4,6 +4,7 @@ import 'buyer_search_screen.dart';
 import 'buyer_profile_screen.dart';
 import 'my_wall_screen.dart';
 import 'seller_profile_screen.dart';
+import '../../widgets/ad_feed_widget.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -193,6 +194,14 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             },
           ),
 
+          const SizedBox(height: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text('जाहिराती', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          ),
+          const SizedBox(height: 8),
+          const AdFeedWidget(compact: true),
+          const SizedBox(height: 8),
           const SizedBox(height: 20),
 
           // Nearby Sellers
