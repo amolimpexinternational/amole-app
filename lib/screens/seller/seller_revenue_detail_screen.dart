@@ -118,10 +118,6 @@ class _SellerRevenueDetailScreenState
             ),
             items: const [
               DropdownMenuItem(
-                value: "Today",
-                child: Text("Today"),
-              ),
-              DropdownMenuItem(
                 value: "Last 7 Days",
                 child: Text("Last 7 Days"),
               ),
@@ -131,7 +127,7 @@ class _SellerRevenueDetailScreenState
               ),
               DropdownMenuItem(
                 value: "Custom Date",
-                child: Text("Custom Date"),
+                child: Text("Custom Date (Last 3 Years)"),
               ),
             ],
             onChanged: (v) async {
