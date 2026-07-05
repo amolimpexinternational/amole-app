@@ -221,9 +221,133 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             child: Row(
               children: [
-                Expanded(child: TextButton.icon(onPressed: () {}, icon: const Icon(Icons.thumb_up_outlined, size: 16, color: AppColors.textLight), label: const Text('आवडले', style: TextStyle(color: AppColors.textLight, fontSize: 12)))),
-                Expanded(child: TextButton.icon(onPressed: () {}, icon: const Icon(Icons.chat_bubble_outline, size: 16, color: AppColors.textLight), label: const Text('Comment', style: TextStyle(color: AppColors.textLight, fontSize: 12)))),
-                Expanded(child: TextButton.icon(onPressed: () {}, icon: const Icon(Icons.share_outlined, size: 16, color: AppColors.textLight), label: const Text('Share', style: TextStyle(color: AppColors.textLight, fontSize: 12)))),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        final current = int.tryParse(ad['likes'].replaceAll(',', '')) ?? 0;
+                        ad['liked'] = !(ad['liked'] ?? false);
+                        ad['likes'] = ad['liked'] ? (current + 1).toString() : (current - 1).toString();
+                      });
+                    },
+                    icon: Icon(
+                      (ad['liked'] ?? false) ? Icons.thumb_up : Icons.thumb_up_outlined,
+                      size: 16,
+                      color: (ad['liked'] ?? false) ? AppColors.primaryBlue : AppColors.textLight,
+                    ),
+                    label: Text(
+                      'आवडले',
+                      style: TextStyle(
+                        color: (ad['liked'] ?? false) ? AppColors.primaryBlue : AppColors.textLight,
+                        fontSize: 12,
+                        fontWeight: (ad['liked'] ?? false) ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      final commentController = TextEditingController();
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                        builder: (ctx) => Padding(
+                          padding: EdgeInsets.only(left: 16, right: 16, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Comments', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                                ],
+                              ),
+                              const Divider(),
+                              const ListTile(
+                                leading: CircleAvatar(child: Text('A')),
+                                title: Text('अनिल जोशी'),
+                                subtitle: Text('खूप छान ऑफर आहे!'),
+                              ),
+                              const ListTile(
+                                leading: CircleAvatar(child: Text('S')),
+                                title: Text('संगीता राणे'),
+                                subtitle: Text('किंमत योग्य आहे.'),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: commentController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Comment लिहा...',
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    onPressed: () {
+                                      if (commentController.text.isNotEmpty) {
+                                        Navigator.pop(ctx);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Comment पाठवला!'), backgroundColor: Colors.green),
+                                        );
+                                      }
+                                    },
+                                    icon: const Icon(Icons.send, color: AppColors.primaryBlue),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.chat_bubble_outline, size: 16, color: AppColors.textLight),
+                    label: const Text('टिप्पणी', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text('Share करा'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.chat, color: Colors.green),
+                                title: const Text('WhatsApp'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp वर Share होत आहे...')));
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.copy, color: AppColors.primaryBlue),
+                                title: const Text('Link Copy करा'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link Copy झाली!'), backgroundColor: Colors.green));
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.share_outlined, size: 16, color: AppColors.textLight),
+                    label: const Text('Share', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+                  ),
+                ),
               ],
             ),
           ),
