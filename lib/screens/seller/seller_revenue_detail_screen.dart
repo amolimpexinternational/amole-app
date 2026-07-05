@@ -53,41 +53,25 @@ class _SellerRevenueDetailScreenState
   Widget paymentTile(
       String date,
       String gross,
-      String fee,
-      String net,
       bool settled) {
     return Card(
       child: ListTile(
         leading: Icon(
-          settled
-              ? Icons.check_circle
-              : Icons.pending,
-          color: settled
-              ? Colors.green
-              : Colors.orange,
+          settled ? Icons.check_circle : Icons.pending,
+          color: settled ? Colors.green : Colors.orange,
         ),
         title: Text(date),
-        subtitle: Text(
-          "Gross : $gross\nFee : $fee",
-        ),
+        subtitle: Text("विक्री : $gross"),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              net,
-              style: const TextStyle(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
+              gross,
+              style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
             ),
             Text(
-              settled ? "Settled" : "Pending",
-              style: TextStyle(
-                fontSize: 11,
-                color: settled
-                    ? Colors.green
-                    : Colors.orange,
-              ),
+              settled ? "मिळाले" : "प्रतीक्षेत",
+              style: TextStyle(fontSize: 11, color: settled ? Colors.green : Colors.orange),
             ),
           ],
         ),
@@ -166,39 +150,11 @@ class _SellerRevenueDetailScreenState
             ),
 
           const SizedBox(height: 10),
-
           summaryCard(
-            "Gross Sales",
+            "माझी कमाई",
             "₹52,000",
-            Icons.shopping_cart,
-            Colors.blue,
-          ),
-
-          const SizedBox(height: 10),
-
-          summaryCard(
-            "Company Fee",
-            "₹5,200",
-            Icons.account_balance,
-            Colors.red,
-          ),
-
-          const SizedBox(height: 10),
-
-          summaryCard(
-            "Seller Received",
-            "₹46,800",
             Icons.account_balance_wallet,
             Colors.green,
-          ),
-
-          const SizedBox(height: 10),
-
-          summaryCard(
-            "Pending Settlement",
-            "₹4,200",
-            Icons.pending_actions,
-            Colors.orange,
           ),
 
           const SizedBox(height: 24),
@@ -216,24 +172,16 @@ class _SellerRevenueDetailScreenState
           paymentTile(
             "04 Jul 2026",
             "₹8,500",
-            "₹850",
-            "₹7,650",
             true,
           ),
-
           paymentTile(
             "03 Jul 2026",
             "₹12,400",
-            "₹1,240",
-            "₹11,160",
             true,
           ),
-
           paymentTile(
             "02 Jul 2026",
             "₹4,800",
-            "₹480",
-            "₹4,320",
             false,
           ),
 
