@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/ad_feed_widget.dart';
 import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
@@ -186,26 +187,12 @@ class _SellerDashboard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen())),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              height: 150,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF00E5FF), Color(0xFF1565C0)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Center(
-                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text('📢 AMOLE जाहिरात', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 6),
-                  Text('तुमच्या परिसरातील ग्राहकांपर्यंत पोहोचा', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                  SizedBox(height: 8),
-                  Text('जाहिरात करा — फक्त ₹100 पासून 🚀', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                ]),
-              ),
-            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text('जाहिराती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
+          const SizedBox(height: 8),
+          const AdFeedWidget(compact: true),
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
