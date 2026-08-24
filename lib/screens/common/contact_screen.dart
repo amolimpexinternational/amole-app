@@ -24,20 +24,20 @@ class ContactScreen extends StatelessWidget {
               Container(
                 width: 100, height: 100,
                 decoration: BoxDecoration(
-                  color: AppColors.primaryBlue.withOpacity(0.1),
+                  color: AppColors.primaryOrange.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.lock_outline, size: 50, color: AppColors.primaryBlue),
+                child: const Icon(Icons.handshake_outlined, size: 50, color: AppColors.primaryOrange),
               ),
               const SizedBox(height: 32),
               Text(
-                '$roleName Access',
+                '$roleName म्हणून जॉईन व्हा',
                 style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textDark),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                'हे खाते फक्त अधिकृत $roleName साठी आहे.\nतुमचा नंबर नोंदणीकृत नाही.',
+                '$roleName नोंदणी आमच्या टीमकडून पडताळणी करूनच होते.\nखालीलपैकी कोणत्याही माध्यमातून आमच्याशी संपर्क साधा — आमची टीम लवकरच तुमच्याशी बोलेल.',
                 style: const TextStyle(fontSize: 15, color: AppColors.textLight, height: 1.5),
                 textAlign: TextAlign.center,
               ),
