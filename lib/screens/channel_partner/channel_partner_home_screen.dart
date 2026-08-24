@@ -122,13 +122,13 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       const Text('AMOLE Channel Partner',
                           style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                       Row(
-                        children: const [
+                        children: [
                           GestureDetector(
                             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpNotificationScreen())),
                             child: const Icon(Icons.notifications_outlined, color: AppColors.white),
                           ),
-                          SizedBox(width: 16),
-                          CircleAvatar(radius: 16, backgroundColor: AppColors.white, child: Icon(Icons.person, color: AppColors.primaryBlue, size: 18)),
+                          const SizedBox(width: 16),
+                          const CircleAvatar(radius: 16, backgroundColor: AppColors.white, child: Icon(Icons.person, color: AppColors.primaryBlue, size: 18)),
                         ],
                       ),
                     ],
