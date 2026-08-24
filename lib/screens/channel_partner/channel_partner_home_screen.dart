@@ -4,6 +4,7 @@ import 'cp_franchise_screen.dart';
 import 'cp_ads_screen.dart';
 import 'cp_revenue_screen.dart';
 import 'cp_profile_screen.dart';
+import 'cp_notification_screen.dart';
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
   const ChannelPartnerHomeScreen({super.key});
@@ -122,7 +123,10 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                           style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                       Row(
                         children: const [
-                          Icon(Icons.notifications_outlined, color: AppColors.white),
+                          GestureDetector(
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpNotificationScreen())),
+                            child: const Icon(Icons.notifications_outlined, color: AppColors.white),
+                          ),
                           SizedBox(width: 16),
                           CircleAvatar(radius: 16, backgroundColor: AppColors.white, child: Icon(Icons.person, color: AppColors.primaryBlue, size: 18)),
                         ],
