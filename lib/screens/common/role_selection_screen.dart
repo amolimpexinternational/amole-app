@@ -4,6 +4,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
 import 'terms_screen.dart';
 import 'contact_screen.dart';
+import '../admin/admin_home_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -81,7 +82,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryBlue.withOpacity(0.08) : AppColors.white,
+          color: isSelected ? AppColors.primaryBlue.withValues(alpha: 0.08) : AppColors.white,
           border: Border.all(
             color: isSelected ? AppColors.primaryBlue : AppColors.lightGrey,
             width: isSelected ? 2 : 1,
@@ -129,16 +130,31 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
               const SizedBox(height: 8),
               const Text('Franchise व Channel Partner साठी जॉईन होण्यासाठी संपर्क करावा लागेल ✉️', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
               const SizedBox(height: 28),
-              _buildRoleCard('buyer', AppStrings.buyer, AppStrings.buyerSub, Icons.shopping_bag_outlined),
-              _buildRoleCard('seller', AppStrings.seller, AppStrings.sellerSub, Icons.storefront_outlined),
-              _buildRoleCard('franchise', AppStrings.franchise, AppStrings.franchiseSub, Icons.business_outlined),
-              _buildRoleCard('channel_partner', AppStrings.channelPartner, AppStrings.channelPartnerSub, Icons.handshake_outlined),
-              const Spacer(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildRoleCard('buyer', AppStrings.buyer, AppStrings.buyerSub, Icons.shopping_bag_outlined),
+                      _buildRoleCard('seller', AppStrings.seller, AppStrings.sellerSub, Icons.storefront_outlined),
+                      _buildRoleCard('franchise', AppStrings.franchise, AppStrings.franchiseSub, Icons.business_outlined),
+                      _buildRoleCard('channel_partner', AppStrings.channelPartner, AppStrings.channelPartnerSub, Icons.handshake_outlined),
+                    ],
+                  ),
+                ),
+              ),
               ElevatedButton(
                 onPressed: _selectedRole == null ? null : _onContinue,
                 child: const Text(AppStrings.continueText),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminHomeScreen())),
+                  icon: const Icon(Icons.admin_panel_settings_outlined, size: 18, color: AppColors.textLight),
+                  label: const Text('Admin Login (Testing Only)', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+                ),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

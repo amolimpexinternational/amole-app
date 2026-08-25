@@ -5,6 +5,11 @@ import 'admin_subadmin_screen.dart';
 import 'admin_revenue_screen.dart';
 import 'admin_notification_screen.dart';
 import 'admin_profile_screen.dart';
+import 'admin_approvals_screen.dart';
+import 'admin_add_franchise_screen.dart';
+import 'admin_add_seller_screen.dart';
+import 'admin_create_ad_screen.dart';
+import 'admin_send_notification_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -113,21 +118,20 @@ class _AdminDashboard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            height: 48,
-            decoration: BoxDecoration(color: Colors.orange.shade50, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.orange.shade200)),
-            child: Row(children: [
-              Icon(Icons.warning_amber_outlined, color: Colors.orange.shade700, size: 20),
-              const SizedBox(width: 10),
-              Expanded(child: Text('0 Franchise/CP अप्रूव्हल प्रतीक्षेत', style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.bold, fontSize: 13))),
-              TextButton(
-                style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
-                onPressed: () {},
-                child: Text('बघा →', style: TextStyle(color: Colors.orange.shade700, fontWeight: FontWeight.bold)),
-              ),
-            ]),
+          InkWell(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminApprovalsScreen())),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              height: 48,
+              decoration: BoxDecoration(color: Colors.orange.shade50, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.orange.shade200)),
+              child: Row(children: [
+                Icon(Icons.warning_amber_outlined, color: Colors.orange.shade700, size: 20),
+                const SizedBox(width: 10),
+                Expanded(child: Text('Franchise/CP कडून Approvals प्रतीक्षेत', style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.bold, fontSize: 13))),
+                Text('बघा →', style: TextStyle(color: Colors.orange.shade700, fontWeight: FontWeight.bold)),
+              ]),
+            ),
           ),
           const SizedBox(height: 20),
           const Padding(
@@ -160,28 +164,48 @@ class _AdminDashboard extends StatelessWidget {
           const SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3,
+              childAspectRatio: 0.95,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSubAdminScreen())),
-                    icon: const Icon(Icons.person_add_alt_1_outlined),
-                    label: const Text('नवीन Sub-Admin'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminChannelPartnersScreen())),
-                    icon: const Icon(Icons.add_business_outlined),
-                    label: const Text('नवीन CP जोडा'),
-                  ),
-                ),
+                _quickAction(context, 'नवीन Channel Partner', Icons.hub_outlined, Colors.indigo, const AdminChannelPartnersScreen()),
+                _quickAction(context, 'नवीन Franchise', Icons.storefront_outlined, AppColors.primaryBlue, const AdminAddFranchiseScreen()),
+                _quickAction(context, 'नवीन Seller', Icons.store_outlined, Colors.teal, const AdminAddSellerScreen()),
+                _quickAction(context, 'जाहिरात तयार करा', Icons.campaign_outlined, Colors.orange, const AdminCreateAdScreen()),
+                _quickAction(context, 'नोटिफिकेशन पाठवा', Icons.notifications_active_outlined, Colors.pink, const AdminSendNotificationScreen()),
+                _quickAction(context, 'Approvals', Icons.fact_check_outlined, Colors.deepPurple, const AdminApprovalsScreen()),
               ],
             ),
           ),
           const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+
+  Widget _quickAction(BuildContext context, String label, IconData icon, Color color, Widget destination) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => destination)),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(radius: 20, backgroundColor: color.withValues(alpha: 0.12), child: Icon(icon, color: color, size: 20)),
+            const SizedBox(height: 8),
+            Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+          ],
+        ),
       ),
     );
   }
