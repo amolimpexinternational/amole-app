@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'cp_franchise_screen.dart';
+import 'cp_seller_screen.dart';
 import 'cp_ads_screen.dart';
+import 'cp_create_ad_screen.dart';
+import 'cp_approvals_screen.dart';
 import 'cp_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
@@ -17,7 +20,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.lightGrey),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -38,21 +41,25 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAction(String label, IconData icon) {
+  Widget _buildQuickAction(BuildContext context, String label, IconData icon, VoidCallback onTap) {
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: AppColors.primaryBlue.withOpacity(0.06),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: AppColors.primaryBlue, size: 26),
-            const SizedBox(height: 6),
-            Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: AppColors.textDark, fontWeight: FontWeight.w600)),
-          ],
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.primaryBlue.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: AppColors.primaryBlue, size: 26),
+              const SizedBox(height: 6),
+              Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: AppColors.textDark, fontWeight: FontWeight.w600)),
+            ],
+          ),
         ),
       ),
     );
@@ -71,7 +78,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+            backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
             child: const Icon(Icons.store_outlined, color: AppColors.primaryBlue),
           ),
           const SizedBox(width: 12),
@@ -87,7 +94,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.12),
+              color: statusColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(status, style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w600)),
@@ -128,7 +135,10 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                             child: const Icon(Icons.notifications_outlined, color: AppColors.white),
                           ),
                           const SizedBox(width: 16),
-                          const CircleAvatar(radius: 16, backgroundColor: AppColors.white, child: Icon(Icons.person, color: AppColors.primaryBlue, size: 18)),
+                          GestureDetector(
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpProfileScreen())),
+                            child: const CircleAvatar(radius: 16, backgroundColor: AppColors.white, child: Icon(Icons.person, color: AppColors.primaryBlue, size: 18)),
+                          ),
                         ],
                       ),
                     ],
@@ -137,7 +147,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: AppColors.white.withOpacity(0.12),
+                      color: AppColors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Row(
@@ -165,6 +175,20 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    InkWell(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen())),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(color: Colors.orange.shade50, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.orange.shade200)),
+                        child: Row(children: [
+                          Icon(Icons.warning_amber_outlined, color: Colors.orange.shade700, size: 20),
+                          const SizedBox(width: 10),
+                          Expanded(child: Text('Franchise/Seller कडून Approvals प्रतीक्षेत', style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.bold, fontSize: 13))),
+                          Text('बघा →', style: TextStyle(color: Colors.orange.shade700, fontWeight: FontWeight.bold)),
+                        ]),
+                      ),
+                    ),
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -184,10 +208,23 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        _buildQuickAction('नवीन Franchise', Icons.add_business_outlined),
-                        _buildQuickAction('Revenue Report', Icons.bar_chart_outlined),
-                        _buildQuickAction('Broadcast Ad', Icons.campaign_outlined),
-                        _buildQuickAction('Support', Icons.headset_mic_outlined),
+                        _buildQuickAction(context, 'नवीन Franchise', Icons.add_business_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen()))),
+                        _buildQuickAction(context, 'नवीन Seller', Icons.storefront_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerScreen()))),
+                        _buildQuickAction(context, 'जाहिरात तयार करा', Icons.campaign_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpCreateAdScreen()))),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        _buildQuickAction(context, 'Revenue Report', Icons.bar_chart_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpRevenueScreen()))),
+                        _buildQuickAction(context, 'Approvals', Icons.fact_check_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen()))),
+                        _buildQuickAction(context, 'Broadcast Msg', Icons.forum_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()))),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -195,7 +232,10 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Franchise List', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                        TextButton(onPressed: () {}, child: const Text('सर्व बघा')),
+                        TextButton(
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen())),
+                          child: const Text('सर्व बघा'),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -219,7 +259,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
           if (index == 1) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen()));
           } else if (index == 2) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerScreen()));
           } else if (index == 3) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const CpRevenueScreen()));
           } else if (index == 4) {
@@ -229,7 +269,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'डॅशबोर्ड'),
           BottomNavigationBarItem(icon: Icon(Icons.business_outlined), label: 'Franchise'),
-          BottomNavigationBarItem(icon: Icon(Icons.campaign_outlined), label: 'Ads'),
+          BottomNavigationBarItem(icon: Icon(Icons.storefront_outlined), label: 'Sellers'),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart_outlined), label: 'Revenue'),
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
         ],
