@@ -5,6 +5,7 @@ import 'buyer_profile_screen.dart';
 import 'my_wall_screen.dart';
 import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
+import 'qr_payment_screen.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -73,18 +74,23 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                         ),
                         const SizedBox(width: 6),
                         // QR Scan Button
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: AppColors.cyan,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.qr_code_scanner, color: AppColors.royalBlue, size: 16),
-                              SizedBox(width: 4),
-                              Text('QR Pay', style: TextStyle(color: AppColors.royalBlue, fontWeight: FontWeight.bold, fontSize: 13)),
-                            ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.cyan,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.qr_code_scanner, color: AppColors.royalBlue, size: 16),
+                                SizedBox(width: 4),
+                                Text('QR Pay', style: TextStyle(color: AppColors.royalBlue, fontWeight: FontWeight.bold, fontSize: 13)),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -159,9 +165,20 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           ),
 
           // Categories
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text('श्रेणी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('श्रेणी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen()));
+                  },
+                  child: const Text('सर्व बघा', style: TextStyle(color: AppColors.primaryBlue, fontSize: 13)),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           GridView.builder(
@@ -301,7 +318,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 children: [
                   Text('🎟️ आजचा Lucky Draw', style: TextStyle(color: AppColors.primaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 4),
-                  Text('फक्त ₹5 मध्ये तिकीट घ्या — रात्री 8 PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+                  Text('फक्त ₹5 मध्ये तिकीट घ्या — दर दिवशी ४:०० PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
                 ],
               ),
             ),
