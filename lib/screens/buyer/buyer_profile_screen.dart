@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'reward_wallet_screen.dart';
 
 class BuyerProfileScreen extends StatelessWidget {
   const BuyerProfileScreen({super.key});
@@ -98,7 +99,7 @@ class BuyerProfileScreen extends StatelessWidget {
                   const Text('माझे खाते', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 10),
                   _buildMenuItem(context, Icons.shopping_bag_outlined, 'माझे ऑर्डर', 'सर्व orders बघा', AppColors.primaryBlue, () {}),
-                  _buildMenuItem(context, Icons.star_outline, 'Loyalty Points', '245 points शिल्लक', AppColors.primaryOrange, () {}),
+                  _buildMenuItem(context, Icons.star_outline, 'Loyalty Points', '245 points शिल्लक', AppColors.primaryOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen()))),
                   _buildMenuItem(context, Icons.card_giftcard_outlined, 'Lucky Draw', 'आजचा draw रात्री 8 PM', AppColors.successGreen, () {}),
                   _buildMenuItem(context, Icons.people_outline, 'Referral', 'मित्रांना invite करा', AppColors.cyan, () {}),
                   const SizedBox(height: 16),

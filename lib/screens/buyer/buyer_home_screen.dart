@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
 import 'buyer_profile_screen.dart';
+import 'reward_wallet_screen.dart';
 import 'my_wall_screen.dart';
 import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
@@ -58,18 +59,21 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                     Row(
                       children: [
                         // Loyalty Points — ठळकपणे
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade600,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.stars, color: Colors.white, size: 16),
-                              SizedBox(width: 4),
-                              Text('245 pts', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                            ],
+                        GestureDetector(
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen())),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.shade600,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(Icons.stars, color: Colors.white, size: 16),
+                                SizedBox(width: 4),
+                                Text('245 pts', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(width: 6),
