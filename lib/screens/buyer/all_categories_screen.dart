@@ -8,6 +8,7 @@ class AllCategoriesScreen extends StatelessWidget {
 
   static const List<Map<String, dynamic>> _categories = [
     {'icon': Icons.shopping_basket_outlined, 'label': 'किराणा'},
+    {'icon': Icons.eco_outlined, 'label': 'भाजीपाला'},
     {'icon': Icons.electrical_services_outlined, 'label': 'इलेक्ट्रॉनिक्स'},
     {'icon': Icons.local_hospital_outlined, 'label': 'मेडिकल'},
     {'icon': Icons.checkroom_outlined, 'label': 'कपडे'},
@@ -50,9 +51,9 @@ class AllCategoriesScreen extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 0.85,
-              crossAxisSpacing: 10,
+              crossAxisCount: 6,
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 8,
               mainAxisSpacing: 14,
             ),
             itemCount: _categories.length,
@@ -65,12 +66,12 @@ class AllCategoriesScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      width: 56, height: 56,
-                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(14)),
-                      child: Icon(c['icon'] as IconData, color: AppColors.primaryBlue, size: 28),
+                      width: 48, height: 48,
+                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                      child: Icon(c['icon'] as IconData, color: AppColors.primaryBlue, size: 24),
                     ),
                     const SizedBox(height: 6),
-                    Text(c['label'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textDark), textAlign: TextAlign.center),
+                    Text(c['label'] as String, style: const TextStyle(fontSize: 10, color: AppColors.textDark), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis),
                   ],
                 ),
               );

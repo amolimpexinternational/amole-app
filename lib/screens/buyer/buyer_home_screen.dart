@@ -25,7 +25,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
 
   final List<Map<String, dynamic>> _categories = [
     {'icon': Icons.shopping_basket_outlined, 'label': 'किराणा'},
-    {'icon': Icons.electrical_services_outlined, 'label': 'इलेक्ट्रॉनिक्स'},
+    {'icon': Icons.eco_outlined, 'label': 'भाजीपाला'},
     {'icon': Icons.local_hospital_outlined, 'label': 'मेडिकल'},
     {'icon': Icons.checkroom_outlined, 'label': 'कपडे'},
     {'icon': Icons.restaurant_outlined, 'label': 'खाद्यपदार्थ'},
