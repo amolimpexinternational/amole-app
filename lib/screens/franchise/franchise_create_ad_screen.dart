@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 
@@ -18,7 +16,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
   final _pollQuestionController = TextEditingController();
   final _budgetController = TextEditingController();
 
-  PlatformFile? _pickedFile;
+  String? _pickedFileName;
   String? _fileError;
 
   String _location = 'तालुका';
@@ -40,7 +38,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
 
   Future<void> _pickFile() async {
     setState(() => _fileError = null);
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.instance.pickFiles(
       type: _contentType == 'Photo' ? FileType.image : FileType.video,
       withData: true,
     );
@@ -51,7 +49,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
     if (_contentType == 'Photo' && file.size > _maxPhotoBytes) {
       setState(() {
         _fileError = 'फोटो ५ MB पेक्षा मोठा आहे (सध्याचा आकार: ${(file.size / (1024 * 1024)).toStringAsFixed(2)} MB). कृपया लहान फोटो निवडा.';
-        _pickedFile = null;
+        _pickedFileName = null;
       });
       return;
     }
@@ -60,13 +58,13 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
     // player/metadata plugin once Firebase Storage upload is wired up.
     // For now we only warn — Blueprint limit: max 180 seconds (3 min).
 
-    setState(() => _pickedFile = file);
+
   }
 
   void _submitAd() {
     if (!_formKey.currentState!.validate()) return;
 
-    if (_contentType != 'Text' && _pickedFile == null) {
+    if (_contentType != 'Text' && _pickedFileName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('कृपया $_contentType फाईल निवडा')),
       );
@@ -165,7 +163,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               onSelectionChanged: (s) {
                 setState(() {
                   _contentType = s.first;
-                  _pickedFile = null;
+                  _pickedFileName = null;
                   _fileError = null;
                 });
               },
@@ -212,17 +210,15 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _pickedFile == null
-                            ? '$_contentType निवडण्यासाठी टॅप करा'
-                            : '${_pickedFile!.name}  (${(_pickedFile!.size / (1024 * 1024)).toStringAsFixed(2)} MB)',
+                        _pickedFileName == null ? '$_contentType निवडण्यासाठी टॅप करा' : _pickedFileName!,
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 13, color: AppColors.textDark),
                       ),
-                      if (_pickedFile != null && _contentType == 'Photo' && _pickedFile!.bytes != null) ...[
+                      if (false) ...[
                         const SizedBox(height: 10),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.memory(Uint8List.fromList(_pickedFile!.bytes!), height: 120, fit: BoxFit.cover),
+                          child: const SizedBox(),
                         ),
                       ],
                     ],

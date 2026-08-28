@@ -5,6 +5,7 @@ import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
 import 'seller_analytics_screen.dart';
+import 'seller_community_screen.dart';
 import 'seller_notification_screen.dart';
 import 'seller_revenue_detail_screen.dart';
 import 'seller_support_screen.dart';
@@ -28,7 +29,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
     const SellerOrdersScreen(),
     const SellerProductsScreen(),
     const SellerQrScreen(),
-    const SellerAnalyticsScreen(),
+    const SellerCommunityScreen(),
   ];
 
   @override
@@ -48,7 +49,7 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), activeIcon: Icon(Icons.shopping_bag), label: 'ऑर्डर'),
           BottomNavigationBarItem(icon: Icon(Icons.inventory_2_outlined), activeIcon: Icon(Icons.inventory_2), label: 'Products'),
           BottomNavigationBarItem(icon: Icon(Icons.qr_code_outlined), activeIcon: Icon(Icons.qr_code), label: 'QR Code'),
-          BottomNavigationBarItem(icon: Icon(Icons.analytics_outlined), activeIcon: Icon(Icons.analytics), label: 'Analytics'),
+          BottomNavigationBarItem(icon: Icon(Icons.people_outlined), activeIcon: Icon(Icons.people), label: 'Community'),
         ],
       ),
     );
