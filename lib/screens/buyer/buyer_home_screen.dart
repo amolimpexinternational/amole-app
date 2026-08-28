@@ -102,7 +102,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                         // Notification
                         IconButton(
                           icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                          onPressed: () {},
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen())),
                         ),
                         // Profile
                         IconButton(
