@@ -2,41 +2,48 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'cp_franchise_screen.dart';
 import 'cp_seller_screen.dart';
+import 'cp_buyer_screen.dart';
 import 'cp_ads_screen.dart';
 import 'cp_create_ad_screen.dart';
 import 'cp_approvals_screen.dart';
 import 'cp_revenue_screen.dart';
+import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
   const ChannelPartnerHomeScreen({super.key});
 
-  Widget _buildKpiCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.lightGrey),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, color: color, size: 22),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-          const SizedBox(height: 2),
-          Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-        ],
+  Widget _buildKpiCard(BuildContext context, String title, String value, IconData icon, Color color, Widget destination) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => destination)),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.lightGrey),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(icon, color: color, size: 22),
+                const Icon(Icons.chevron_right, size: 16, color: AppColors.textLight),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 2),
+            Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+          ],
+        ),
       ),
     );
   }
@@ -144,26 +151,30 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text('पुणे जिल्हा', style: TextStyle(color: AppColors.white, fontSize: 13)),
-                            SizedBox(height: 4),
-                            Text('₹38,400', style: TextStyle(color: AppColors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                            Text('या महिन्याचं Revenue Share', style: TextStyle(color: AppColors.white, fontSize: 11)),
-                          ],
-                        ),
-                        const Icon(Icons.account_balance_wallet_outlined, color: AppColors.cyan, size: 32),
-                      ],
+                  InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerRevenueScreen())),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text('पुणे जिल्हा', style: TextStyle(color: AppColors.white, fontSize: 13)),
+                              SizedBox(height: 4),
+                              Text('₹38,400', style: TextStyle(color: AppColors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                              Text('या महिन्याचं Revenue Share — सेलर-निहाय बघा →', style: TextStyle(color: AppColors.white, fontSize: 11)),
+                            ],
+                          ),
+                          const Icon(Icons.account_balance_wallet_outlined, color: AppColors.cyan, size: 32),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -197,10 +208,10 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       crossAxisSpacing: 12,
                       childAspectRatio: 1.4,
                       children: [
-                        _buildKpiCard('एकूण Franchise', '8', Icons.business_outlined, AppColors.primaryBlue),
-                        _buildKpiCard('Active Sellers', '142', Icons.storefront_outlined, AppColors.successGreen),
-                        _buildKpiCard('एकूण Buyers', '3,250', Icons.people_outline, AppColors.primaryOrange),
-                        _buildKpiCard('महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen),
+                        _buildKpiCard(context, 'एकूण Franchise', '8', Icons.business_outlined, AppColors.primaryBlue, const CpFranchiseScreen()),
+                        _buildKpiCard(context, 'Active Sellers', '142', Icons.storefront_outlined, AppColors.successGreen, const CpSellerScreen()),
+                        _buildKpiCard(context, 'एकूण Buyers', '3,250', Icons.people_outline, AppColors.primaryOrange, const CpBuyerScreen()),
+                        _buildKpiCard(context, 'महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen, const CpSellerRevenueScreen()),
                       ],
                     ),
                     const SizedBox(height: 20),

@@ -11,14 +11,17 @@ class CpProfileScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.08), borderRadius: BorderRadius.circular(8)),
+            decoration: BoxDecoration(color: AppColors.primaryBlue.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
             child: Icon(icon, color: AppColors.primaryBlue, size: 20),
           ),
           const SizedBox(width: 14),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-            Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textDark)),
-          ]),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+              Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+            ]),
+          ),
+          const Icon(Icons.lock_outline, size: 16, color: AppColors.textLight),
         ],
       ),
     );
@@ -28,12 +31,45 @@ class CpProfileScreen extends StatelessWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(color: color.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
         child: Column(children: [
           Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
           const SizedBox(height: 4),
           Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
         ]),
+      ),
+    );
+  }
+
+  void _showChangePhotoDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Profile फोटो बदला', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined, color: AppColors.primaryBlue),
+              title: const Text('कॅमेराने फोटो काढा'),
+              onTap: () {
+                // TODO: capture photo via camera and upload to Firebase Storage
+                Navigator.pop(ctx);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined, color: AppColors.primaryBlue),
+              title: const Text('गॅलरीतून निवडा'),
+              onTap: () {
+                // TODO: pick photo from gallery and upload to Firebase Storage
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -46,16 +82,6 @@ class CpProfileScreen extends StatelessWidget {
         backgroundColor: AppColors.primaryBlue,
         title: const Text('माझं Profile', style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold)),
         iconTheme: const IconThemeData(color: AppColors.white),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined, color: AppColors.white),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profile edit — लवकरच येणार!'), backgroundColor: AppColors.primaryBlue),
-              );
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -71,17 +97,33 @@ class CpProfileScreen extends StatelessWidget {
                 ),
               ),
               child: Column(children: [
-                CircleAvatar(
-                  radius: 42,
-                  backgroundColor: AppColors.white,
-                  child: const Icon(Icons.person, color: AppColors.primaryBlue, size: 46),
+                Stack(
+                  children: [
+                    const CircleAvatar(
+                      radius: 42,
+                      backgroundColor: AppColors.white,
+                      child: Icon(Icons.person, color: AppColors.primaryBlue, size: 46),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () => _showChangePhotoDialog(context),
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(color: AppColors.primaryOrange, shape: BoxShape.circle),
+                          child: const Icon(Icons.camera_alt, color: AppColors.white, size: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 const Text('राजेश कुलकर्णी', style: TextStyle(color: AppColors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                  decoration: BoxDecoration(color: AppColors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(20)),
+                  decoration: BoxDecoration(color: AppColors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20)),
                   child: const Text('Channel Partner — पुणे जिल्हा', style: TextStyle(color: AppColors.white, fontSize: 13)),
                 ),
                 const SizedBox(height: 8),
@@ -101,6 +143,21 @@ class CpProfileScreen extends StatelessWidget {
                     _buildStatCard('Buyers', '3,250', AppColors.primaryOrange),
                   ]),
                   const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(10)),
+                    child: const Row(children: [
+                      Icon(Icons.info_outline, color: AppColors.primaryBlue, size: 18),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'खालील माहिती फक्त Admin किंवा Sub-Admin बदलू शकतात. बदल हवा असल्यास त्यांच्याशी संपर्क साधा. फक्त प्रोफाइल फोटो तुम्ही स्वतः बदलू शकता (वरील कॅमेरा आयकॉन).',
+                          style: TextStyle(fontSize: 12, color: AppColors.textDark),
+                        ),
+                      ),
+                    ]),
+                  ),
+                  const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.lightGrey)),
