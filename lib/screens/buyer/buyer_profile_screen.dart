@@ -3,8 +3,54 @@ import '../../constants/app_colors.dart';
 import 'reward_wallet_screen.dart';
 import 'referred_users_screen.dart';
 
-class BuyerProfileScreen extends StatelessWidget {
+class BuyerProfileScreen extends StatefulWidget {
   const BuyerProfileScreen({super.key});
+
+  @override
+  State<BuyerProfileScreen> createState() => _BuyerProfileScreenState();
+}
+
+class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
+  String? _profession;
+
+  static const List<Map<String, dynamic>> _professionOptions = [
+    {'label': 'विद्यार्थी', 'icon': Icons.school_outlined},
+    {'label': 'शेतकरी', 'icon': Icons.agriculture_outlined},
+    {'label': 'खाजगी नोकरी', 'icon': Icons.badge_outlined},
+    {'label': 'सरकारी नोकरी', 'icon': Icons.account_balance_outlined},
+    {'label': 'स्वयंरोजगार / व्यवसाय', 'icon': Icons.storefront_outlined},
+    {'label': 'गृहिणी', 'icon': Icons.home_outlined},
+    {'label': 'निवृत्त', 'icon': Icons.elderly_outlined},
+    {'label': 'इतर', 'icon': Icons.more_horiz_outlined},
+  ];
+
+  void _showProfessionPicker() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('तुमचा व्यवसाय/प्रोफेशन निवडा', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 16),
+            ..._professionOptions.map((p) => ListTile(
+                  leading: Icon(p['icon'] as IconData, color: AppColors.primaryBlue),
+                  title: Text(p['label'] as String),
+                  trailing: _profession == p['label'] ? const Icon(Icons.check_circle, color: AppColors.successGreen) : null,
+                  onTap: () {
+                    setState(() => _profession = p['label'] as String);
+                    Navigator.pop(context);
+                  },
+                )),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildMenuItem(BuildContext context, IconData icon, String title, String subtitle, Color iconColor, VoidCallback onTap) {
     return Card(
@@ -101,8 +147,9 @@ class BuyerProfileScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   _buildMenuItem(context, Icons.shopping_bag_outlined, 'माझे ऑर्डर', 'सर्व orders बघा', AppColors.primaryBlue, () {}),
                   _buildMenuItem(context, Icons.star_outline, 'Loyalty Points', '245 points शिल्लक', AppColors.primaryOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen()))),
-                  _buildMenuItem(context, Icons.card_giftcard_outlined, 'Lucky Draw', 'आजचा draw रात्री 8 PM', AppColors.successGreen, () {}),
+                  _buildMenuItem(context, Icons.card_giftcard_outlined, 'Lucky Draw', 'आजचा draw संध्याकाळी 4 PM', AppColors.successGreen, () {}),
                   _buildMenuItem(context, Icons.people_outline, 'Referral', 'मित्रांना invite करा', AppColors.cyan, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferredUsersScreen()))),
+                  _buildMenuItem(context, Icons.work_outline, 'व्यवसाय / प्रोफेशन', _profession ?? 'निवडलेले नाही — टॅप करून निवडा', Colors.brown, _showProfessionPicker),
                   const SizedBox(height: 16),
                   const Text('सेटिंग्ज', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 10),
