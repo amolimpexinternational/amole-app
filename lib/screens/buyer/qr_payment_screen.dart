@@ -230,7 +230,7 @@ class _QrPaymentScreenState extends State<QrPaymentScreen> {
             Text(widget.sellerName,
                 style: const TextStyle(fontSize: 16, color: AppColors.textLight)),
             const SizedBox(height: 8),
-            Text('+${(double.tryParse(_amountController.text) ?? 0) * 0.02 < 1 ? ((double.tryParse(_amountController.text) ?? 0) * 0.02).toStringAsFixed(2) : ((double.tryParse(_amountController.text) ?? 0) * 0.02).toStringAsFixed(0)} Loyalty Points मिळाले! (2%)',
+            Text('+${(double.tryParse(_amountController.text) ?? 0) * 0.02 < 1 ? ((double.tryParse(_amountController.text) ?? 0) * 0.02).toStringAsFixed(2) : ((double.tryParse(_amountController.text) ?? 0) * 0.02).toStringAsFixed(0)} Loyalty Points मिळाले!',
                 style: const TextStyle(fontSize: 14, color: AppColors.primaryOrange, fontWeight: FontWeight.w600)),
             const SizedBox(height: 40),
             SizedBox(
