@@ -86,6 +86,115 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
     );
   }
 
+  void _showConversationHistory(Map<String, dynamic> customer) {
+    final List<Map<String, dynamic>> history = [
+      {'type': 'sent', 'msg': 'दिवाळी ऑफर! सर्व वस्तूंवर 20% सूट.', 'date': '24 Aug 2026', 'time': '10:30 AM'},
+      {'type': 'received', 'msg': 'धन्यवाद! मी उद्या येतो.', 'date': '24 Aug 2026', 'time': '11:00 AM'},
+      {'type': 'sent', 'msg': 'नवीन Stock आला आहे. Order करा!', 'date': '20 Aug 2026', 'time': '3:00 PM'},
+      {'type': 'received', 'msg': 'तांदूळ 5kg आणि तेल 1L पाठवा.', 'date': '20 Aug 2026', 'time': '3:30 PM'},
+      {'type': 'sent', 'msg': 'Order confirm झाला!', 'date': '20 Aug 2026', 'time': '3:35 PM'},
+      {'type': 'received', 'msg': 'किंमत किती आहे?', 'date': '15 Aug 2026', 'time': '5:00 PM'},
+      {'type': 'sent', 'msg': 'तांदूळ ₹250, तेल ₹140.', 'date': '15 Aug 2026', 'time': '5:05 PM'},
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (_, scrollController) => Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              decoration: const BoxDecoration(
+                color: AppColors.primaryBlue,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Color(customer['color'] as int).withOpacity(0.3),
+                    child: Text(customer['avatar'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(customer['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                        const Text('गेल्या 180 दिवसांचा संवाद', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(_),
+                    icon: const Icon(Icons.close, color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: history.length,
+                itemBuilder: (context, index) {
+                  final msg = history[index];
+                  final isSent = msg['type'] == 'sent';
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (index == 0 || history[index]['date'] != history[index-1]['date'])
+                        Center(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(12)),
+                            child: Text(msg['date'], style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                          ),
+                        ),
+                      Align(
+                        alignment: isSent ? Alignment.centerRight : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+                          decoration: BoxDecoration(
+                            color: isSent ? AppColors.primaryBlue : Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topLeft: const Radius.circular(14),
+                              topRight: const Radius.circular(14),
+                              bottomLeft: Radius.circular(isSent ? 14 : 0),
+                              bottomRight: Radius.circular(isSent ? 0 : 14),
+                            ),
+                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 4)],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(msg['msg'], style: TextStyle(fontSize: 13, color: isSent ? Colors.white : AppColors.textDark)),
+                              const SizedBox(height: 4),
+                              Text(msg['time'], style: TextStyle(fontSize: 9, color: isSent ? Colors.white60 : AppColors.textLight)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -261,16 +370,27 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  setState(() => _selectedTab = 0);
-                  setState(() {
-                    _selectedAudience = 'निवडक ग्राहक';
-                    for (var cu in _customers) { cu['selected'] = false; }
-                    c['selected'] = true;
-                  });
-                },
-                icon: const Icon(Icons.message_outlined, color: AppColors.primaryBlue),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () => _showConversationHistory(c),
+                    icon: const Icon(Icons.history, color: AppColors.textLight),
+                    tooltip: 'संवाद इतिहास',
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() => _selectedTab = 0);
+                      setState(() {
+                        _selectedAudience = 'निवडक ग्राहक';
+                        for (var cu in _customers) { cu['selected'] = false; }
+                        c['selected'] = true;
+                      });
+                    },
+                    icon: const Icon(Icons.message_outlined, color: AppColors.primaryBlue),
+                    tooltip: 'Message पाठवा',
+                  ),
+                ],
               ),
             ],
           ),

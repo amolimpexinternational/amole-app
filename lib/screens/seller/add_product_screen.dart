@@ -171,7 +171,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 keyboard: TextInputType.number, hint: 'उदा. 50'),
 
             // Pricing Section — Blueprint 5.4
-            _buildSectionTitle('किंमत (Blueprint ५.४ नुसार)'),
+            _buildSectionTitle('किंमत'),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -252,7 +252,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             const SizedBox(height: 16),
 
             // Delivery Settings — Blueprint 5.7
-            _buildSectionTitle('डिलिव्हरी सेटिंग्ज (Blueprint ५.७)'),
+            _buildSectionTitle('डिलिव्हरी सेटिंग्ज'),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
