@@ -6,6 +6,7 @@ import 'reward_wallet_screen.dart';
 import 'my_wall_screen.dart';
 import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
+import 'buyer_notification_screen.dart';
 import 'qr_payment_screen.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
