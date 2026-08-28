@@ -5,6 +5,7 @@ import '../../constants/app_strings.dart';
 import 'terms_screen.dart';
 import 'contact_screen.dart';
 import '../admin/admin_home_screen.dart';
+import '../channel_partner/channel_partner_home_screen.dart';
 import '../franchise/franchise_home_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
@@ -116,6 +117,14 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     );
   }
 
+  Widget _testingShortcut(String label, IconData icon, Widget destination) {
+    return TextButton.icon(
+      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => destination)),
+      icon: Icon(icon, size: 18, color: AppColors.textLight),
+      label: Text(label, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,21 +156,17 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 onPressed: _selectedRole == null ? null : _onContinue,
                 child: const Text(AppStrings.continueText),
               ),
-              const SizedBox(height: 12),
-              Center(
-                child: TextButton.icon(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminHomeScreen())),
-                  icon: const Icon(Icons.admin_panel_settings_outlined, size: 18, color: AppColors.textLight),
-                  label: const Text('Admin Login (Testing Only)', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                ),
+              const SizedBox(height: 8),
+              const Center(
+                child: Text('— Testing Only बटणे (Production मध्ये काढणे आवश्यक) —', style: TextStyle(fontSize: 10, color: AppColors.lightGrey)),
               ),
-              const SizedBox(height: 4),
-              Center(
-                child: TextButton.icon(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseHomeScreen())),
-                  icon: const Icon(Icons.business_outlined, size: 18, color: AppColors.textLight),
-                  label: const Text('Franchise Login (Testing Only)', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                ),
+              Wrap(
+                alignment: WrapAlignment.center,
+                children: [
+                  _testingShortcut('Admin Login', Icons.admin_panel_settings_outlined, const AdminHomeScreen()),
+                  _testingShortcut('CP Login', Icons.handshake_outlined, const ChannelPartnerHomeScreen()),
+                  _testingShortcut('Franchise Login', Icons.business_outlined, const FranchiseHomeScreen()),
+                ],
               ),
               const SizedBox(height: 8),
             ],
