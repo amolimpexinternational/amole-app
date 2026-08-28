@@ -112,7 +112,7 @@ class _FranchiseKycScreenState extends State<FranchiseKycScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         title: const Text('Seller KYC', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        automaticallyImplyLeading: false,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [

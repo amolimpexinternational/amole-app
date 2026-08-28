@@ -5,6 +5,7 @@ import '../../constants/app_strings.dart';
 import 'terms_screen.dart';
 import 'contact_screen.dart';
 import '../admin/admin_home_screen.dart';
+import '../franchise/franchise_home_screen.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -152,6 +153,14 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                   onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminHomeScreen())),
                   icon: const Icon(Icons.admin_panel_settings_outlined, size: 18, color: AppColors.textLight),
                   label: const Text('Admin Login (Testing Only)', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseHomeScreen())),
+                  icon: const Icon(Icons.business_outlined, size: 18, color: AppColors.textLight),
+                  label: const Text('Franchise Login (Testing Only)', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
                 ),
               ),
               const SizedBox(height: 8),
