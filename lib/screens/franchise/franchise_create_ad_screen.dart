@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'package:file_picker/file_picker.dart';
 
 class FranchiseCreateAdScreen extends StatefulWidget {
   const FranchiseCreateAdScreen({super.key});
@@ -38,17 +39,17 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
 
   Future<void> _pickFile() async {
     setState(() => _fileError = null);
-    final result = await FilePicker.instance.pickFiles(
+    final files = await FilePicker.pickFiles(
       type: _contentType == 'Photo' ? FileType.image : FileType.video,
-      withData: true,
     );
-    if (result == null || result.files.isEmpty) return;
+    if (files.isEmpty) return;
 
-    final file = result.files.first;
+    final file = files.first;
+    final size = await file.length();
 
-    if (_contentType == 'Photo' && file.size > _maxPhotoBytes) {
+    if (_contentType == 'Photo' && size > _maxPhotoBytes) {
       setState(() {
-        _fileError = 'फोटो ५ MB पेक्षा मोठा आहे (सध्याचा आकार: ${(file.size / (1024 * 1024)).toStringAsFixed(2)} MB). कृपया लहान फोटो निवडा.';
+        _fileError = 'फोटो ५ MB पेक्षा मोठा आहे (सध्याचा आकार: ${(size / (1024 * 1024)).toStringAsFixed(2)} MB). कृपया लहान फोटो निवडा.';
         _pickedFileName = null;
       });
       return;
@@ -57,8 +58,10 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
     // TODO (Stage 3 - Backend): actual video duration check needs a video
     // player/metadata plugin once Firebase Storage upload is wired up.
     // For now we only warn — Blueprint limit: max 180 seconds (3 min).
-
-
+    setState(() {
+      _pickedFileName = file.name;
+      _fileError = null;
+    });
   }
 
   void _submitAd() {
@@ -214,13 +217,6 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 13, color: AppColors.textDark),
                       ),
-                      if (false) ...[
-                        const SizedBox(height: 10),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: const SizedBox(),
-                        ),
-                      ],
                     ],
                   ),
                 ),
