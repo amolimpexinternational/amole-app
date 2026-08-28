@@ -3,7 +3,8 @@ import '../../constants/app_colors.dart';
 import 'seller_profile_screen.dart';
 
 class BuyerSearchScreen extends StatefulWidget {
-  const BuyerSearchScreen({super.key});
+  final String initialFilter;
+  const BuyerSearchScreen({super.key, this.initialFilter = 'all'});
 
   @override
   State<BuyerSearchScreen> createState() => _BuyerSearchScreenState();
@@ -13,6 +14,12 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'all';
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFilter = widget.initialFilter;
+  }
 
   final List<Map<String, String>> _sellers = [
     {'name': 'श्री गणेश किराणा स्टोअर', 'category': 'किराणा', 'distance': '0.5 km', 'rating': '4.5'},

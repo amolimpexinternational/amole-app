@@ -9,6 +9,8 @@ import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
 import 'buyer_notification_screen.dart';
 import 'qr_payment_screen.dart';
+import 'pincode_shops_screen.dart';
+import 'coming_soon_screen.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -34,6 +36,38 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     {'icon': Icons.pets_outlined, 'label': 'पाळीव'},
     {'icon': Icons.more_horiz_outlined, 'label': 'इतर'},
   ];
+
+  final List<Map<String, dynamic>> _services = [
+    {'label': 'Global\nशॉपिंग', 'icon': Icons.shopping_cart_outlined, 'action': 'shopping'},
+    {'label': 'फूड ऑर्डर\nकरा', 'icon': Icons.restaurant_outlined, 'action': 'food'},
+    {'label': 'इन्स्टंट लोकल\nडिलिव्हरी', 'icon': Icons.bolt_outlined, 'action': 'instant'},
+    {'label': 'राईड बुक\nकरा', 'icon': Icons.two_wheeler_outlined, 'action': 'ride'},
+    {'label': 'मित्र बनवा /\nसोशल कनेक्ट', 'icon': Icons.people_alt_outlined, 'action': 'social'},
+    {'label': 'डिलिव्हरी /\nलॉजिस्टिक्स सेवा', 'icon': Icons.local_shipping_outlined, 'action': 'logistics'},
+  ];
+
+  void _handleServiceTap(String action) {
+    switch (action) {
+      case 'shopping':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'all')));
+        break;
+      case 'food':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'services')));
+        break;
+      case 'instant':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen()));
+        break;
+      case 'social':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'friends')));
+        break;
+      case 'ride':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const ComingSoonScreen(title: 'राईड बुक करा')));
+        break;
+      case 'logistics':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const ComingSoonScreen(title: 'डिलिव्हरी / लॉजिस्टिक्स सेवा')));
+        break;
+    }
+  }
 
   Widget _buildHomeTab() {
     return SingleChildScrollView(
@@ -144,33 +178,75 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // Banner Ad — 25% मोठा (120 → 150)
-          Container(
-            margin: const EdgeInsets.all(16),
-            height: 150,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          // Banner Ad — height निम्मी (150 → 75), आता tappable
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
+            child: Container(
+              margin: const EdgeInsets.all(16),
+              height: 75,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
               ),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 6),
-                  Text('माझा पैसा माझ्या खिशात', style: TextStyle(color: Colors.white70, fontSize: 14)),
-                  SizedBox(height: 8),
-                  Text('आपल्या लोकांचा आपला बाजार 🛒', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                ],
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('माझा पैसा माझ्या खिशात 🛒', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  ],
+                ),
               ),
             ),
           ),
 
-          // Categories
+          // ---- 6 आडवे सेवा कार्ड्स (Blueprint 1.1 प्रमाणे) ----
+          SizedBox(
+            height: 96,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _services.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final s = _services[index];
+                return GestureDetector(
+                  onTap: () => _handleServiceTap(s['action'] as String),
+                  child: SizedBox(
+                    width: 78,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryBlue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Icon(s['icon'] as IconData, color: AppColors.primaryBlue, size: 26),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          s['label'] as String,
+                          style: const TextStyle(fontSize: 10.5, color: AppColors.textDark, fontWeight: FontWeight.w600),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // Categories — खाली हलवलं
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
