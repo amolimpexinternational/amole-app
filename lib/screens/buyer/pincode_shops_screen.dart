@@ -3,7 +3,8 @@ import '../../constants/app_colors.dart';
 import 'seller_profile_screen.dart';
 
 class PincodeShopsScreen extends StatelessWidget {
-  const PincodeShopsScreen({super.key});
+  final String? category;
+  const PincodeShopsScreen({super.key, this.category});
 
   final List<Map<String, String>> _shops = const [
     {'name': 'श्री गणेश किराणा', 'category': 'किराणा', 'pincode': '411028', 'rating': '4.5', 'distance': '0.3 km'},
@@ -16,16 +17,23 @@ class PincodeShopsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final filtered = category == null
+        ? _shops
+        : _shops.where((s) => s['category'] == category).toList();
+
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-            Text('Pincode: 411028', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            Text(
+              category == null ? 'आपल्या गावातील दुकाने' : '$category — दुकाने',
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const Text('Pincode: 411028', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
       ),
@@ -49,59 +57,61 @@ class PincodeShopsScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _shops.length,
-              itemBuilder: (context, index) {
-                final shop = _shops[index];
-                return GestureDetector(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(
-                    builder: (_) => SellerProfileScreen(sellerName: shop['name']!, category: shop['category']!),
-                  )),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppColors.lightGrey),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 52, height: 52,
-                          decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                          child: const Icon(Icons.store_outlined, color: AppColors.primaryBlue, size: 26),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+            child: filtered.isEmpty
+                ? const Center(child: Text('या कॅटेगिरीत सध्या कोणतंही दुकान नाही', style: TextStyle(color: AppColors.textLight)))
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      final shop = filtered[index];
+                      return GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(
+                          builder: (_) => SellerProfileScreen(sellerName: shop['name']!, category: shop['category']!),
+                        )),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppColors.lightGrey),
+                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
+                          ),
+                          child: Row(
                             children: [
-                              Text(shop['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                              const SizedBox(height: 4),
-                              Text(shop['category']!, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-                              const SizedBox(height: 4),
-                              Row(children: [
-                                const Icon(Icons.star, color: AppColors.primaryOrange, size: 14),
-                                const SizedBox(width: 4),
-                                Text(shop['rating']!, style: const TextStyle(fontSize: 12, color: AppColors.textDark)),
-                                const SizedBox(width: 12),
-                                const Icon(Icons.location_on_outlined, color: AppColors.textLight, size: 14),
-                                const SizedBox(width: 2),
-                                Text(shop['distance']!, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-                              ]),
+                              Container(
+                                width: 52, height: 52,
+                                decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+                                child: const Icon(Icons.store_outlined, color: AppColors.primaryBlue, size: 26),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(shop['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                                    const SizedBox(height: 4),
+                                    Text(shop['category']!, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                                    const SizedBox(height: 4),
+                                    Row(children: [
+                                      const Icon(Icons.star, color: AppColors.primaryOrange, size: 14),
+                                      const SizedBox(width: 4),
+                                      Text(shop['rating']!, style: const TextStyle(fontSize: 12, color: AppColors.textDark)),
+                                      const SizedBox(width: 12),
+                                      const Icon(Icons.location_on_outlined, color: AppColors.textLight, size: 14),
+                                      const SizedBox(width: 2),
+                                      Text(shop['distance']!, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                                    ]),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.chevron_right, color: AppColors.textLight),
                             ],
                           ),
                         ),
-                        const Icon(Icons.chevron_right, color: AppColors.textLight),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),

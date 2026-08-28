@@ -29,6 +29,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'likes': '128',
       'comments': '24',
       'tag': 'Sponsored',
+      'pollQuestion': 'तुम्हाला किराणा सामानावर सूट आवडते का?',
     },
     {
       'seller': 'राज इलेक्ट्रॉनिक्स',
@@ -43,6 +44,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'likes': '256',
       'comments': '48',
       'tag': 'Ad',
+      'pollQuestion': 'तुम्ही नवीन मोबाईल खरेदी करण्यास इंटरेस्टेड आहात का?',
     },
     {
       'seller': 'स्वाद हॉटेल',
@@ -57,6 +59,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'likes': '89',
       'comments': '15',
       'tag': 'Sponsored',
+      'pollQuestion': 'तुम्ही घरपोच जेवण मागवण्यास इंटरेस्टेड आहात का?',
     },
     {
       'seller': 'फॅशन पॉईंट',
@@ -71,6 +74,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       'likes': '312',
       'comments': '67',
       'tag': 'Ad',
+      'pollQuestion': 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?',
     },
   ];
 
@@ -103,8 +107,95 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
     super.dispose();
   }
 
+  // Blueprint 6.8: poll-reply cost split — replier gets 35% of cost per reply.
+  // Text ₹0.10 → ₹0.035 | Photo ₹0.25 → ₹0.0875 | Video(30s) ₹0.50 → ₹0.175
+  double _pollRewardFor(Map<String, dynamic> ad) {
+    switch (ad['type']) {
+      case 'video':
+        return 0.175;
+      case 'photo':
+        return 0.0875;
+      default:
+        return 0.035;
+    }
+  }
+
+  Widget _buildPollSection(Map<String, dynamic> ad) {
+    final bool answered = ad['pollAnswer'] != null;
+    final String question = ad['pollQuestion'] ?? 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?';
+
+    void answer(bool yes) {
+      setState(() {
+        ad['pollAnswer'] = yes;
+      });
+      final reward = _pollRewardFor(ad);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('✅ धन्यवाद! तुम्हाला ₹${reward.toStringAsFixed(3)} रिवॉर्ड मिळाले'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.primaryBlue.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.poll_outlined, size: 15, color: AppColors.primaryBlue),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(question, style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: answered ? null : () => answer(true),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: (answered && ad['pollAnswer'] == true) ? Colors.green : Colors.transparent,
+                    side: const BorderSide(color: Colors.green),
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                  ),
+                  child: Text('Yes', style: TextStyle(color: (answered && ad['pollAnswer'] == true) ? Colors.white : Colors.green, fontSize: 12)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: answered ? null : () => answer(false),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: (answered && ad['pollAnswer'] == false) ? Colors.red : Colors.transparent,
+                    side: const BorderSide(color: Colors.red),
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                  ),
+                  child: Text('No', style: TextStyle(color: (answered && ad['pollAnswer'] == false) ? Colors.white : Colors.red, fontSize: 12)),
+                ),
+              ),
+            ],
+          ),
+          if (answered) ...[
+            const SizedBox(height: 6),
+            Text('तुमचं उत्तर नोंदवलं गेलं ✅', style: TextStyle(fontSize: 10.5, color: Colors.green.shade700)),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildAdCard(Map<String, dynamic> ad) {
-    final double mediaHeight = widget.compact ? 180 : 220;
+    final double mediaHeight = widget.compact ? 240 : 300;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -204,6 +295,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
               ],
             ),
           ),
+          _buildPollSection(ad),
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
             child: Row(

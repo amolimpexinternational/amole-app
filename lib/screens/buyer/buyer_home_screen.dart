@@ -11,6 +11,7 @@ import 'buyer_notification_screen.dart';
 import 'qr_payment_screen.dart';
 import 'pincode_shops_screen.dart';
 import 'coming_soon_screen.dart';
+import 'all_categories_screen.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -246,7 +247,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Categories — खाली हलवलं
+          // Categories — खाली हलवलं, आता 4x1, प्रत्येक tappable
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -255,7 +256,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 const Text('श्रेणी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const AllCategoriesScreen()));
                   },
                   child: const Text('सर्व बघा', style: TextStyle(color: AppColors.primaryBlue, fontSize: 13)),
                 ),
@@ -273,22 +274,28 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemCount: 8,
+            itemCount: 4,
             itemBuilder: (context, index) {
-              return Column(
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryBlue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(14),
+              final cat = _categories[index];
+              return GestureDetector(
+                onTap: () => Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => PincodeShopsScreen(category: cat['label'] as String),
+                )),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(cat['icon'] as IconData, color: AppColors.primaryBlue, size: 28),
                     ),
-                    child: Icon(_categories[index]['icon'] as IconData, color: AppColors.primaryBlue, size: 28),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(_categories[index]['label'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textDark), textAlign: TextAlign.center),
-                ],
+                    const SizedBox(height: 6),
+                    Text(cat['label'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textDark), textAlign: TextAlign.center),
+                  ],
+                ),
               );
             },
           ),
