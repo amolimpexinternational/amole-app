@@ -16,7 +16,7 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
     {
       'type': 'earn',
       'title': 'श्री गणेश किराणा खरेदी',
-      'subtitle': '₹500 खरेदीवर 2% = 10 pts',
+      'subtitle': 'दुकानातून खरेदी केल्यावर मिळाले',
       'points': '+10',
       'date': 'आज, सकाळी 10:30',
       'expiry': '26 Nov 2026',
@@ -25,7 +25,7 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
     {
       'type': 'earn',
       'title': 'Referral Bonus — अनिल जोशी',
-      'subtitle': 'अनिल च्या ₹200 खरेदीवर 0.25%',
+      'subtitle': 'तुमच्या मित्राने केलेल्या खरेदीवर मिळाले',
       'points': '+0.5',
       'date': 'काल, दुपारी 2:15',
       'expiry': '25 Nov 2026',
@@ -34,7 +34,7 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
     {
       'type': 'earn',
       'title': 'राज इलेक्ट्रॉनिक्स खरेदी',
-      'subtitle': '₹1200 खरेदीवर 2% = 24 pts',
+      'subtitle': 'दुकानातून खरेदी केल्यावर मिळाले',
       'points': '+24',
       'date': '24 Aug, सायं 6:00',
       'expiry': '24 Nov 2026',
@@ -43,7 +43,7 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
     {
       'type': 'spend',
       'title': 'स्वाद हॉटेल — Points वापरले',
-      'subtitle': 'ऑर्डर #AM-ORD-009 मध्ये',
+      'subtitle': 'ऑर्डर #AM-ORD-009 मध्ये वापरले',
       'points': '-15',
       'date': '23 Aug, सकाळी 1:00',
       'expiry': '',
@@ -52,7 +52,7 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
     {
       'type': 'earn',
       'title': 'Referral Bonus — संगीता राणे',
-      'subtitle': 'संगीता च्या ₹800 खरेदीवर 0.25%',
+      'subtitle': 'तुमच्या मित्राने केलेल्या खरेदीवर मिळाले',
       'points': '+2',
       'date': '22 Aug, दुपारी 3:45',
       'expiry': '22 Nov 2026',
@@ -325,13 +325,13 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
                               color: AppColors.textDark)),
                       const SizedBox(height: 12),
                       _buildEarnRow(Icons.shopping_bag_outlined,
-                          'खरेदीवर', '2% प्रत्येक खरेदीवर', AppColors.primaryBlue),
+                          'प्रत्येक खरेदीवर', 'दुकानातून काहीही खरेदी करा', AppColors.primaryBlue),
                       _buildEarnRow(Icons.people_outlined,
-                          'Referral Bonus', '0.25% refer केलेल्याच्या खरेदीवर', Colors.purple),
+                          'रेफर केलेल्या मित्राच्या खरेदीवर', 'तुम्ही जोडलेला मित्र खरेदी करतो तेव्हा', Colors.purple),
                       _buildEarnRow(Icons.campaign_outlined,
-                          'Poll उत्तर', 'जाहिरातीतील Poll ला उत्तर द्या', Colors.teal),
+                          'जाहिरातीतील Poll ला उत्तर दिल्यावर', 'जाहिरातीतील प्रश्नाला उत्तर द्या', Colors.teal),
                       _buildEarnRow(Icons.card_giftcard_outlined,
-                          'Lucky Draw', '₹5 ticket खरेदी करा', AppColors.primaryOrange),
+                          'Lucky Draw मध्ये भाग घेतल्यावर', 'तिकीट घेऊन ड्रॉमध्ये सहभागी व्हा', AppColors.primaryOrange),
                     ],
                   ),
                 ),
@@ -339,6 +339,29 @@ class _RewardWalletScreenState extends State<RewardWalletScreen>
 
                 // Expiry Alert
                 _buildExpiryAlert(),
+
+                // FIFO usage note
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.blue.shade100),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.info_outline, color: AppColors.primaryBlue, size: 18),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Points वापरताना सर्वात आधी मिळालेले Points आधी वापरले जातात.',
+                          style: TextStyle(fontSize: 12, color: AppColors.textDark),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 // Use Points
                 Container(
