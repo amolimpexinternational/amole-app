@@ -4,6 +4,7 @@ import 'buyer_search_screen.dart';
 import 'buyer_profile_screen.dart';
 import 'reward_wallet_screen.dart';
 import 'my_wall_screen.dart';
+import 'lucky_draw_screen.dart';
 import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
 import 'buyer_notification_screen.dart';
@@ -309,7 +310,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           ),
 
           // Ad Block 2 — Lucky Draw
-          Container(
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
+            child:           Container(
             margin: const EdgeInsets.all(16),
             height: 100,
             decoration: BoxDecoration(
@@ -327,6 +330,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 ],
               ),
             ),
+          ),
           ),
           const SizedBox(height: 16),
         ],
