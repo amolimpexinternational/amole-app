@@ -41,29 +41,50 @@ class _LuckyDrawScreenState extends State<LuckyDrawScreen> {
                   const SizedBox(height: 12),
                   const Text('आजचा Lucky Draw', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  const Text('रात्री ८:०० वाजता', style: TextStyle(color: Colors.white70, fontSize: 15)),
+                  const Text('निकाल: संध्याकाळी ४:०० वाजता', style: TextStyle(color: Colors.white70, fontSize: 15)),
+                  const SizedBox(height: 4),
+                  const Text('(तिकीट खरेदीची अंतिम वेळ: ३:५० वाजेपर्यंत)', style: TextStyle(color: Colors.white60, fontSize: 12)),
                   const SizedBox(height: 16),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(30)),
-                    child: const Text('🏆 पहिला बक्षीस: ₹10,000', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    child: const Text('🏆 बक्षीस Reward Points स्वरूपात मिळते', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
+            // 🔴 FIX: Fixed prize list (₹10,000/₹5,000...) काढून dynamic %-सूत्र दाखवणारं कार्ड
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8)]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('बक्षीस यादी', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                  const SizedBox(height: 12),
-                  _buildPrizeRow('🥇', '1st', '₹10,000'),
-                  _buildPrizeRow('🥈', '2nd', '₹5,000'),
-                  _buildPrizeRow('🥉', '3rd', '₹2,000'),
-                  _buildPrizeRow('🎁', '4th-10th', '₹500 प्रत्येकी'),
+                  const Text('बक्षीस कसे ठरते?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'बक्षिसाची रक्कम रोज बदलते — ती त्या दिवशी विकल्या गेलेल्या एकूण तिकिटांवर अवलंबून असते.',
+                    style: TextStyle(fontSize: 13, color: AppColors.textLight),
+                  ),
+                  const SizedBox(height: 14),
+                  _buildFormulaRow('१', 'बक्षीस पूल', 'त्या दिवशीच्या एकूण तिकीट विक्रीच्या ५०%'),
+                  _buildFormulaRow('२', 'विजेते', 'त्या दिवशीच्या सहभागींपैकी ५%'),
+                  _buildFormulaRow('३', 'प्रत्येक विजेत्याला', 'बक्षीस पूल ÷ विजेत्यांची संख्या'),
+                  const SizedBox(height: 14),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(10)),
+                    child: const Text(
+                      'उदाहरण: आज २०० तिकिटं विकली गेली (₹१,०००) → बक्षीस पूल ₹५०० → १० विजेते → प्रत्येकी ₹५० इतके Reward Points',
+                      style: TextStyle(fontSize: 12.5, color: AppColors.textDark, fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'विजेता निवड यादृच्छिक (random) नाही — मागील ९० दिवसांतील तुमची खरेदी, वेगवेगळी दुकानं, आणि सर्वात मोठी एकल खरेदी या निकषांवर प्राधान्य ठरते.',
+                    style: TextStyle(fontSize: 12, color: AppColors.textLight),
+                  ),
                 ],
               ),
             ),
@@ -117,7 +138,7 @@ class _LuckyDrawScreenState extends State<LuckyDrawScreen> {
                   children: [
                     Text('🎟️ टिकीट यशस्वीरित्या घेतलं!', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16)),
                     SizedBox(height: 4),
-                    Text('रात्री ८:०० वाजता निकाल जाहीर होईल', style: TextStyle(color: Colors.green, fontSize: 13)),
+                    Text('संध्याकाळी ४:०० वाजता निकाल जाहीर होईल', style: TextStyle(color: Colors.green, fontSize: 13)),
                   ],
                 ),
               ),
@@ -128,16 +149,29 @@ class _LuckyDrawScreenState extends State<LuckyDrawScreen> {
     );
   }
 
-  Widget _buildPrizeRow(String emoji, String rank, String prize) {
+  Widget _buildFormulaRow(String step, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: 12),
-          Text(rank, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark)),
-          const Spacer(),
-          Text(prize, style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+          CircleAvatar(
+            radius: 11,
+            backgroundColor: const Color(0xFF6A1B9A),
+            child: Text(step, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 13, color: AppColors.textDark),
+                children: [
+                  TextSpan(text: '$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: value, style: const TextStyle(color: AppColors.textLight)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
