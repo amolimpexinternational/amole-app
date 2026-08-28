@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 
@@ -10,6 +11,45 @@ class LuckyDrawScreen extends StatefulWidget {
 
 class _LuckyDrawScreenState extends State<LuckyDrawScreen> {
   bool _ticketBought = false;
+  final ScrollController _winnersController = ScrollController();
+  Timer? _autoScrollTimer;
+
+  // Demo data — गेल्या ३० दिवसांतील विजेते (backend स्टेजमध्ये API मधून येईल)
+  final List<Map<String, String>> _recentWinners = const [
+    {'name': 'सुनिता पवार', 'date': '२७ ऑगस्ट', 'points': '₹५५ Points'},
+    {'name': 'राहुल जाधव', 'date': '२६ ऑगस्ट', 'points': '₹४० Points'},
+    {'name': 'अंजली शिंदे', 'date': '२५ ऑगस्ट', 'points': '₹७० Points'},
+    {'name': 'विकास पाटील', 'date': '२४ ऑगस्ट', 'points': '₹३० Points'},
+    {'name': 'प्रिया देशमुख', 'date': '२३ ऑगस्ट', 'points': '₹६० Points'},
+    {'name': 'संदीप कदम', 'date': '२१ ऑगस्ट', 'points': '₹४५ Points'},
+    {'name': 'नेहा भोसले', 'date': '१९ ऑगस्ट', 'points': '₹५० Points'},
+    {'name': 'गणेश मोरे', 'date': '१७ ऑगस्ट', 'points': '₹३५ Points'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
+      if (!_winnersController.hasClients) return;
+      final maxScroll = _winnersController.position.maxScrollExtent;
+      double next = _winnersController.offset + 0.8;
+      if (next >= maxScroll) {
+        next = 0;
+      }
+      _winnersController.jumpTo(next);
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    _winnersController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,36 +94,60 @@ class _LuckyDrawScreenState extends State<LuckyDrawScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            // 🔴 FIX: Fixed prize list (₹10,000/₹5,000...) काढून dynamic %-सूत्र दाखवणारं कार्ड
+            // गेल्या ३० दिवसांतील विजेते — auto-scrolling पट्टी
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8)]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('बक्षीस कसे ठरते?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'बक्षिसाची रक्कम रोज बदलते — ती त्या दिवशी विकल्या गेलेल्या एकूण तिकिटांवर अवलंबून असते.',
-                    style: TextStyle(fontSize: 13, color: AppColors.textLight),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('गेल्या ३० दिवसांतील विजेते 🎉', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   ),
-                  const SizedBox(height: 14),
-                  _buildFormulaRow('१', 'बक्षीस पूल', 'त्या दिवशीच्या एकूण तिकीट विक्रीच्या ५०%'),
-                  _buildFormulaRow('२', 'विजेते', 'त्या दिवशीच्या सहभागींपैकी ५%'),
-                  _buildFormulaRow('३', 'प्रत्येक विजेत्याला', 'बक्षीस पूल ÷ विजेत्यांची संख्या'),
-                  const SizedBox(height: 14),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(10)),
-                    child: const Text(
-                      'उदाहरण: आज २०० तिकिटं विकली गेली (₹१,०००) → बक्षीस पूल ₹५०० → १० विजेते → प्रत्येकी ₹५० इतके Reward Points',
-                      style: TextStyle(fontSize: 12.5, color: AppColors.textDark, fontStyle: FontStyle.italic),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 78,
+                    child: ListView.builder(
+                      controller: _winnersController,
+                      scrollDirection: Axis.horizontal,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      // यादी दुप्पट करून seamless loop चा आभास दिला
+                      itemCount: _recentWinners.length * 2,
+                      itemBuilder: (context, index) {
+                        final winner = _recentWinners[index % _recentWinners.length];
+                        return _buildWinnerCard(winner);
+                      },
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'विजेता निवड यादृच्छिक (random) नाही — मागील ९० दिवसांतील तुमची खरेदी, वेगवेगळी दुकानं, आणि सर्वात मोठी एकल खरेदी या निकषांवर प्राधान्य ठरते.',
-                    style: TextStyle(fontSize: 12, color: AppColors.textLight),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            // ₹१,००० खरेदीवर १ तिकीट मोफत गिफ्ट
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.orange.shade200),
+              ),
+              child: Row(
+                children: [
+                  const Text('🎁', style: TextStyle(fontSize: 32)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: RichText(
+                      text: const TextSpan(
+                        style: TextStyle(fontSize: 14, color: AppColors.textDark),
+                        children: [
+                          TextSpan(text: '₹१,००० च्या खरेदीवर ', style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(text: '१ Lucky Draw तिकीट मोफत गिफ्ट मिळेल!'),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -149,29 +213,36 @@ class _LuckyDrawScreenState extends State<LuckyDrawScreen> {
     );
   }
 
-  Widget _buildFormulaRow(String step, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+  Widget _buildWinnerCard(Map<String, String> winner) {
+    return Container(
+      width: 150,
+      margin: const EdgeInsets.only(right: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 11,
-            backgroundColor: const Color(0xFF6A1B9A),
-            child: Text(step, style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                style: const TextStyle(fontSize: 13, color: AppColors.textDark),
-                children: [
-                  TextSpan(text: '$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: value, style: const TextStyle(color: AppColors.textLight)),
-                ],
+          Row(
+            children: [
+              const Text('🏆', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  winner['name']!,
+                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: AppColors.textDark),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
+            ],
           ),
+          const SizedBox(height: 4),
+          Text(winner['date']!, style: const TextStyle(fontSize: 10.5, color: AppColors.textLight)),
+          const SizedBox(height: 2),
+          Text(winner['points']!, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Colors.green)),
         ],
       ),
     );
