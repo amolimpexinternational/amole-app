@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../admin/admin_edit_profile_screen.dart';
+import '../admin/admin_view_dashboard_screen.dart';
 
 class CpFranchiseScreen extends StatefulWidget {
   const CpFranchiseScreen({super.key});
@@ -133,7 +135,35 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
               itemCount: _franchises.length,
               itemBuilder: (ctx, i) {
                 final f = _franchises[i];
-                return Container(
+                return GestureDetector(
+                  onTap: () => Navigator.push(ctx, MaterialPageRoute(
+                    builder: (_) => AdminEditProfileScreen(
+                      name: f['name'],
+                      roleLabel: 'Franchise',
+                      idCode: f['area'],
+                      avatarIcon: Icons.storefront_outlined,
+                      avatarColor: AppColors.primaryBlue,
+                      stats: [MapEntry('Sellers', '${f['sellers']}')],
+                      fields: [
+                        ProfileField(label: 'क्षेत्र', icon: Icons.location_on_outlined, value: f['area']),
+                        ProfileField(label: 'मालक', icon: Icons.person_outlined, value: f['owner']),
+                        ProfileField(label: 'मोबाईल', icon: Icons.phone_outlined, value: f['phone']),
+                        ProfileField(label: 'स्थिती', icon: Icons.verified_outlined, value: f['status']),
+                      ],
+                      dashboardScreen: AdminViewDashboardScreen(
+                        name: f['name'],
+                        roleLabel: 'Franchise',
+                        headerSubtitle: f['area'],
+                        revenueLabel: 'महसूल',
+                        revenueValue: f['revenue'],
+                        viewerLabel: 'Channel Partner',
+                        kpis: [
+                          DashboardKpi(title: 'Sellers', value: '${f['sellers']}', subtitle: 'नोंदणीकृत', icon: Icons.storefront_outlined, color: AppColors.primaryBlue),
+                        ],
+                      ),
+                    ),
+                  )),
+                  child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -178,6 +208,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
                         _buildChip(Icons.currency_rupee, f['revenue'], AppColors.successGreen),
                       ]),
                     ],
+                  ),
                   ),
                 );
               },

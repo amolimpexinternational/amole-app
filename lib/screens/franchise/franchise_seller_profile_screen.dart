@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../admin/admin_view_dashboard_screen.dart';
+import '../admin/admin_entity_transactions_screen.dart';
 
 class FranchiseSellerProfileScreen extends StatefulWidget {
   final Map<String, String> seller;
@@ -22,7 +24,6 @@ class _FranchiseSellerProfileScreenState extends State<FranchiseSellerProfileScr
     _name = widget.seller['name'] ?? '-';
     _mobile = widget.seller['mobile'] ?? '-';
     _pincode = widget.seller['pincode'] ?? '-';
-    // TODO (Stage 3 - Backend): fetch real full address from Firestore.
     _address = widget.seller['address'] ?? 'गल्ली नं. ४, मुख्य रस्ता, हडपसर, पुणे, महाराष्ट्र';
     _joined = widget.seller['joined'] ?? '-';
   }
@@ -51,7 +52,6 @@ class _FranchiseSellerProfileScreenState extends State<FranchiseSellerProfileScr
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('रद्द करा')),
           ElevatedButton(
             onPressed: () {
-              // TODO (Stage 3 - Backend): persist updated seller info to Firestore.
               setState(() {
                 _name = nameCtrl.text;
                 _mobile = mobileCtrl.text;
@@ -100,11 +100,7 @@ class _FranchiseSellerProfileScreenState extends State<FranchiseSellerProfileScr
         backgroundColor: AppColors.primaryBlue,
         title: Text(_name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined, color: Colors.white),
-            tooltip: 'Edit',
-            onPressed: _editSellerInfo,
-          ),
+          IconButton(icon: const Icon(Icons.edit_outlined, color: Colors.white), tooltip: 'Edit', onPressed: _editSellerInfo),
         ],
       ),
       body: Padding(
@@ -119,14 +115,39 @@ class _FranchiseSellerProfileScreenState extends State<FranchiseSellerProfileScr
                 child: const Icon(Icons.storefront_outlined, size: 40, color: AppColors.primaryBlue),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            Row(children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminViewDashboardScreen(
+                    name: _name,
+                    roleLabel: 'Seller',
+                    headerSubtitle: 'पिनकोड: $_pincode',
+                    revenueLabel: 'या महिन्यातील महसूल',
+                    revenueValue: '₹18,450',
+                    viewerLabel: 'Franchise',
+                    kpis: [
+                      DashboardKpi(title: 'ऑर्डर्स', value: '37', subtitle: '3 प्रतीक्षेत', icon: Icons.shopping_bag_outlined, color: Colors.orange),
+                      DashboardKpi(title: 'ग्राहक', value: '124', subtitle: 'या महिन्यात', icon: Icons.people_outlined, color: Colors.purple),
+                    ],
+                  ))),
+                  icon: const Icon(Icons.dashboard_outlined, size: 18),
+                  label: const Text('डॅशबोर्ड बघा', style: TextStyle(fontSize: 12)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminEntityTransactionsScreen(entityName: _name, roleLabel: 'Seller'))),
+                  icon: const Icon(Icons.receipt_long_outlined, size: 18),
+                  label: const Text('व्यवहार इतिहास', style: TextStyle(fontSize: 12)),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
-              ),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,27 +157,6 @@ class _FranchiseSellerProfileScreenState extends State<FranchiseSellerProfileScr
                   _infoRow(Icons.home_outlined, "पूर्ण पत्ता", _address),
                   _infoRow(Icons.calendar_today_outlined, "सामील झाल्याची तारीख", _joined),
                   _infoRow(Icons.verified_outlined, "स्टेटस", "✅ Verified"),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.info_outline, color: AppColors.textLight, size: 18),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      "या सेलरचा ऑर्डर/विक्री इतिहास इथे दिसेल (Backend टप्प्यात)",
-                      style: TextStyle(fontSize: 12, color: AppColors.textLight),
-                    ),
-                  ),
                 ],
               ),
             ),

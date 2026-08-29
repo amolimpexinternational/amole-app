@@ -17,6 +17,7 @@ class AdminViewDashboardScreen extends StatelessWidget {
   final String revenueLabel;
   final String revenueValue;
   final List<DashboardKpi> kpis;
+  final String viewerLabel;
 
   const AdminViewDashboardScreen({
     super.key,
@@ -26,6 +27,7 @@ class AdminViewDashboardScreen extends StatelessWidget {
     required this.revenueLabel,
     required this.revenueValue,
     required this.kpis,
+    this.viewerLabel = 'Admin',
   });
 
   @override
@@ -45,7 +47,7 @@ class AdminViewDashboardScreen extends StatelessWidget {
                 children: [
                   Row(children: [
                     IconButton(icon: const Icon(Icons.arrow_back, color: Colors.white), onPressed: () => Navigator.pop(context)),
-                    Expanded(child: Text('$roleLabel Dashboard (Admin View)', style: const TextStyle(color: Colors.white70, fontSize: 12))),
+                    Expanded(child: Text('$roleLabel Dashboard ($viewerLabel View)', style: const TextStyle(color: Colors.white70, fontSize: 12))),
                   ]),
                   Text(name, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
@@ -74,10 +76,10 @@ class AdminViewDashboardScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(10)),
-                    child: const Row(children: [
-                      Icon(Icons.visibility_outlined, color: AppColors.primaryBlue, size: 18),
-                      SizedBox(width: 8),
-                      Expanded(child: Text('हे Admin साठी फक्त बघण्यासाठी (Read-only) डॅशबोर्ड आहे.', style: TextStyle(fontSize: 12, color: AppColors.textDark))),
+                    child: Row(children: [
+                      const Icon(Icons.visibility_outlined, color: AppColors.primaryBlue, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text('हे $viewerLabel साठी फक्त बघण्यासाठी (Read-only) डॅशबोर्ड आहे.', style: const TextStyle(fontSize: 12, color: AppColors.textDark))),
                     ]),
                   ),
                   const SizedBox(height: 16),
