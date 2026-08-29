@@ -10,6 +10,10 @@ import 'cp_revenue_screen.dart';
 import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
+import '../../data/ads_data.dart';
+import '../../data/local_posts_data.dart';
+import '../admin/admin_live_ads_screen.dart';
+import '../admin/admin_viral_posts_screen.dart';
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
   const ChannelPartnerHomeScreen({super.key});
@@ -212,6 +216,8 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildKpiCard(context, 'Active Sellers', '142', Icons.storefront_outlined, AppColors.successGreen, const CpSellerScreen()),
                         _buildKpiCard(context, 'एकूण Buyers', '3,250', Icons.people_outline, AppColors.primaryOrange, const CpBuyerScreen()),
                         _buildKpiCard(context, 'महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen, const CpSellerRevenueScreen()),
+                        _buildKpiCard(context, 'Live जाहिराती', '${AdsData.liveAds.where((a) => a.location.contains('पुणे')).length}', Icons.campaign_outlined, Colors.deepOrange, AdminLiveAdsScreen(locationKeyword: 'पुणे', title: 'पुणे जिल्हा — Live जाहिराती')),
+                        _buildKpiCard(context, 'Most Viral पोस्ट', '${LocalPostsData.posts.where((p) => p.responsePoints >= 1000).length}', Icons.local_fire_department_outlined, Colors.redAccent, const AdminViralPostsScreen()),
                       ],
                     ),
                     const SizedBox(height: 20),

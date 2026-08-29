@@ -13,6 +13,7 @@ import 'franchise_revenue_screen.dart';
 import 'franchise_ad_screen.dart';
 import 'franchise_create_ad_screen.dart';
 import 'franchise_add_seller_screen.dart';
+import 'franchise_wallet_screen.dart';
 
 class FranchiseHomeScreen extends StatelessWidget {
   const FranchiseHomeScreen({super.key});
@@ -52,6 +53,7 @@ class FranchiseHomeScreen extends StatelessWidget {
                         Text(franchiseName, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
                       ]),
                       Row(children: [
+                        IconButton(icon: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FranchiseWalletScreen(franchiseName: franchiseName)))),
                         IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseNotificationScreen()))),
                         IconButton(icon: const Icon(Icons.person_outline, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseProfileScreen()))),
                       ]),
