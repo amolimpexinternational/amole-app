@@ -198,7 +198,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   }
 
   Widget _buildAdCard(Map<String, dynamic> ad) {
-    final double mediaHeight = widget.compact ? 240 : 300;
+    final double mediaHeight = widget.compact ? 240 : 360;
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(
         builder: (_) => SellerProfileScreen(sellerName: ad['seller'], category: ad['category'] ?? ''),
@@ -462,7 +462,14 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       itemCount: _myOffers.length,
       itemBuilder: (context, index) {
         final offer = _myOffers[index];
-        return Container(
+        return GestureDetector(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => SellerProfileScreen(
+              sellerName: offer['seller'],
+              category: 'दुकान',
+            ),
+          )),
+          child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -509,6 +516,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
                 child: Text(offer['saved'] ? 'Saved' : 'Save', style: const TextStyle(color: Colors.white, fontSize: 12)),
               ),
             ],
+          ),
           ),
         );
       },
@@ -596,7 +604,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         const SizedBox(height: 8),
         if (_selectedTab == 0) ...[
           SizedBox(
-            height: widget.compact ? 460 : 540,
+            height: widget.compact ? 460 : 620,
             child: PageView.builder(
               controller: _pageController,
               onPageChanged: (i) => setState(() => _currentPage = i),
