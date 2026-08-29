@@ -12,6 +12,7 @@ import 'qr_payment_screen.dart';
 import 'pincode_shops_screen.dart';
 import 'coming_soon_screen.dart';
 import 'all_categories_screen.dart';
+import 'order_tracking_screen.dart';
 
 class BuyerHomeScreen extends StatefulWidget {
   const BuyerHomeScreen({super.key});
@@ -45,6 +46,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     {'label': 'राईड बुक\nकरा', 'icon': Icons.two_wheeler_outlined, 'action': 'ride'},
     {'label': 'मित्र बनवा /\nसोशल कनेक्ट', 'icon': Icons.people_alt_outlined, 'action': 'social'},
     {'label': 'डिलिव्हरी /\nलॉजिस्टिक्स सेवा', 'icon': Icons.local_shipping_outlined, 'action': 'logistics'},
+    {'label': 'शेतकरी', 'icon': Icons.agriculture_outlined, 'action': 'farmers'},
   ];
 
   void _handleServiceTap(String action) {
@@ -117,10 +119,10 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                           ),
                         ),
                         const SizedBox(width: 6),
-                        // QR Scan Button
+                        // Orders — पूर्वीच्या QR चिपच्या जागी
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderTrackingScreen()));
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -130,9 +132,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                             ),
                             child: const Row(
                               children: [
-                                Icon(Icons.qr_code_scanner, color: AppColors.royalBlue, size: 16),
+                                Icon(Icons.shopping_bag_outlined, color: AppColors.royalBlue, size: 16),
                                 SizedBox(width: 4),
-                                Text('QR Pay', style: TextStyle(color: AppColors.royalBlue, fontWeight: FontWeight.bold, fontSize: 13)),
+                                Text('ऑर्डर', style: TextStyle(color: AppColors.royalBlue, fontWeight: FontWeight.bold, fontSize: 13)),
                               ],
                             ),
                           ),
@@ -182,7 +184,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // Banner Ad — height निम्मी (150 → 75), आता tappable
+          // Banner Ad
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
             child: Container(
@@ -209,7 +211,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // ---- 6 आडवे सेवा कार्ड्स (Blueprint 1.1 प्रमाणे) ----
+          // ---- 7 आडवे सेवा कार्ड्स (Blueprint 4.9 + शेतकरी) ----
           SizedBox(
             height: 96,
             child: ListView.separated(
@@ -248,9 +250,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               },
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-          // Categories — खाली हलवलं, आता 4x1, प्रत्येक tappable
+          // Categories — 4x1, compact (जागा वाचवण्यासाठी aspect ratio वाढवला)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -266,14 +268,14 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              childAspectRatio: 0.85,
+              childAspectRatio: 1.15,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
@@ -287,21 +289,22 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 child: Column(
                   children: [
                     Container(
-                      width: 56,
-                      height: 56,
+                      width: 52,
+                      height: 52,
                       decoration: BoxDecoration(
                         color: AppColors.primaryBlue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Icon(cat['icon'] as IconData, color: AppColors.primaryBlue, size: 28),
+                      child: Icon(cat['icon'] as IconData, color: AppColors.primaryBlue, size: 26),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(cat['label'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textDark), textAlign: TextAlign.center),
                   ],
                 ),
               );
             },
           ),
+          const SizedBox(height: 4),
 
           const AdFeedWidget(),
           const SizedBox(height: 8),
@@ -391,25 +394,25 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           // Ad Block 2 — Lucky Draw
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
-            child:           Container(
-            margin: const EdgeInsets.all(16),
-            height: 100,
-            decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.primaryBlue.withOpacity(0.2)),
-            ),
-            child: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('🎟️ आजचा Lucky Draw', style: TextStyle(color: AppColors.primaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 4),
-                  Text('फक्त ₹5 मध्ये तिकीट घ्या — दर दिवशी ४:०० PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                ],
+            child: Container(
+              margin: const EdgeInsets.all(16),
+              height: 100,
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.2)),
+              ),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('🎟️ आजचा Lucky Draw', style: TextStyle(color: AppColors.primaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('फक्त ₹5 मध्ये तिकीट घ्या — दर दिवशी ४:०० PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+                  ],
+                ),
               ),
             ),
-          ),
           ),
           const SizedBox(height: 16),
         ],
@@ -422,23 +425,14 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(child: _buildHomeTab()),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment'))),
-        backgroundColor: AppColors.cyan,
-        foregroundColor: AppColors.textDark,
-        icon: const Icon(Icons.qr_code_scanner, size: 26),
-        label: const Text('QR Pay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-        elevation: 6,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const MyWallScreen()),
-            );
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const MyWallScreen()));
+          } else if (index == 2) {
+            // अंगठ्याजवळ सहज पोहोचणारं मधलं स्थान — QR Scan
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
           } else {
             setState(() => _currentIndex = index);
           }
@@ -451,7 +445,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'होम'),
           BottomNavigationBarItem(icon: Icon(Icons.dynamic_feed_outlined), activeIcon: Icon(Icons.dynamic_feed), label: 'My Wall'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), activeIcon: Icon(Icons.shopping_bag), label: 'ऑर्डर'),
+          BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), activeIcon: Icon(Icons.qr_code_scanner), label: 'QR Pay'),
           BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), activeIcon: Icon(Icons.chat_bubble), label: 'माझे मेसेज'),
           BottomNavigationBarItem(icon: Icon(Icons.people_outline), activeIcon: Icon(Icons.people), label: 'परिसर'),
         ],
