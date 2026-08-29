@@ -258,51 +258,54 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
               ),
             )
           else
-            Container(
-              width: double.infinity,
-              height: 220,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: grad, begin: Alignment.topLeft, end: Alignment.bottomRight),
-              ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          post.mediaType == PostMediaType.video ? Icons.play_circle_filled : Icons.image_outlined,
-                          color: Colors.white.withValues(alpha: 0.35),
-                          size: 64,
-                        ),
-                        const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            post.text,
-                            textAlign: TextAlign.center,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+            AspectRatio(
+              // Facebook feed पोस्ट प्रमाणे 4:5 (उभं, पूर्ण रुंदीचं)
+              aspectRatio: 4 / 5,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: grad, begin: Alignment.topLeft, end: Alignment.bottomRight),
+                ),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            post.mediaType == PostMediaType.video ? Icons.play_circle_filled : Icons.image_outlined,
+                            color: Colors.white.withValues(alpha: 0.35),
+                            size: 64,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (post.mediaType == PostMediaType.video)
-                    Positioned(
-                      top: 8, right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
-                        child: const Row(children: [
-                          Icon(Icons.videocam, color: Colors.white, size: 12),
-                          SizedBox(width: 3),
-                          Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
-                        ]),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              post.text,
+                              textAlign: TextAlign.center,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                ],
+                    if (post.mediaType == PostMediaType.video)
+                      Positioned(
+                        top: 8, right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+                          child: const Row(children: [
+                            Icon(Icons.videocam, color: Colors.white, size: 12),
+                            SizedBox(width: 3),
+                            Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
+                          ]),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
 
@@ -475,7 +478,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   }
 
   Widget _buildAdCard(Map<String, dynamic> ad) {
-    final double mediaHeight = widget.compact ? 180 : (widget.isSeller ? 220 : 220);
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(
         builder: (_) => SellerProfileScreen(sellerName: ad['seller'], category: ad['category'] ?? ''),
@@ -525,58 +527,61 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
                 ],
               ),
             ),
-            Container(
-              width: double.infinity,
-              height: mediaHeight,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [ad['bgColor1'] as Color, ad['bgColor2'] as Color],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          ad['type'] == 'video' ? Icons.play_circle_filled : Icons.image_outlined,
-                          color: Colors.white.withValues(alpha: 0.3),
-                          size: 60,
-                        ),
-                        const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(ad['title'],
-                              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center),
-                        ),
-                        const SizedBox(height: 6),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(ad['desc'],
-                              style: const TextStyle(color: Colors.white, fontSize: 12),
-                              textAlign: TextAlign.center),
-                        ),
-                      ],
-                    ),
+            AspectRatio(
+              // Facebook feed पोस्ट प्रमाणे 4:5 (उभं, पूर्ण रुंदीचं)
+              aspectRatio: 4 / 5,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [ad['bgColor1'] as Color, ad['bgColor2'] as Color],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  if (ad['type'] == 'video')
-                    Positioned(
-                      top: 8, right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
-                        child: const Row(children: [
-                          Icon(Icons.videocam, color: Colors.white, size: 12),
-                          SizedBox(width: 3),
-                          Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
-                        ]),
+                ),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            ad['type'] == 'video' ? Icons.play_circle_filled : Icons.image_outlined,
+                            color: Colors.white.withValues(alpha: 0.3),
+                            size: 60,
+                          ),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(ad['title'],
+                                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center),
+                          ),
+                          const SizedBox(height: 6),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(ad['desc'],
+                                style: const TextStyle(color: Colors.white, fontSize: 12),
+                                textAlign: TextAlign.center),
+                          ),
+                        ],
                       ),
                     ),
-                ],
+                    if (ad['type'] == 'video')
+                      Positioned(
+                        top: 8, right: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+                          child: const Row(children: [
+                            Icon(Icons.videocam, color: Colors.white, size: 12),
+                            SizedBox(width: 3),
+                            Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
+                          ]),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
             _buildPollSection(ad),
