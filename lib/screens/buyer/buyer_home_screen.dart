@@ -426,6 +426,15 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(child: _buildHomeTab()),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment'))),
+        backgroundColor: AppColors.cyan,
+        foregroundColor: AppColors.textDark,
+        icon: const Icon(Icons.qr_code_scanner, size: 26),
+        label: const Text('QR Pay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        elevation: 6,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
