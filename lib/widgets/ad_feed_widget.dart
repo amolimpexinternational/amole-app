@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
-import '../screens/buyer/seller_profile_screen.dart';
+import '../screens/buyer/my_wall_screen.dart';
 
 class AdFeedWidget extends StatefulWidget {
   final bool compact;
@@ -16,70 +16,68 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   int _currentPage = 0;
   int _selectedTab = 0;
 
+  // बायरसाठी: 0 = लोकल कनेक्ट, 1 = जाहिराती, 2 = My Offers
+  // सेलरसाठी: 0 = जाहिराती, 1 = Create Offer
+  int get _adsTabIndex => widget.isSeller ? 0 : 1;
+  int get _offersTabIndex => widget.isSeller ? 1 : 2;
+  bool get _hasLocalConnect => !widget.isSeller;
+
   final List<Map<String, dynamic>> _ads = [
     {
       'seller': 'श्री गणेश किराणा',
-      'category': 'किराणा',
       'location': 'हडपसर, पुणे',
       'avatar': 'G',
       'avatarColor': Colors.orange,
       'type': 'photo',
       'title': 'दिवाळी धमाका ऑफर!',
       'desc': 'सर्व किराणा मालावर 20% सूट — फक्त आजपुरता!',
-      'bgColor1': const Color(0xFFFF6B35),
-      'bgColor2': const Color(0xFFFF8F00),
+      'bgColor1': Color(0xFFFF6B35),
+      'bgColor2': Color(0xFFFF8F00),
       'likes': '128',
       'comments': '24',
       'tag': 'Sponsored',
-      'pollQuestion': 'तुम्हाला किराणा सामानावर सूट आवडते का?',
     },
     {
       'seller': 'राज इलेक्ट्रॉनिक्स',
-      'category': 'इलेक्ट्रॉनिक्स',
       'location': 'कोंढवा, पुणे',
       'avatar': 'R',
       'avatarColor': Colors.blue,
       'type': 'video',
       'title': 'नवीन Mobile आला!',
       'desc': 'Samsung Galaxy A55 — Rs.32,999 मध्ये. EMI उपलब्ध.',
-      'bgColor1': const Color(0xFF1565C0),
-      'bgColor2': const Color(0xFF00E5FF),
+      'bgColor1': Color(0xFF1565C0),
+      'bgColor2': Color(0xFF00E5FF),
       'likes': '256',
       'comments': '48',
       'tag': 'Ad',
-      'pollQuestion': 'तुम्ही नवीन मोबाईल खरेदी करण्यास इंटरेस्टेड आहात का?',
     },
     {
       'seller': 'स्वाद हॉटेल',
-      'category': 'खाद्यपदार्थ',
       'location': 'वानवडी, पुणे',
       'avatar': 'S',
       'avatarColor': Colors.green,
       'type': 'photo',
       'title': 'जेवण घरपोच!',
       'desc': 'ताजे, घरगुती जेवण — Rs.80 पासून. Free Delivery Rs.200 वर.',
-      'bgColor1': const Color(0xFF2E7D32),
-      'bgColor2': const Color(0xFF66BB6A),
+      'bgColor1': Color(0xFF2E7D32),
+      'bgColor2': Color(0xFF66BB6A),
       'likes': '89',
       'comments': '15',
       'tag': 'Sponsored',
-      'pollQuestion': 'तुम्ही घरपोच जेवण मागवण्यास इंटरेस्टेड आहात का?',
     },
     {
       'seller': 'फॅशन पॉईंट',
-      'category': 'कपडे',
       'location': 'मगरपट्टा, पुणे',
       'avatar': 'F',
       'avatarColor': Colors.pink,
       'type': 'photo',
       'title': 'नवीन Collection आली!',
       'desc': 'Ladies & Gents कपडे — Buy 2 Get 1 Free. आजच या!',
-      'bgColor1': const Color(0xFFAD1457),
-      'bgColor2': const Color(0xFFEC407A),
+      'bgColor1': Color(0xFFAD1457),
+      'bgColor2': Color(0xFFEC407A),
       'likes': '312',
       'comments': '67',
       'tag': 'Ad',
-      'pollQuestion': 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?',
     },
   ];
 
@@ -87,6 +85,14 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
     {'title': 'किराणा 10% Off', 'seller': 'श्री गणेश किराणा', 'validity': '31 July पर्यंत', 'color': Colors.orange, 'saved': false},
     {'title': 'Free Delivery', 'seller': 'स्वाद हॉटेल', 'validity': 'आठवडाभर', 'color': Colors.green, 'saved': false},
     {'title': 'Mobile Cashback Rs.500', 'seller': 'राज इलेक्ट्रॉनिक्स', 'validity': '5 Aug पर्यंत', 'color': Colors.blue, 'saved': false},
+  ];
+
+  // TODO (Stage 3 - Backend): replace with real recent posts from Firestore
+  // (collection: wall_posts, ordered by createdAt desc, same feed as My Wall)
+  final List<Map<String, String>> _localPosts = [
+    {'name': 'सुनिता पाटील', 'time': '2 तासांपूर्वी', 'text': 'कोणाला चांगला इलेक्ट्रिशियन माहिती आहे का? घरी काम आहे.'},
+    {'name': 'राहुल शिंदे', 'time': '5 तासांपूर्वी', 'text': 'आज स्थानिक बाजारात ताजी भाजी मिळाली, खूप छान दर्जा!'},
+    {'name': 'प्रिया देशमुख', 'time': '1 दिवसांपूर्वी', 'text': 'AMOLE मुळे माझ्या परिसरातल्या दुकानांची माहिती मिळाली, खूप उपयोगी App आहे.'},
   ];
 
   @override
@@ -97,7 +103,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
 
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 4), () {
-      if (mounted && _pageController.hasClients && _selectedTab == 0) {
+      if (mounted && _pageController.hasClients && _selectedTab == _adsTabIndex) {
         final next = (_currentPage + 1) % _ads.length;
         _pageController.animateToPage(next, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
         setState(() => _currentPage = next);
@@ -112,346 +118,308 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
     super.dispose();
   }
 
-  // Blueprint 6.8: poll-reply cost split — replier gets 35% of cost per reply.
-  double _pollRewardFor(Map<String, dynamic> ad) {
-    switch (ad['type']) {
-      case 'video':
-        return 0.175; // Video (30s) ₹0.50 → 35% = ₹0.175
-      case 'photo':
-        return 0.0875; // Photo ₹0.25 → 35% = ₹0.0875
-      default:
-        return 0.035; // Text ₹0.10 → 35% = ₹0.035
-    }
+  void _goToMyWall() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const MyWallScreen()));
   }
 
-  Widget _buildPollSection(Map<String, dynamic> ad) {
-    final bool answered = ad['pollAnswer'] != null;
-    final String question = ad['pollQuestion'] ?? 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?';
-
-    void answer(bool yes) {
-      setState(() => ad['pollAnswer'] = yes);
-      final reward = _pollRewardFor(ad);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('✅ धन्यवाद! तुम्हाला ₹${reward.toStringAsFixed(3)} रिवॉर्ड मिळाले'),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.primaryBlue.withOpacity(0.07),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.primaryBlue.withOpacity(0.15)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.poll_outlined, size: 16, color: AppColors.primaryBlue),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(question, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark)),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: answered ? null : () => answer(true),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: (answered && ad['pollAnswer'] == true) ? Colors.green : Colors.transparent,
-                    side: const BorderSide(color: Colors.green),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  child: Text('Yes', style: TextStyle(color: (answered && ad['pollAnswer'] == true) ? Colors.white : Colors.green, fontWeight: FontWeight.bold, fontSize: 13)),
+  Widget _buildLocalConnectTab() {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      itemCount: _localPosts.length,
+      itemBuilder: (context, index) {
+        final post = _localPosts[index];
+        return GestureDetector(
+          onTap: _goToMyWall,
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                  child: Text(post['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: answered ? null : () => answer(false),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: (answered && ad['pollAnswer'] == false) ? Colors.red : Colors.transparent,
-                    side: const BorderSide(color: Colors.red),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(post['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
+                          const SizedBox(width: 6),
+                          Text('· ${post['time']!}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(post['text']!, style: const TextStyle(fontSize: 13, color: AppColors.textDark), maxLines: 2, overflow: TextOverflow.ellipsis),
+                    ],
                   ),
-                  child: Text('No', style: TextStyle(color: (answered && ad['pollAnswer'] == false) ? Colors.white : Colors.red, fontWeight: FontWeight.bold, fontSize: 13)),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          if (answered) ...[
-            const SizedBox(height: 6),
-            Text('तुमचं उत्तर नोंदवलं गेलं ✅', style: TextStyle(fontSize: 10.5, color: Colors.green.shade700)),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildAdCard(Map<String, dynamic> ad) {
-    final double mediaHeight = widget.compact ? 240 : 360;
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(
-        builder: (_) => SellerProfileScreen(sellerName: ad['seller'], category: ad['category'] ?? ''),
-      )),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 12, offset: const Offset(0, 4))],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: ad['avatarColor'] as Color,
-                    child: Text(ad['avatar'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(ad['seller'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on, size: 11, color: AppColors.textLight),
-                            const SizedBox(width: 2),
-                            Text(ad['location'], style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                              decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(4)),
-                              child: Text(ad['tag'], style: const TextStyle(fontSize: 9, color: AppColors.textLight)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right, color: AppColors.textLight),
-                ],
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              height: mediaHeight,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [ad['bgColor1'] as Color, ad['bgColor2'] as Color],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+    final double mediaHeight = widget.compact ? 180 : (widget.isSeller ? 220 : 240);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 12, offset: const Offset(0, 4))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: ad['avatarColor'] as Color,
+                  child: Text(ad['avatar'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(ad['seller'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on, size: 11, color: AppColors.textLight),
+                          const SizedBox(width: 2),
+                          Text(ad['location'], style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                            decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(4)),
+                            child: Text(ad['tag'], style: const TextStyle(fontSize: 9, color: AppColors.textLight)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.more_horiz, color: AppColors.textLight),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            height: mediaHeight,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [ad['bgColor1'] as Color, ad['bgColor2'] as Color],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              child: Stack(
-                children: [
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          ad['type'] == 'video' ? Icons.play_circle_filled : Icons.image_outlined,
-                          color: Colors.white.withOpacity(0.3),
-                          size: 70,
-                        ),
-                        const SizedBox(height: 12),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(ad['title'],
-                              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center),
-                        ),
-                        const SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(ad['desc'],
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
-                              textAlign: TextAlign.center),
-                        ),
-                      ],
+            ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        ad['type'] == 'video' ? Icons.play_circle_filled : Icons.image_outlined,
+                        color: Colors.white.withOpacity(0.3),
+                        size: 70,
+                      ),
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(ad['title'],
+                            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center),
+                      ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(ad['desc'],
+                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            textAlign: TextAlign.center),
+                      ),
+                    ],
+                  ),
+                ),
+                if (ad['type'] == 'video')
+                  Positioned(
+                    top: 8, right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                      decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
+                      child: const Row(children: [
+                        Icon(Icons.videocam, color: Colors.white, size: 12),
+                        SizedBox(width: 3),
+                        Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
+                      ]),
                     ),
                   ),
-                  if (ad['type'] == 'video')
-                    Positioned(
-                      top: 8, right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(4)),
-                        child: const Row(children: [
-                          Icon(Icons.videocam, color: Colors.white, size: 12),
-                          SizedBox(width: 3),
-                          Text('Video', style: TextStyle(color: Colors.white, fontSize: 10)),
-                        ]),
-                      ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+            child: Row(
+              children: [
+                const Icon(Icons.thumb_up, color: AppColors.primaryBlue, size: 14),
+                const SizedBox(width: 4),
+                Text('${ad['likes']} आवडले', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                const Spacer(),
+                Text('${ad['comments']} comments', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        final current = int.tryParse(ad['likes'].replaceAll(',', '')) ?? 0;
+                        ad['liked'] = !(ad['liked'] ?? false);
+                        ad['likes'] = ad['liked'] ? (current + 1).toString() : (current - 1).toString();
+                      });
+                    },
+                    icon: Icon(
+                      (ad['liked'] ?? false) ? Icons.thumb_up : Icons.thumb_up_outlined,
+                      size: 16,
+                      color: (ad['liked'] ?? false) ? AppColors.primaryBlue : AppColors.textLight,
                     ),
-                ],
-              ),
-            ),
-            _buildPollSection(ad),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-              child: Row(
-                children: [
-                  const Icon(Icons.thumb_up, color: AppColors.primaryBlue, size: 14),
-                  const SizedBox(width: 4),
-                  Text('${ad['likes']} आवडले', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-                  const Spacer(),
-                  Text('${ad['comments']} comments', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          final current = int.tryParse(ad['likes'].replaceAll(',', '')) ?? 0;
-                          ad['liked'] = !(ad['liked'] ?? false);
-                          ad['likes'] = ad['liked'] ? (current + 1).toString() : (current - 1).toString();
-                        });
-                      },
-                      icon: Icon(
-                        (ad['liked'] ?? false) ? Icons.thumb_up : Icons.thumb_up_outlined,
-                        size: 16,
+                    label: Text(
+                      'आवडले',
+                      style: TextStyle(
                         color: (ad['liked'] ?? false) ? AppColors.primaryBlue : AppColors.textLight,
-                      ),
-                      label: Text(
-                        'आवडले',
-                        style: TextStyle(
-                          color: (ad['liked'] ?? false) ? AppColors.primaryBlue : AppColors.textLight,
-                          fontSize: 12,
-                          fontWeight: (ad['liked'] ?? false) ? FontWeight.bold : FontWeight.normal,
-                        ),
+                        fontSize: 12,
+                        fontWeight: (ad['liked'] ?? false) ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () {
-                        final commentController = TextEditingController();
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                          builder: (ctx) => Padding(
-                            padding: EdgeInsets.only(left: 16, right: 16, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text('Comments', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                    IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
-                                  ],
-                                ),
-                                const Divider(),
-                                const ListTile(
-                                  leading: CircleAvatar(child: Text('A')),
-                                  title: Text('अनिल जोशी'),
-                                  subtitle: Text('खूप छान ऑफर आहे!'),
-                                ),
-                                const ListTile(
-                                  leading: CircleAvatar(child: Text('S')),
-                                  title: Text('संगीता राणे'),
-                                  subtitle: Text('किंमत योग्य आहे.'),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextField(
-                                        controller: commentController,
-                                        decoration: InputDecoration(
-                                          hintText: 'Comment लिहा...',
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                                        ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      final commentController = TextEditingController();
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                        builder: (ctx) => Padding(
+                          padding: EdgeInsets.only(left: 16, right: 16, top: 20, bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Comments', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                                ],
+                              ),
+                              const Divider(),
+                              const ListTile(
+                                leading: CircleAvatar(child: Text('A')),
+                                title: Text('अनिल जोशी'),
+                                subtitle: Text('खूप छान ऑफर आहे!'),
+                              ),
+                              const ListTile(
+                                leading: CircleAvatar(child: Text('S')),
+                                title: Text('संगीता राणे'),
+                                subtitle: Text('किंमत योग्य आहे.'),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: commentController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Comment लिहा...',
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    IconButton(
-                                      onPressed: () {
-                                        if (commentController.text.isNotEmpty) {
-                                          Navigator.pop(ctx);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('Comment पाठवला!'), backgroundColor: Colors.green),
-                                          );
-                                        }
-                                      },
-                                      icon: const Icon(Icons.send, color: AppColors.primaryBlue),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    onPressed: () {
+                                      if (commentController.text.isNotEmpty) {
+                                        Navigator.pop(ctx);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Comment पाठवला!'), backgroundColor: Colors.green),
+                                        );
+                                      }
+                                    },
+                                    icon: const Icon(Icons.send, color: AppColors.primaryBlue),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.chat_bubble_outline, size: 16, color: AppColors.textLight),
-                      label: const Text('टिप्पणी', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                    ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.chat_bubble_outline, size: 16, color: AppColors.textLight),
+                    label: const Text('टिप्पणी', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
                   ),
-                  Expanded(
-                    child: TextButton.icon(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: const Text('Share करा'),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.chat, color: Colors.green),
-                                  title: const Text('WhatsApp'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp वर Share होत आहे...')));
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.copy, color: AppColors.primaryBlue),
-                                  title: const Text('Link Copy करा'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link Copy झाली!'), backgroundColor: Colors.green));
-                                  },
-                                ),
-                              ],
-                            ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text('Share करा'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.chat, color: Colors.green),
+                                title: const Text('WhatsApp'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('WhatsApp वर Share होत आहे...')));
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.copy, color: AppColors.primaryBlue),
+                                title: const Text('Link Copy करा'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link Copy झाली!'), backgroundColor: Colors.green));
+                                },
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.share_outlined, size: 16, color: AppColors.textLight),
-                      label: const Text('Share', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                    ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.share_outlined, size: 16, color: AppColors.textLight),
+                    label: const Text('Share', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -462,14 +430,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       itemCount: _myOffers.length,
       itemBuilder: (context, index) {
         final offer = _myOffers[index];
-        return GestureDetector(
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => SellerProfileScreen(
-              sellerName: offer['seller'],
-              category: 'दुकान',
-            ),
-          )),
-          child: Container(
+        return Container(
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -516,7 +477,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
                 child: Text(offer['saved'] ? 'Saved' : 'Save', style: const TextStyle(color: Colors.white, fontSize: 12)),
               ),
             ],
-          ),
           ),
         );
       },
@@ -573,10 +533,13 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   Widget build(BuildContext context) {
     final tabs = widget.isSeller
         ? ['📢 जाहिराती', '🎯 Create Offer']
-        : ['📢 जाहिराती', '🎁 My Offers'];
+        : ['🧑‍🤝‍🧑 लोकल कनेक्ट', '📢 जाहिराती', '🎁 My Offers'];
+
+    final double feedHeight = widget.compact ? 340 : (widget.isSeller ? 400 : 440);
 
     return Column(
       children: [
+        // Tab Bar
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(10)),
@@ -594,7 +557,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
                       style: TextStyle(
                         color: _selectedTab == i ? Colors.white : AppColors.textLight,
                         fontWeight: _selectedTab == i ? FontWeight.bold : FontWeight.normal,
-                        fontSize: 13,
+                        fontSize: 12,
                       )),
                 ),
               ),
@@ -602,9 +565,12 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
           ),
         ),
         const SizedBox(height: 8),
-        if (_selectedTab == 0) ...[
+        // Content
+        if (_hasLocalConnect && _selectedTab == 0) ...[
+          SizedBox(height: feedHeight, child: _buildLocalConnectTab()),
+        ] else if (_selectedTab == _adsTabIndex) ...[
           SizedBox(
-            height: widget.compact ? 460 : 620,
+            height: feedHeight,
             child: PageView.builder(
               controller: _pageController,
               onPageChanged: (i) => setState(() => _currentPage = i),
@@ -626,9 +592,9 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             )),
           ),
           const SizedBox(height: 8),
-        ] else if (_selectedTab == 1 && !widget.isSeller)
-          SizedBox(height: 340, child: _buildMyOffersTab())
-        else if (_selectedTab == 1 && widget.isSeller)
+        ] else if (_selectedTab == _offersTabIndex && !widget.isSeller)
+          SizedBox(height: feedHeight, child: _buildMyOffersTab())
+        else if (_selectedTab == _offersTabIndex && widget.isSeller)
           SizedBox(height: 420, child: _buildCreateOfferTab(context)),
       ],
     );
