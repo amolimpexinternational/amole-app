@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../data/ads_data.dart';
+import '../../data/local_posts_data.dart';
 import 'admin_channel_partners_screen.dart';
 import 'admin_subadmin_screen.dart';
 import 'admin_revenue_screen.dart';
@@ -14,6 +16,9 @@ import 'admin_add_franchise_screen.dart';
 import 'admin_add_seller_screen.dart';
 import 'admin_create_ad_screen.dart';
 import 'admin_send_notification_screen.dart';
+import 'admin_settlement_screen.dart';
+import 'admin_live_ads_screen.dart';
+import 'admin_viral_posts_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -67,11 +72,7 @@ class _AdminDashboard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.royalBlue, AppColors.primaryBlue],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: LinearGradient(colors: [AppColors.royalBlue, AppColors.primaryBlue], begin: Alignment.topLeft, end: Alignment.bottomRight),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,13 +80,10 @@ class _AdminDashboard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('नमस्कार, Admin! 👋', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                        Text('AMOLE Admin Panel', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
+                    const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('नमस्कार, Admin! 👋', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                      Text('AMOLE Admin Panel', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                    ]),
                     Row(children: [
                       GestureDetector(
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminWalletScreen())),
@@ -161,6 +159,9 @@ class _AdminDashboard extends StatelessWidget {
               _kpi(context, 'एकूण Buyers', '0', 'नोंदणीकृत', Icons.people_outlined, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminBuyerListScreen()))),
               _kpi(context, 'आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
               _kpi(context, 'महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
+              _kpi(context, 'Live जाहिराती', '${AdsData.liveAds.length}', 'एकूण Live', Icons.campaign_outlined, Colors.deepOrange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminLiveAdsScreen()))),
+              _kpi(context, 'Most Viral पोस्ट', '${LocalPostsData.posts.where((p) => p.responsePoints >= 1000).length}', '1000+ Response', Icons.local_fire_department_outlined, Colors.redAccent, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminViralPostsScreen()))),
+              _kpi(context, 'Daily Settlement', '', 'Seller-निहाय, तारीखनिहाय', Icons.account_balance_outlined, Colors.brown, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSettlementScreen()))),
             ],
           ),
           const SizedBox(height: 24),
@@ -221,24 +222,24 @@ class _AdminDashboard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white, borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(14),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+              Icon(icon, color: color, size: 22),
+            ]),
+            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+            Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-            Icon(icon, color: color, size: 22),
-          ]),
-          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-          Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-        ],
-      ),
-    ),
     );
   }
 }
