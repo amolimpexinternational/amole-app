@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'admin_edit_profile_screen.dart';
-import 'admin_view_dashboard_screen.dart';
+import '../channel_partner/channel_partner_home_screen.dart';
 
 class AdminChannelPartnersScreen extends StatelessWidget {
   const AdminChannelPartnersScreen({super.key});
@@ -64,18 +64,7 @@ class AdminChannelPartnersScreen extends StatelessWidget {
             ProfileField(label: 'Join Date', icon: Icons.calendar_today_outlined, value: cp['joinDate'] ?? ''),
             ProfileField(label: 'KYC Status', icon: Icons.verified_outlined, value: cp['kyc'] ?? ''),
           ],
-          dashboardScreen: AdminViewDashboardScreen(
-            name: cp['name'] ?? '',
-            roleLabel: 'Channel Partner',
-            headerSubtitle: '${cp['district']} — ${cp['id']}',
-            revenueLabel: 'या महिन्याचं Revenue Share',
-            revenueValue: cp['revenue'] ?? '₹0',
-            kpis: [
-              DashboardKpi(title: 'एकूण Franchise', value: cp['franchise'] ?? '0', subtitle: 'Active', icon: Icons.business_outlined, color: AppColors.primaryBlue),
-              DashboardKpi(title: 'Active Sellers', value: cp['sellers'] ?? '0', subtitle: 'नोंदणीकृत', icon: Icons.storefront_outlined, color: AppColors.successGreen),
-              DashboardKpi(title: 'एकूण Buyers', value: cp['buyers'] ?? '0', subtitle: 'नोंदणीकृत', icon: Icons.people_outline, color: AppColors.primaryOrange),
-            ],
-          ),
+          dashboardScreen: const ChannelPartnerHomeScreen(),
         ),
       )),
       child: Container(

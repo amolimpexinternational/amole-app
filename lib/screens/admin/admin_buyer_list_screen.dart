@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'admin_edit_profile_screen.dart';
+import '../buyer/buyer_home_screen.dart';
 
 class AdminBuyerListScreen extends StatelessWidget {
   const AdminBuyerListScreen({super.key});
@@ -45,6 +46,7 @@ class AdminBuyerListScreen extends StatelessWidget {
                     fields: [
                       ProfileField(label: 'परिसर', icon: Icons.location_on_outlined, value: b['area'] ?? ''),
                     ],
+                    dashboardScreen: const BuyerHomeScreen(),
                   ),
                 )),
                 child: Container(

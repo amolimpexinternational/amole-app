@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'admin_edit_profile_screen.dart';
-import 'admin_view_dashboard_screen.dart';
+import '../seller/seller_home_screen.dart';
 
 class AdminSellerListScreen extends StatelessWidget {
   const AdminSellerListScreen({super.key});
@@ -51,17 +51,7 @@ class AdminSellerListScreen extends StatelessWidget {
                       ProfileField(label: 'Franchise', icon: Icons.storefront_outlined, value: s['franchise'] ?? ''),
                       ProfileField(label: 'स्थिती', icon: Icons.verified_outlined, value: s['status'] ?? ''),
                     ],
-                    dashboardScreen: AdminViewDashboardScreen(
-                      name: s['shop'] ?? '',
-                      roleLabel: 'Seller',
-                      headerSubtitle: s['franchise'] ?? '',
-                      revenueLabel: 'या महिन्यातील महसूल',
-                      revenueValue: s['revenue'] ?? '₹0',
-                      kpis: [
-                        DashboardKpi(title: 'ऑर्डर्स', value: s['orders'] ?? '0', subtitle: 'या महिन्यात', icon: Icons.shopping_bag_outlined, color: Colors.orange),
-                        DashboardKpi(title: 'ग्राहक', value: s['customers'] ?? '0', subtitle: 'या महिन्यात', icon: Icons.people_outlined, color: Colors.purple),
-                      ],
-                    ),
+                    dashboardScreen: const SellerHomeScreen(),
                   ),
                 )),
                 child: Container(

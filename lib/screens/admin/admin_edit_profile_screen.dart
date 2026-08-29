@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import 'admin_view_dashboard_screen.dart';
 import 'admin_entity_transactions_screen.dart';
 
 class ProfileField {
@@ -8,6 +7,43 @@ class ProfileField {
   final IconData icon;
   String value;
   ProfileField({required this.label, required this.icon, required this.value});
+}
+
+// Admin जेव्हा CP/Franchise/Seller/Buyer चा खरा Home Dashboard उघडतो, तेव्हा
+// त्या मूळ स्क्रीनमध्ये कुठलाही बदल न करता वर एक तरंगणारं Back बटण दाखवतो —
+// कारण त्या रोलच्या स्वतःच्या home screen ला मुळात Back बटणाची गरज नसते.
+class _AdminDashboardWrapper extends StatelessWidget {
+  final Widget child;
+  final String roleLabel;
+  const _AdminDashboardWrapper({required this.child, required this.roleLabel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          child,
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8, top: 8),
+              child: Material(
+                color: Colors.black.withValues(alpha: 0.35),
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () => Navigator.pop(context),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Icon(Icons.arrow_back, color: Colors.white, size: 22),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class AdminEditProfileScreen extends StatefulWidget {
@@ -110,7 +146,9 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen> {
                     if (widget.dashboardScreen != null)
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => widget.dashboardScreen!)),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(
+                            builder: (_) => _AdminDashboardWrapper(roleLabel: widget.roleLabel, child: widget.dashboardScreen!),
+                          )),
                           icon: const Icon(Icons.dashboard_outlined, size: 18),
                           label: const Text('डॅशबोर्ड बघा', style: TextStyle(fontSize: 12)),
                         ),

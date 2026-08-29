@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'admin_edit_profile_screen.dart';
-import 'admin_view_dashboard_screen.dart';
+import '../franchise/franchise_home_screen.dart';
 
 class AdminFranchiseListScreen extends StatelessWidget {
   const AdminFranchiseListScreen({super.key});
@@ -54,17 +54,7 @@ class AdminFranchiseListScreen extends StatelessWidget {
                       ProfileField(label: 'Channel Partner', icon: Icons.hub_outlined, value: f['cp'] ?? ''),
                       ProfileField(label: 'स्थिती', icon: Icons.verified_outlined, value: f['status'] ?? ''),
                     ],
-                    dashboardScreen: AdminViewDashboardScreen(
-                      name: f['name'] ?? '',
-                      roleLabel: 'Franchise',
-                      headerSubtitle: f['area'] ?? '',
-                      revenueLabel: "या महिन्याचा व्यवसाय",
-                      revenueValue: f['business'] ?? '₹0',
-                      kpis: [
-                        DashboardKpi(title: 'Total Sellers', value: f['sellers'] ?? '0', subtitle: 'नोंदणीकृत', icon: Icons.storefront_outlined, color: AppColors.primaryBlue),
-                        DashboardKpi(title: 'Total Buyers', value: f['buyers'] ?? '0', subtitle: 'नोंदणीकृत', icon: Icons.people_outline, color: AppColors.successGreen),
-                      ],
-                    ),
+                    dashboardScreen: const FranchiseHomeScreen(),
                   ),
                 )),
                 child: Container(
