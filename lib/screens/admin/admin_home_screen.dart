@@ -4,6 +4,9 @@ import 'admin_channel_partners_screen.dart';
 import 'admin_subadmin_screen.dart';
 import 'admin_revenue_screen.dart';
 import 'admin_wallet_screen.dart';
+import 'admin_franchise_list_screen.dart';
+import 'admin_seller_list_screen.dart';
+import 'admin_buyer_list_screen.dart';
 import 'admin_notification_screen.dart';
 import 'admin_profile_screen.dart';
 import 'admin_approvals_screen.dart';
@@ -152,12 +155,12 @@ class _AdminDashboard extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             children: [
-              _kpi('Channel Partners', '0', 'एकूण जिल्हे', Icons.hub_outlined, Colors.indigo, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminChannelPartnersScreen()))),
-              _kpi('Franchise', '0', 'एकूण पिनकोड', Icons.storefront_outlined, AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminFranchiseListScreen()))),
-              _kpi('एकूण Sellers', '0', 'नोंदणीकृत', Icons.store_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSellerListScreen()))),
-              _kpi('एकूण Buyers', '0', 'नोंदणीकृत', Icons.people_outlined, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBuyerListScreen()))),
-              _kpi('आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminRevenueScreen()))),
-              _kpi('महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminRevenueScreen()))),
+              _kpi(context, 'Channel Partners', '0', 'एकूण जिल्हे', Icons.hub_outlined, Colors.indigo, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminChannelPartnersScreen()))),
+              _kpi(context, 'Franchise', '0', 'एकूण पिनकोड', Icons.storefront_outlined, AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminFranchiseListScreen()))),
+              _kpi(context, 'एकूण Sellers', '0', 'नोंदणीकृत', Icons.store_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminSellerListScreen()))),
+              _kpi(context, 'एकूण Buyers', '0', 'नोंदणीकृत', Icons.people_outlined, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminBuyerListScreen()))),
+              _kpi(context, 'आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
+              _kpi(context, 'महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
             ],
           ),
           const SizedBox(height: 24),
@@ -214,7 +217,7 @@ class _AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _kpi(String title, String value, String subtitle, IconData icon, Color color, {VoidCallback? onTap}) {
+  Widget _kpi(BuildContext context, String title, String value, String subtitle, IconData icon, Color color, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
