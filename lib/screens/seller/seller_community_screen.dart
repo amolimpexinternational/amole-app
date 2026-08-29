@@ -132,7 +132,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => Navigator.pop(_),
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close, color: Colors.white),
                   ),
                 ],
