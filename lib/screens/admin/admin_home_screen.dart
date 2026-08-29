@@ -3,6 +3,7 @@ import '../../constants/app_colors.dart';
 import 'admin_channel_partners_screen.dart';
 import 'admin_subadmin_screen.dart';
 import 'admin_revenue_screen.dart';
+import 'admin_wallet_screen.dart';
 import 'admin_notification_screen.dart';
 import 'admin_profile_screen.dart';
 import 'admin_approvals_screen.dart';
@@ -83,14 +84,17 @@ class _AdminDashboard extends StatelessWidget {
                       ],
                     ),
                     Row(children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(20)),
-                        child: const Row(children: [
-                          Icon(Icons.currency_rupee, color: Colors.white, size: 16),
-                          SizedBox(width: 4),
-                          Text('₹0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                        ]),
+                      GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminWalletScreen())),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(20)),
+                          child: const Row(children: [
+                            Icon(Icons.currency_rupee, color: Colors.white, size: 16),
+                            SizedBox(width: 4),
+                            Text('₹0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                          ]),
+                        ),
                       ),
                       const SizedBox(width: 6),
                       IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminNotificationScreen()))),
@@ -148,12 +152,12 @@ class _AdminDashboard extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             children: [
-              _kpi('Channel Partners', '0', 'एकूण जिल्हे', Icons.hub_outlined, Colors.indigo),
-              _kpi('Franchise', '0', 'एकूण पिनकोड', Icons.storefront_outlined, AppColors.primaryBlue),
-              _kpi('एकूण Sellers', '0', 'नोंदणीकृत', Icons.store_outlined, Colors.teal),
-              _kpi('एकूण Buyers', '0', 'नोंदणीकृत', Icons.people_outlined, Colors.purple),
-              _kpi('आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green),
-              _kpi('महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink),
+              _kpi('Channel Partners', '0', 'एकूण जिल्हे', Icons.hub_outlined, Colors.indigo, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminChannelPartnersScreen()))),
+              _kpi('Franchise', '0', 'एकूण पिनकोड', Icons.storefront_outlined, AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminFranchiseListScreen()))),
+              _kpi('एकूण Sellers', '0', 'नोंदणीकृत', Icons.store_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSellerListScreen()))),
+              _kpi('एकूण Buyers', '0', 'नोंदणीकृत', Icons.people_outlined, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminBuyerListScreen()))),
+              _kpi('आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminRevenueScreen()))),
+              _kpi('महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminRevenueScreen()))),
             ],
           ),
           const SizedBox(height: 24),
@@ -210,8 +214,10 @@ class _AdminDashboard extends StatelessWidget {
     );
   }
 
-  Widget _kpi(String title, String value, String subtitle, IconData icon, Color color) {
-    return Container(
+  Widget _kpi(String title, String value, String subtitle, IconData icon, Color color, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white, borderRadius: BorderRadius.circular(14),
@@ -229,6 +235,7 @@ class _AdminDashboard extends StatelessWidget {
           Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
         ],
       ),
+    ),
     );
   }
 }
