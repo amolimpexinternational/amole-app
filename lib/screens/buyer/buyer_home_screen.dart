@@ -67,6 +67,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
       case 'logistics':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ComingSoonScreen(title: 'डिलिव्हरी / लॉजिस्टिक्स सेवा')));
         break;
+      case 'farmers':
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const ComingSoonScreen(title: 'शेतकरी यादी')));
+        break;
     }
   }
 
@@ -300,15 +303,8 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             },
           ),
 
-          const SizedBox(height: 16),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text('जाहिराती', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-          ),
-          const SizedBox(height: 8),
           const AdFeedWidget(),
           const SizedBox(height: 8),
-          const SizedBox(height: 20),
 
           // Nearby Sellers
           Padding(
