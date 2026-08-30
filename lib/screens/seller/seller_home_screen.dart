@@ -9,6 +9,7 @@ import 'seller_notification_screen.dart';
 import 'seller_revenue_detail_screen.dart';
 import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
+import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -339,9 +340,13 @@ class _SellerDashboard extends StatelessWidget {
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),
                     onTap: () {
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('${c['name']} profile — लवकरच येणार!')),
-                      );
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => SellerCustomerProfileScreen(
+                          customerName: c['name']!,
+                          totalPurchase: c['purchase']!,
+                          visits: c['visits']!,
+                        ),
+                      ));
                     },
                   );
                 },
