@@ -240,7 +240,7 @@ class _SellerDashboard extends StatelessWidget {
                       child: Column(children: const [
                         Icon(Icons.stars_outlined, color: Colors.amber, size: 24),
                         SizedBox(height: 6),
-                        Text('Discount Offer', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+                        Text('स्पेशल ऑफर्स', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
                       ]),
                     ),
                   ),

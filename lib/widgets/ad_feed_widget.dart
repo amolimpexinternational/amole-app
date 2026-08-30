@@ -17,13 +17,13 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   int _currentPage = 0;
   int _selectedTab = 0;
 
-  // बायरसाठी टॅब क्रम: 0 = लोकल कनेक्ट, 1 = जाहिराती, 2 = My Offers, 3 = Most Viral
-  // सेलरसाठी: 0 = जाहिराती, 1 = Create Offer
-  int get _adsTabIndex => widget.isSeller ? 0 : 1;
-  int get _offersTabIndex => widget.isSeller ? 1 : 2;
-  int get _viralTabIndex => 3;
-  bool get _hasLocalConnect => !widget.isSeller;
-  bool get _hasViralTab => !widget.isSeller;
+  // सर्वांसाठी (Buyer व Seller) समान टॅब क्रम: 0 = लोकल कनेक्ट, 1 = जाहिराती, 2 = My Offers,
+  // 3 = Create Offer (फक्त Seller साठी), शेवटचा = Most Viral
+  int get _localConnectTabIndex => 0;
+  int get _adsTabIndex => 1;
+  int get _offersTabIndex => 2;
+  int get _createOfferTabIndex => 3;
+  int get _viralTabIndex => widget.isSeller ? 4 : 3;
 
   final List<Map<String, dynamic>> _ads = [
     {
@@ -846,7 +846,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   @override
   Widget build(BuildContext context) {
     final tabs = widget.isSeller
-        ? ['📢 जाहिराती', '🎯 Create Offer']
+        ? ['🧑‍🤝‍🧑 लोकल कनेक्ट', '📢 जाहिराती', '🎁 My Offers', '🎯 Create Offer', '🔥 Most Viral']
         : ['🧑‍🤝‍🧑 लोकल कनेक्ट', '📢 जाहिराती', '🎁 My Offers', '🔥 Most Viral'];
 
     final double feedHeight = widget.compact ? 340 : (widget.isSeller ? 400 : 440);
@@ -880,7 +880,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
           ),
         ),
         const SizedBox(height: 8),
-        if (_hasLocalConnect && _selectedTab == 0) ...[
+        if (_selectedTab == _localConnectTabIndex) ...[
           SizedBox(height: feedHeight, child: _buildLocalConnectTab()),
         ] else if (_selectedTab == _adsTabIndex) ...[
           SizedBox(
@@ -906,11 +906,11 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             )),
           ),
           const SizedBox(height: 8),
-        ] else if (_selectedTab == _offersTabIndex && !widget.isSeller)
+        ] else if (_selectedTab == _offersTabIndex)
           SizedBox(height: feedHeight, child: _buildMyOffersTab())
-        else if (_selectedTab == _offersTabIndex && widget.isSeller)
+        else if (widget.isSeller && _selectedTab == _createOfferTabIndex)
           SizedBox(height: 420, child: _buildCreateOfferTab(context))
-        else if (_hasViralTab && _selectedTab == _viralTabIndex)
+        else if (_selectedTab == _viralTabIndex)
           SizedBox(height: feedHeight, child: _buildMostViralTab()),
       ],
     );
