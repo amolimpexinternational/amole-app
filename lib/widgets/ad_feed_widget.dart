@@ -852,8 +852,16 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         : ['🧑‍🤝‍🧑 लोकल कनेक्ट', '📢 जाहिराती', '🎁 My Offers', '🔥 Most Viral'];
 
     final double feedHeight = widget.compact ? 340 : (widget.isSeller ? 400 : 440);
-    // Poll विभागामुळे जाहिरात कार्ड उंच झालं आहे — ads टॅबसाठी जास्त उंची
-    final double adsFeedHeight = widget.compact ? 460 : (widget.isSeller ? 440 : 560);
+    // मूळ कारण: आधी हा एक अंदाजे स्थिर आकडा होता (Poll + AspectRatio(4:5)
+    // मीडियाची खरी उंची न मोजता) — मोठ्या स्क्रीनवर कार्डाची खरी उंची या
+    // fixed आकड्यापेक्षा जास्त होत असे, आणि Poll SingleChildScrollView च्या
+    // आत दिसणाऱ्या भागाबाहेर clip होत असे. buyer/seller साठी वेगळे आकडे
+    // वापरल्यानेच सेलरचं कार्ड बायरपेक्षा जास्त लहान/क्लिप दिसत होतं.
+    // आता स्क्रीनच्या रुंदीवरून खरी मीडिया-उंची काढून, buyer/seller दोघांसाठी
+    // समान सूत्राने पुरेशी उंची दिली आहे.
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double adMediaHeight = (screenWidth - 32) * 5 / 4;
+    final double adsFeedHeight = adMediaHeight + 340;
 
     return Column(
       children: [
