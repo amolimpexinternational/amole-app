@@ -161,6 +161,7 @@ class _SellerDashboard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 6),
+                        IconButton(icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())), tooltip: 'Subscription'),
                         IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))),
                         IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))),
                       ],
@@ -210,45 +211,8 @@ class _SellerDashboard extends StatelessWidget {
             child: Text('जाहिराती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 8),
-          const AdFeedWidget(compact: true, isSeller: true),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
-                      child: Column(children: const [
-                        Icon(Icons.workspace_premium_outlined, color: AppColors.primaryBlue, size: 24),
-                        SizedBox(height: 6),
-                        Text('Subscription', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
-                      ]),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerDiscountOfferScreen())),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                      child: Column(children: const [
-                        Icon(Icons.stars_outlined, color: Colors.amber, size: 24),
-                        SizedBox(height: 6),
-                        Text('स्पेशल ऑफर्स', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textDark)),
-                      ]),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
+          const AdFeedWidget(isSeller: true),
+          const SizedBox(height: 8),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('माझा आढावा — 30 दिवस', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
@@ -263,12 +227,12 @@ class _SellerDashboard extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             children: [
-              _kpiCard('प्रोफाइल व्ह्यूज', '1,248', 'आज: 42', Icons.visibility_outlined, AppColors.primaryBlue),
-              _kpiCard('ऑर्डर्स', '37', '3 प्रतीक्षेत', Icons.shopping_bag_outlined, Colors.orange),
-              _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green),
-              _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple),
-              _kpiCard('नवीन ग्राहक', '8', 'आज', Icons.person_add_outlined, Colors.teal),
-              _kpiCard('सक्रिय जाहिराती', '2', 'चालू आहेत', Icons.campaign_outlined, Colors.pink),
+              _kpiCard('प्रोफाइल व्ह्यूज', '1,248', 'आज: 42', Icons.visibility_outlined, AppColors.primaryBlue, onTap: () => _showProfileViewers(context)),
+              _kpiCard('विक्री झालेल्या वस्तू', '37', '3 प्रतीक्षेत', Icons.shopping_bag_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen()))),
+              _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
+              _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
+              _kpiCard('नवीन जाहिराती', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
+              _kpiCard('सक्रिय जाहिराती', '2', 'चालू आहेत', Icons.campaign_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
             ],
           ),
           const SizedBox(height: 24),
@@ -277,8 +241,10 @@ class _SellerDashboard extends StatelessWidget {
     );
   }
 
-  Widget _kpiCard(String title, String value, String subtitle, IconData icon, Color color) {
-    return Container(
+  Widget _kpiCard(String title, String value, String subtitle, IconData icon, Color color, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -296,6 +262,96 @@ class _SellerDashboard extends StatelessWidget {
           Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
           Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
         ],
+      ),
+    ),
+    );
+  }
+
+  void _showProfileViewers(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Profile बघणारे', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            _viewerTile('अनिल जोशी', 'आज सकाळी 10:30', Icons.person_outlined),
+            _viewerTile('संगीता राणे', 'काल दुपारी 2:15', Icons.person_outlined),
+            _viewerTile('रमेश पाटील', 'काल सायं 5:00', Icons.person_outlined),
+            _viewerTile('प्रिया देशमुख', '2 दिवसांपूर्वी', Icons.person_outlined),
+            _viewerTile('सुनील कदम', '3 दिवसांपूर्वी', Icons.person_outlined),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _viewerTile(String name, String time, IconData icon) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+        child: Icon(icon, color: AppColors.primaryBlue, size: 20),
+      ),
+      title: Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+      subtitle: Text(time, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+      dense: true,
+    );
+  }
+
+  void _showCustomerList(BuildContext context) {
+    final customers = [
+      {'name': 'अनिल जोशी', 'purchase': '₹1,200', 'visits': '5 वेळा'},
+      {'name': 'संगीता राणे', 'purchase': '₹3,500', 'visits': '12 वेळा'},
+      {'name': 'रमेश पाटील', 'purchase': '₹850', 'visits': '3 वेळा'},
+      {'name': 'प्रिया देशमुख', 'purchase': '₹450', 'visits': '2 वेळा'},
+      {'name': 'सुनील कदम', 'purchase': '₹2,100', 'visits': '8 वेळा'},
+    ];
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (ctx, scrollController) => Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('ग्राहक यादी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: customers.length,
+                itemBuilder: (context, index) {
+                  final c = customers[index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                      child: Text(c['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                    ),
+                    title: Text(c['name']!, style: const TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: Text('एकूण खरेदी: ${c['purchase']} | ${c['visits']}'),
+                    trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),
+                    onTap: () {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${c['name']} profile — लवकरच येणार!')),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
