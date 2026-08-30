@@ -14,7 +14,7 @@ class AdminSettlementScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
-      appBar: AppBar(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white, title: const Text('Seller Daily Auto-Settlement')),
+      appBar: AppBar(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white, title: const Text('Daily Auto-Settlement (Seller/Franchise/CP)')),
       body: Column(
         children: [
           Container(
