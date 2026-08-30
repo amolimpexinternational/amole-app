@@ -4,15 +4,12 @@ import '../../widgets/ad_feed_widget.dart';
 import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
-import 'seller_analytics_screen.dart';
 import 'seller_community_screen.dart';
 import 'seller_notification_screen.dart';
 import 'seller_revenue_detail_screen.dart';
-import 'seller_support_screen.dart';
 import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
 import 'seller_subscription_screen.dart';
-import 'seller_discount_offer_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -223,7 +220,7 @@ class _SellerDashboard extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             crossAxisCount: 2,
-            childAspectRatio: 1.4,
+            childAspectRatio: 1.7,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             children: [
