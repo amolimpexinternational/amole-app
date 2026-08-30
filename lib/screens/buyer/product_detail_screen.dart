@@ -3,23 +3,33 @@ import '../../constants/app_colors.dart';
 import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
-  const ProductDetailScreen({super.key});
+  final String productName;
+  final String price;
+  final String sellerName;
+
+  const ProductDetailScreen({
+    super.key,
+    this.productName = 'उत्पादन',
+    this.price = '₹0',
+    this.sellerName = 'AMOLE Seller',
+  });
 
   @override
-  State<ProductDetailScreen> createState() =>
-      _ProductDetailScreenState();
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
-class _ProductDetailScreenState
-    extends State<ProductDetailScreen> {
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
   int quantity = 1;
+
+  double get _unitPrice => double.tryParse(widget.price.replaceAll('₹', '').replaceAll(',', '')) ?? 0;
+  double get _totalPrice => _unitPrice * quantity;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
-        title: const Text('Product Details'),
+        title: const Text('उत्पादनाची माहिती'),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: AppColors.white,
       ),
@@ -39,21 +49,20 @@ class _ProductDetailScreenState
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Organic Alphonso Mango',
-                    style: TextStyle(
+                  Text(
+                    widget.productName,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textDark,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    '₹850',
-                    style: TextStyle(
+                  Text(
+                    widget.price,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: AppColors.successGreen,
@@ -61,7 +70,7 @@ class _ProductDetailScreenState
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Description',
+                    'वर्णन',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -69,24 +78,24 @@ class _ProductDetailScreenState
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Fresh organic Alphonso mangoes directly from farmers. Premium quality and naturally ripened.',
+                    'ताजी, दर्जेदार वस्तू — थेट विक्रेत्याकडून.',
                     style: TextStyle(
                       color: AppColors.textLight,
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const ListTile(
-                    leading: CircleAvatar(
+                  ListTile(
+                    leading: const CircleAvatar(
                       child: Icon(Icons.store),
                     ),
-                    title: Text('AMOLE Farmer Store'),
-                    subtitle: Text('Verified Seller'),
+                    title: Text(widget.sellerName),
+                    subtitle: const Text('Verified Seller'),
                   ),
                   const SizedBox(height: 20),
                   Row(
                     children: [
                       const Text(
-                        'Quantity:',
+                        'संख्या:',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -117,6 +126,9 @@ class _ProductDetailScreenState
                         },
                         icon: const Icon(Icons.add_circle),
                       ),
+                      const Spacer(),
+                      Text('एकूण: ₹${_totalPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -125,21 +137,17 @@ class _ProductDetailScreenState
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const CartScreen()),
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('${widget.productName} कार्टमध्ये टाकलं'), backgroundColor: Colors.green),
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                AppColors.primaryOrange,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14),
+                            backgroundColor: AppColors.primaryOrange,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: const Text(
-                            'Add to Cart',
-                            style: TextStyle(
-                                color: AppColors.white),
+                            'Cart मध्ये टाका',
+                            style: TextStyle(color: AppColors.white),
                           ),
                         ),
                       ),
@@ -153,15 +161,12 @@ class _ProductDetailScreenState
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                AppColors.primaryBlue,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14),
+                            backgroundColor: AppColors.primaryBlue,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           child: const Text(
-                            'Buy Now',
-                            style: TextStyle(
-                                color: AppColors.white),
+                            'आत्ता खरेदी करा',
+                            style: TextStyle(color: AppColors.white),
                           ),
                         ),
                       ),
