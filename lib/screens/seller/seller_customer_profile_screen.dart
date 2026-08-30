@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../shared/chat_screen.dart';
 
 class SellerCustomerProfileScreen extends StatelessWidget {
   final String customerName;
@@ -38,7 +39,7 @@ class SellerCustomerProfileScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 44,
-                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                  backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
                   child: Text(
                     customerName.isNotEmpty ? customerName[0] : '?',
                     style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
@@ -46,6 +47,39 @@ class SellerCustomerProfileScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(customerName, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                const SizedBox(height: 14),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => ChatScreen(contactName: customerName, contactRole: 'ग्राहक'),
+                      )),
+                      icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                      label: const Text('Message'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(130, 44),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => CallDialog(contactName: customerName),
+                      ),
+                      icon: const Icon(Icons.call_outlined, size: 18),
+                      label: const Text('Call'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primaryBlue,
+                        side: const BorderSide(color: AppColors.primaryBlue),
+                        minimumSize: const Size(110, 44),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -92,7 +126,7 @@ class SellerCustomerProfileScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
                 ),
                 child: Row(
                   children: [
