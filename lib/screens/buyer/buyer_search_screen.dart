@@ -3,7 +3,8 @@ import '../../constants/app_colors.dart';
 import 'seller_profile_screen.dart';
 
 class BuyerSearchScreen extends StatefulWidget {
-  const BuyerSearchScreen({super.key});
+  final String initialFilter;
+  const BuyerSearchScreen({super.key, this.initialFilter = 'all'});
 
   @override
   State<BuyerSearchScreen> createState() => _BuyerSearchScreenState();
@@ -13,7 +14,12 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'all';
   String _searchQuery = '';
-  final Set<String> _addedFriends = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFilter = widget.initialFilter;
+  }
 
   final List<Map<String, String>> _sellers = [
     {'name': 'श्री गणेश किराणा स्टोअर', 'category': 'किराणा', 'distance': '0.5 km', 'rating': '4.5'},
@@ -135,7 +141,6 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
   }
 
   Widget _buildBuyerCard(Map<String, String> item) {
-    final bool isAdded = _addedFriends.contains(item['name']);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -170,14 +175,14 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
             ),
           ),
           ElevatedButton(
-            onPressed: isAdded ? null : () => setState(() => _addedFriends.add(item['name']!)),
+            onPressed: () {},
             style: ElevatedButton.styleFrom(
-              backgroundColor: isAdded ? Colors.grey : AppColors.primaryBlue,
+              backgroundColor: AppColors.primaryBlue,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               minimumSize: Size.zero,
             ),
-            child: Text(isAdded ? 'जोडलं ✓' : 'मित्र जोडा', style: const TextStyle(fontSize: 12, color: Colors.white)),
+            child: const Text('मित्र जोडा', style: TextStyle(fontSize: 12, color: Colors.white)),
           ),
         ],
       ),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'reward_wallet_screen.dart';
-import 'referred_users_screen.dart';
-import 'order_tracking_screen.dart';
 import 'lucky_draw_screen.dart';
+import 'order_tracking_screen.dart';
+import 'buyer_notification_screen.dart';
+import 'referred_users_screen.dart';
 
 class BuyerProfileScreen extends StatefulWidget {
   const BuyerProfileScreen({super.key});
@@ -180,18 +181,13 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
                           Positioned(
                             bottom: 0,
                             right: 0,
-                            child: GestureDetector(
-                              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('फोटो बदलण्याची सुविधा Stage 3 (Backend) मध्ये येईल')),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: AppColors.primaryOrange,
+                                shape: BoxShape.circle,
                               ),
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryOrange,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.edit, size: 14, color: AppColors.white),
-                              ),
+                              child: const Icon(Icons.edit, size: 14, color: AppColors.white),
                             ),
                           ),
                         ],
@@ -222,11 +218,9 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
                 children: [
                   const Text('माझे खाते', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 10),
-                  _buildMenuItem(context, Icons.shopping_bag_outlined, 'माझे ऑर्डर', 'सर्व orders बघा', AppColors.primaryBlue,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderTrackingScreen()))),
+                  _buildMenuItem(context, Icons.shopping_bag_outlined, 'माझे ऑर्डर', 'सर्व orders बघा', AppColors.primaryBlue, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderTrackingScreen()))),
                   _buildMenuItem(context, Icons.star_outline, 'Loyalty Points', '245 points शिल्लक', AppColors.primaryOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen()))),
-                  _buildMenuItem(context, Icons.card_giftcard_outlined, 'Lucky Draw', 'आजचा draw संध्याकाळी 4 PM', AppColors.successGreen,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen()))),
+                  _buildMenuItem(context, Icons.card_giftcard_outlined, 'Lucky Draw', 'आजचा draw संध्याकाळी 4 PM', AppColors.successGreen, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen()))),
                   _buildMenuItem(context, Icons.people_outline, 'Referral', 'मित्रांना invite करा', AppColors.cyan, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferredUsersScreen()))),
                   _buildMenuItem(context, Icons.work_outline, 'व्यवसाय / प्रोफेशन', _profession ?? 'निवडलेले नाही — टॅप करून निवडा', Colors.brown, _showProfessionPicker),
                   _buildMenuItem(context, Icons.cake_outlined, 'जन्मतारीख', dobText, Colors.pink, _pickDob),
@@ -235,9 +229,9 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
                   const Text('सेटिंग्ज', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 10),
                   _buildMenuItem(context, Icons.location_on_outlined, 'माझा पत्ता', 'हडपसर, पुणे — पिनकोड ${_pincodeController.text}', AppColors.primaryBlue, _editPincode),
-                  _buildMenuItem(context, Icons.language_outlined, 'भाषा', 'मराठी', AppColors.primaryOrange, () {}),
-                  _buildMenuItem(context, Icons.notifications_outlined, 'Notifications', 'चालू आहे', AppColors.successGreen, () {}),
-                  _buildMenuItem(context, Icons.help_outline, 'Help & Support', 'आम्हाला संपर्क करा', AppColors.textLight, () {}),
+                  _buildMenuItem(context, Icons.language_outlined, 'भाषा', 'मराठी', AppColors.primaryOrange, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('भाषा बदल — लवकरच येणार!')))),
+                  _buildMenuItem(context, Icons.notifications_outlined, 'Notifications', 'चालू आहे', AppColors.successGreen, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()))),
+                  _buildMenuItem(context, Icons.help_outline, 'Help & Support', 'आम्हाला संपर्क करा', AppColors.textLight, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Support: support@amole.in | amole.in')))),
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
