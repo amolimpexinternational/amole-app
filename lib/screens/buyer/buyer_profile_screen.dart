@@ -5,6 +5,7 @@ import 'lucky_draw_screen.dart';
 import 'order_tracking_screen.dart';
 import 'buyer_notification_screen.dart';
 import 'referred_users_screen.dart';
+import 'buyer_social_profile_screen.dart';
 
 class BuyerProfileScreen extends StatefulWidget {
   const BuyerProfileScreen({super.key});
@@ -17,7 +18,15 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
   String? _profession;
   DateTime? _dob;
   String? _gender;
+
+  String _profileName = 'राहुल शर्मा';
+  IconData _profileIcon = Icons.person;
+
   final TextEditingController _pincodeController = TextEditingController(text: '411028');
+  final TextEditingController _addressController = TextEditingController(text: 'हडपसर');
+  final TextEditingController _talukaController = TextEditingController(text: 'हवेली');
+  final TextEditingController _districtController = TextEditingController(text: 'पुणे');
+  final TextEditingController _stateController = TextEditingController(text: 'महाराष्ट्र');
 
   static const List<Map<String, dynamic>> _professionOptions = [
     {'label': 'विद्यार्थी', 'icon': Icons.school_outlined},
@@ -35,7 +44,198 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
   @override
   void dispose() {
     _pincodeController.dispose();
+    _addressController.dispose();
+    _talukaController.dispose();
+    _districtController.dispose();
+    _stateController.dispose();
     super.dispose();
+  }
+
+  void _editProfileName() {
+    final controller = TextEditingController(text: _profileName);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('नाव बदला'),
+        content: TextField(
+          controller: controller,
+          textCapitalization: TextCapitalization.words,
+          decoration: const InputDecoration(
+            labelText: 'पूर्ण नाव',
+            hintText: 'तुमचे नाव टाका',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              controller.dispose();
+              Navigator.pop(context);
+            },
+            child: const Text('रद्द करा'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                setState(() => _profileName = controller.text.trim());
+              }
+              controller.dispose();
+              Navigator.pop(context);
+            },
+            child: const Text('जतन करा'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editProfilePhoto() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'प्रोफाइल फोटो बदला',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('कॅमेरा — Demo'),
+              onTap: () {
+                setState(() => _profileIcon = Icons.account_circle);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Demo प्रोफाइल फोटो निवडला')),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('गॅलरी — Demo'),
+              onTap: () {
+                setState(() => _profileIcon = Icons.account_circle);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Demo प्रोफाइल फोटो निवडला')),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: const Text('Default फोटो'),
+              onTap: () {
+                setState(() => _profileIcon = Icons.person);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _editAddress() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('माझा पत्ता'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _addressController,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  labelText: 'संपूर्ण पत्ता',
+                  hintText: 'घर क्रमांक, रस्ता, परिसर',
+                  prefixIcon: Icon(Icons.home_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _talukaController,
+                decoration: const InputDecoration(
+                  labelText: 'तालुका',
+                  prefixIcon: Icon(Icons.location_city_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _districtController,
+                decoration: const InputDecoration(
+                  labelText: 'जिल्हा',
+                  prefixIcon: Icon(Icons.map_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _stateController,
+                decoration: const InputDecoration(
+                  labelText: 'राज्य',
+                  prefixIcon: Icon(Icons.public_outlined),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _pincodeController,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                decoration: const InputDecoration(
+                  labelText: 'पिनकोड',
+                  hintText: '६ अंकी पिनकोड टाका',
+                  prefixIcon: Icon(Icons.pin_drop_outlined),
+                  counterText: '',
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      _addressController.text = 'हडपसर, पुणे';
+                      _talukaController.text = 'हवेली';
+                      _districtController.text = 'पुणे';
+                      _stateController.text = 'महाराष्ट्र';
+                      _pincodeController.text = '411028';
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Demo GPS location निवडली'),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.my_location),
+                  label: const Text('GPS नुसार लोकेशन निवडा'),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('रद्द करा'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {});
+              Navigator.pop(context);
+            },
+            child: const Text('पत्ता जतन करा'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showProfessionPicker() {
@@ -102,28 +302,6 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
     if (picked != null) setState(() => _dob = picked);
   }
 
-  void _editPincode() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('पिनकोड बदला'),
-        content: TextField(
-          controller: _pincodeController,
-          keyboardType: TextInputType.number,
-          maxLength: 6,
-          decoration: const InputDecoration(hintText: '६ अंकी पिनकोड टाका'),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('रद्द करा')),
-          ElevatedButton(
-            onPressed: () { setState(() {}); Navigator.pop(context); },
-            child: const Text('जतन करा'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMenuItem(BuildContext context, IconData icon, String title, String subtitle, Color iconColor, VoidCallback onTap) {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
@@ -173,27 +351,54 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
                       const SizedBox(height: 20),
                       Stack(
                         children: [
-                          const CircleAvatar(
-                            radius: 40,
-                            backgroundColor: AppColors.white,
-                            child: Icon(Icons.person, size: 45, color: AppColors.primaryBlue),
+                          GestureDetector(
+                            onTap: _editProfilePhoto,
+                            child: CircleAvatar(
+                              radius: 40,
+                              backgroundColor: AppColors.white,
+                              child: Icon(_profileIcon, size: 45, color: AppColors.primaryBlue),
+                            ),
                           ),
                           Positioned(
                             bottom: 0,
                             right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: AppColors.primaryOrange,
-                                shape: BoxShape.circle,
+                            child: GestureDetector(
+                              onTap: _editProfilePhoto,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.primaryOrange,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.edit, size: 14, color: AppColors.white),
                               ),
-                              child: const Icon(Icons.edit, size: 14, color: AppColors.white),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
-                      const Text('राहुल शर्मा', style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                      GestureDetector(
+                        onTap: _editProfileName,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _profileName,
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(
+                              Icons.edit,
+                              size: 16,
+                              color: AppColors.white,
+                            ),
+                          ],
+                        ),
+                      ),
                       const Text('+91 98765 43210', style: TextStyle(color: AppColors.white, fontSize: 13)),
                       const SizedBox(height: 6),
                       Container(
@@ -222,13 +427,33 @@ class _BuyerProfileScreenState extends State<BuyerProfileScreen> {
                   _buildMenuItem(context, Icons.star_outline, 'Loyalty Points', '245 points शिल्लक', AppColors.primaryOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen()))),
                   _buildMenuItem(context, Icons.card_giftcard_outlined, 'Lucky Draw', 'आजचा draw संध्याकाळी 4 PM', AppColors.successGreen, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen()))),
                   _buildMenuItem(context, Icons.people_outline, 'Referral', 'मित्रांना invite करा', AppColors.cyan, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferredUsersScreen()))),
+                  _buildMenuItem(
+                    context,
+                    Icons.public,
+                    'माझा सोशल प्रोफाईल',
+                    'Preview / माझे प्रोफाईल कसे दिसेल',
+                    AppColors.primaryBlue,
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const BuyerSocialProfileScreen(),
+                      ),
+                    ),
+                  ),
                   _buildMenuItem(context, Icons.work_outline, 'व्यवसाय / प्रोफेशन', _profession ?? 'निवडलेले नाही — टॅप करून निवडा', Colors.brown, _showProfessionPicker),
                   _buildMenuItem(context, Icons.cake_outlined, 'जन्मतारीख', dobText, Colors.pink, _pickDob),
                   _buildMenuItem(context, Icons.wc_outlined, 'लिंग', _gender ?? 'निवडलेले नाही — टॅप करून निवडा', Colors.deepPurple, _showGenderPicker),
                   const SizedBox(height: 16),
                   const Text('सेटिंग्ज', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 10),
-                  _buildMenuItem(context, Icons.location_on_outlined, 'माझा पत्ता', 'हडपसर, पुणे — पिनकोड ${_pincodeController.text}', AppColors.primaryBlue, _editPincode),
+                  _buildMenuItem(
+                    context,
+                    Icons.location_on_outlined,
+                    'माझा पत्ता',
+                    '${_addressController.text}, ${_talukaController.text}, ${_districtController.text}, ${_stateController.text} — ${_pincodeController.text}',
+                    AppColors.primaryBlue,
+                    _editAddress,
+                  ),
                   _buildMenuItem(context, Icons.language_outlined, 'भाषा', 'मराठी', AppColors.primaryOrange, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('भाषा बदल — लवकरच येणार!')))),
                   _buildMenuItem(context, Icons.notifications_outlined, 'Notifications', 'चालू आहे', AppColors.successGreen, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()))),
                   _buildMenuItem(context, Icons.help_outline, 'Help & Support', 'आम्हाला संपर्क करा', AppColors.textLight, () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Support: support@amole.in | amole.in')))),
