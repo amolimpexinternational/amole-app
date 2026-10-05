@@ -8,6 +8,8 @@ import 'lucky_draw_screen.dart';
 import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
 import 'buyer_notification_screen.dart';
+import 'cart_screen.dart';
+import 'buyer_favourite_screen.dart';
 import 'qr_payment_screen.dart';
 import 'pincode_shops_screen.dart';
 import 'coming_soon_screen.dart';
@@ -140,6 +142,28 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
+                        // Cart
+                        IconButton(
+                          tooltip: 'Cart',
+                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const CartScreen()),
+                            );
+                          },
+                        ),
+                        // My Favourite
+                        IconButton(
+                          tooltip: 'My Favourite',
+                          icon: const Icon(Icons.favorite_border, color: Colors.white),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
+                            );
+                          },
+                        ),
                         // Notification
                         IconButton(
                           icon: const Icon(Icons.notifications_outlined, color: Colors.white),
