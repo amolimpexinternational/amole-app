@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../data/buyer_order_history_data.dart';
 
 class OrderTrackingScreen extends StatelessWidget {
   const OrderTrackingScreen({super.key});
@@ -87,6 +88,50 @@ class OrderTrackingScreen extends StatelessWidget {
                   buildStep('पाठवली', 'ऑर्डर यशस्वीरित्या पाठवली', true),
                   buildStep('डिलिव्हरीसाठी निघाली', 'तुमची ऑर्डर वाटेत आहे', false),
                   buildStep('डिलिव्हर झाली', 'डिलिव्हरी प्रलंबित', false),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'मागील ऑर्डर्स',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  ...BuyerOrderHistoryData.orders.map(
+                    (order) => Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '#${order['id']}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  order['status'],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: order['status'] == 'पूर्ण'
+                                        ? AppColors.successGreen
+                                        : AppColors.errorRed,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text('दिनांक: ${order['date']}'),
+                            Text('Seller: ${order['seller']}'),
+                            Text('Products: ${order['items']}'),
+                            Text('एकूण: ${order['total']}'),
+                            Text('Payment: ${order['payment']}'),
+                            Text('Delivery: ${order['delivery']}'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
