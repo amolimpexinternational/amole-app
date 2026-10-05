@@ -38,6 +38,7 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${item['name']} Cart मध्ये टाकले'),
+        duration: const Duration(seconds: 2),
         action: SnackBarAction(
           label: 'Cart पहा',
           textColor: AppColors.white,

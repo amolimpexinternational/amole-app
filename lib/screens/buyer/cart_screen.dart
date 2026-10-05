@@ -378,7 +378,7 @@ class _CartScreenState extends State<CartScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: const Text(
-                'Checkout करा',
+                'ऑर्डर नक्की करा',
                 style: TextStyle(
                   color: AppColors.white,
                   fontWeight: FontWeight.bold,
@@ -412,21 +412,12 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ),
             )
-          : Column(
+          : ListView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
               children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      return _buildCartItem(items[index]);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                  child: _buildSummary(),
-                ),
+                ...items.map(_buildCartItem),
+                const SizedBox(height: 4),
+                _buildSummary(),
               ],
             ),
     );

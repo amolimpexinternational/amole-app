@@ -54,7 +54,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
   void _handleServiceTap(String action) {
     switch (action) {
       case 'shopping':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'all')));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'products')));
         break;
       case 'food':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'services')));
