@@ -647,3 +647,52 @@ FIX USER-REPORTED DEMO ISSUES.
 COMPLETE THE DEMO.
 THEN MOVE TO BACKEND.
 
+
+---
+
+# 19. CURRENT DEMO STATUS — OCTOBER 2026
+
+## Completed Buyer Demo Work
+
+The following buyer demo functionality has been completed and pushed to GitHub:
+
+- Buyer order history demo with dummy past orders.
+- Buyer social profile demo.
+- Buyer public social profile demo.
+- Buyer search for products and buyers.
+- Buyer favourites demo.
+- Buyer cart demo with quantity controls and final amount summary.
+- Product detail demo with quantity controls, favourite, add-to-cart and buy-now actions.
+- Existing dummy product database and shared shopping data are being reused.
+- Dedicated Global Shopping Home implemented with product search, categories, offers, product cards, cart and favourites.
+- Global Shopping header includes a Home button that returns to the main Buyer Home screen.
+- Four demo products (IDs 5-8) added to ProductDatabase; six active, in-stock products are available for the shopping grid.
+
+Latest pushed commit:
+- 254199a — Add buyer shopping and social demo updates
+
+Current Git branch:
+- main
+
+Current remote:
+- origin/main
+
+## Next Planned Demo Work
+
+Create a dedicated:
+
+Global Shopping Home
+
+This must be separate from the main Amole App Home.
+
+Important navigation rule:
+
+- Notification -> Home must continue to open the complete Amole App Buyer Home.
+- Global Shopping -> Global Shopping Home must open a dedicated e-commerce shopping home.
+- Global Shopping Home should show products directly on the main screen, along with shopping search, categories, offers/deals and other professional e-commerce elements.
+- Do NOT copy Amazon's exact code, screen design or branding.
+- Build an Amole-branded professional e-commerce experience inspired by common marketplace UX.
+- Reuse the existing ProductDetailScreen, CartScreen, ProductDatabase and BuyerShoppingData wherever appropriate.
+- Do not recreate existing product detail or cart functionality unnecessarily.
+
+Global Shopping Home demo implementation is complete and has been tested by the user. Backend integration is not included.

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
+import 'global_shopping_home_screen.dart';
 import 'buyer_profile_screen.dart';
 import 'reward_wallet_screen.dart';
 import 'my_wall_screen.dart';
@@ -54,7 +55,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
   void _handleServiceTap(String action) {
     switch (action) {
       case 'shopping':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'products')));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const GlobalShoppingHomeScreen()));
         break;
       case 'food':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'services')));
