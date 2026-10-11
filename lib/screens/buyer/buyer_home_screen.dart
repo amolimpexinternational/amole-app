@@ -83,9 +83,10 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+         
           // Header
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
+            padding: const EdgeInsets.fromLTRB(12, 14, 12, 18),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [AppColors.primaryBlue, AppColors.royalBlue],
@@ -99,108 +100,199 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // App Name
-                    const Text('AMOLE', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                    const Text(
+                      'AMOLE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Loyalty Points — ठळकपणे
                         GestureDetector(
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen())),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const RewardWalletScreen(),
+                            ),
+                          ),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.amber.shade600,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.stars, color: Colors.white, size: 16),
-                                SizedBox(width: 4),
-                                Text('245 pts', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        // Orders — पूर्वीच्या QR चिपच्या जागी
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderTrackingScreen()));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: AppColors.cyan,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Row(
-                              children: [
-                                Icon(Icons.shopping_bag_outlined, color: AppColors.royalBlue, size: 16),
-                                SizedBox(width: 4),
-                                Text('ऑर्डर', style: TextStyle(color: AppColors.royalBlue, fontWeight: FontWeight.bold, fontSize: 13)),
+                                Icon(Icons.stars, color: Colors.white, size: 14),
+                                SizedBox(width: 3),
+                                Text(
+                                  '245 pts',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
                         ),
                         const SizedBox(width: 4),
-                        // Cart
+                        GestureDetector(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const OrderTrackingScreen(),
+                            ),
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.cyan,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.shopping_bag_outlined,
+                                  color: AppColors.royalBlue,
+                                  size: 14,
+                                ),
+                                SizedBox(width: 3),
+                                Text(
+                                  'ऑर्डर',
+                                  style: TextStyle(
+                                    color: AppColors.royalBlue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 2),
                         IconButton(
                           tooltip: 'Cart',
-                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const CartScreen()),
-                            );
-                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 28,
+                            minHeight: 32,
+                          ),
+                          iconSize: 20,
+                          icon: const Icon(
+                            Icons.shopping_cart_outlined,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const CartScreen(),
+                            ),
+                          ),
                         ),
-                        // My Favourite
                         IconButton(
                           tooltip: 'My Favourite',
-                          icon: const Icon(Icons.favorite_border, color: Colors.white),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
-                            );
-                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 28,
+                            minHeight: 32,
+                          ),
+                          iconSize: 20,
+                          icon: const Icon(
+                            Icons.favorite_border,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BuyerFavouriteScreen(),
+                            ),
+                          ),
                         ),
-                        // Notification
                         IconButton(
-                          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen())),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 28,
+                            minHeight: 32,
+                          ),
+                          iconSize: 20,
+                          icon: const Icon(
+                            Icons.notifications_outlined,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BuyerNotificationScreen(),
+                            ),
+                          ),
                         ),
-                        // Profile
                         IconButton(
-                          icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerProfileScreen()));
-                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 28,
+                            minHeight: 32,
+                          ),
+                          iconSize: 20,
+                          icon: const Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.white,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BuyerProfileScreen(),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                // Search Bar
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
-                    );
-                  },
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BuyerSearchScreen(),
+                    ),
+                  ),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 11,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.search, color: AppColors.primaryBlue),
-                        SizedBox(width: 10),
-                        Text('दुकान, वस्तू, सेवा शोधा...', style: TextStyle(color: AppColors.textLight, fontSize: 15)),
+                        Icon(
+                          Icons.search,
+                          color: AppColors.primaryBlue,
+                          size: 21,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'दुकान, वस्तू, सेवा शोधा...',
+                          style: TextStyle(
+                            color: AppColors.textLight,
+                            fontSize: 14,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -208,6 +300,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ],
             ),
           ),
+
 
           // Banner Ad
           GestureDetector(
