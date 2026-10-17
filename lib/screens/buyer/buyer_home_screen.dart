@@ -8,6 +8,8 @@ import 'my_wall_screen.dart';
 import 'lucky_draw_screen.dart';
 import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
+import '../../widgets/offers_slider_widget.dart';
+import '../../widgets/home_services_grid.dart';
 import 'buyer_notification_screen.dart';
 import 'cart_screen.dart';
 import 'buyer_favourite_screen.dart';
@@ -184,6 +186,17 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                         ),
                         const SizedBox(width: 2),
                         IconButton(
+                          tooltip: 'Search',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 32),
+                          iconSize: 20,
+                          icon: const Icon(Icons.search, color: Colors.white),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
+                          ),
+                        ),
+                        IconButton(
                           tooltip: 'Cart',
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(
@@ -261,47 +274,16 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BuyerSearchScreen(),
-                    ),
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 11,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.search,
-                          color: AppColors.primaryBlue,
-                          size: 21,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'दुकान, वस्तू, सेवा शोधा...',
-                          style: TextStyle(
-                            color: AppColors.textLight,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                
               ],
             ),
           ),
 
 
+          const OffersSliderWidget(),
+          const SizedBox(height: 14),
+          const HomeServicesGrid(),
+          const SizedBox(height: 4),
           // Banner Ad
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
@@ -329,186 +311,6 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // ---- 7 आडवे सेवा कार्ड्स (Blueprint 4.9 + शेतकरी) ----
-          SizedBox(
-            height: 96,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: _services.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final s = _services[index];
-                return GestureDetector(
-                  onTap: () => _handleServiceTap(s['action'] as String),
-                  child: SizedBox(
-                    width: 78,
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 56,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Icon(s['icon'] as IconData, color: AppColors.primaryBlue, size: 26),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          s['label'] as String,
-                          style: const TextStyle(fontSize: 10.5, color: AppColors.textDark, fontWeight: FontWeight.w600),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Categories — 4x1, compact (जागा वाचवण्यासाठी aspect ratio वाढवला)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('श्रेणी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const AllCategoriesScreen()));
-                  },
-                  child: const Text('सर्व बघा', style: TextStyle(color: AppColors.primaryBlue, fontSize: 13)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 1.15,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              final cat = _categories[index];
-              return GestureDetector(
-                onTap: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => PincodeShopsScreen(category: cat['label'] as String),
-                )),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryBlue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(cat['icon'] as IconData, color: AppColors.primaryBlue, size: 26),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(cat['label'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textDark), textAlign: TextAlign.center),
-                  ],
-                ),
-              );
-            },
-          ),
-          const SizedBox(height: 4),
-
-          const AdFeedWidget(),
-          const SizedBox(height: 8),
-
-          // Nearby Sellers
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('जवळचे दुकानदार', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen()));
-                  },
-                  child: const Text('सर्व बघा', style: TextStyle(color: AppColors.primaryBlue)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              final sellers = [
-                {'name': 'गणेश किराणा मार्ट', 'category': 'किराणा', 'distance': '0.3 km', 'rating': '4.8'},
-                {'name': 'श्री मेडिकल स्टोर', 'category': 'मेडिकल', 'distance': '0.7 km', 'rating': '4.6'},
-                {'name': 'राज इलेक्ट्रॉनिक्स', 'category': 'इलेक्ट्रॉनिक्स', 'distance': '1.2 km', 'rating': '4.5'},
-              ];
-              final seller = sellers[index];
-              return GestureDetector(
-                onTap: () => Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => SellerProfileScreen(
-                    sellerName: seller['name']!,
-                    category: seller['category']!,
-                  ),
-                )),
-                child: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(Icons.storefront_outlined, color: AppColors.primaryBlue, size: 28),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(seller['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                          const SizedBox(height: 3),
-                          Text(seller['category']!, style: const TextStyle(fontSize: 13, color: AppColors.textLight)),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const SizedBox(width: 3),
-                          Text(seller['rating']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                        ]),
-                        const SizedBox(height: 3),
-                        Text(seller['distance']!, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-                      ],
-                    ),
-                  ],
-                ),
-                ),
-              );
-            },
-          ),
-
           // Ad Block 2 — Lucky Draw
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
@@ -532,6 +334,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ),
             ),
           ),
+          const AdFeedWidget(),
+          const SizedBox(height: 8),
+
           const SizedBox(height: 16),
         ],
       ),

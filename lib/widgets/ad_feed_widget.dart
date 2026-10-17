@@ -363,10 +363,22 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   Widget _buildLocalConnectTab() {
     final posts = List<LocalPost>.from(LocalPostsData.posts)
       ..sort((a, b) => b.postedAt.compareTo(a.postedAt));
+    return _buildSlidingPosts(posts);
+  }
+
+  Widget _buildSlidingPosts(List<dynamic> items) {
+    final w = MediaQuery.of(context).size.width * 0.92;
     return ListView.builder(
+      scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: posts.length,
-      itemBuilder: (context, index) => _buildFeedPostCard(posts[index]),
+      itemCount: items.length,
+      itemBuilder: (context, index) => SizedBox(
+        width: w,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: SingleChildScrollView(child: _buildFeedPostCard(items[index])),
+        ),
+      ),
     );
   }
 
@@ -384,11 +396,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         ),
       );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: viral.length,
-      itemBuilder: (context, index) => _buildFeedPostCard(viral[index]),
-    );
+    return _buildSlidingPosts(viral);
   }
 
   // Blueprint 6.8: poll-reply cost split
@@ -891,7 +899,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         ),
         const SizedBox(height: 8),
         if (_selectedTab == _localConnectTabIndex) ...[
-          SizedBox(height: feedHeight, child: _buildLocalConnectTab()),
+          SizedBox(height: adsFeedHeight, child: _buildLocalConnectTab()),
         ] else if (_selectedTab == _adsTabIndex) ...[
           SizedBox(
             height: adsFeedHeight,
@@ -921,7 +929,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         else if (widget.isSeller && _selectedTab == _createOfferTabIndex)
           SizedBox(height: 420, child: _buildCreateOfferTab(context))
         else if (_selectedTab == _viralTabIndex)
-          SizedBox(height: feedHeight, child: _buildMostViralTab()),
+          SizedBox(height: adsFeedHeight, child: _buildMostViralTab()),
       ],
     );
   }
