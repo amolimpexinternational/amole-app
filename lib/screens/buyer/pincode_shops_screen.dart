@@ -6,20 +6,54 @@ class PincodeShopsScreen extends StatelessWidget {
   final String? category;
   const PincodeShopsScreen({super.key, this.category});
 
+  // Demo: Buyer चे ठिकाण (खरा buyer profile Stage 3 मध्ये येईल)
+  static const String _buyerPincode = '411028';
+  static const String _buyerTaluka = 'हवेली';
+  static const String _buyerDistrict = 'पुणे';
+
   final List<Map<String, String>> _shops = const [
-    {'name': 'श्री गणेश किराणा', 'category': 'किराणा', 'pincode': '411028', 'rating': '4.5', 'distance': '0.3 km'},
-    {'name': 'राज मेडिकल', 'category': 'मेडिकल', 'pincode': '411028', 'rating': '4.8', 'distance': '0.5 km'},
-    {'name': 'स्वाद हॉटेल', 'category': 'खाद्यपदार्थ', 'pincode': '411028', 'rating': '4.7', 'distance': '0.8 km'},
-    {'name': 'फॅशन पॉईंट', 'category': 'कपडे', 'pincode': '411028', 'rating': '4.0', 'distance': '1.0 km'},
-    {'name': 'होम डेकोर', 'category': 'घर', 'pincode': '411028', 'rating': '4.2', 'distance': '1.2 km'},
-    {'name': 'इलेक्ट्रो शॉप', 'category': 'इलेक्ट्रॉनिक्स', 'pincode': '411028', 'rating': '4.3', 'distance': '1.5 km'},
+    // --- Buyer च्या पिनकोडचे ---
+    {'name': 'श्री गणेश किराणा', 'category': 'किराणा', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.5', 'distance': '0.3 km'},
+    {'name': 'राज मेडिकल', 'category': 'मेडिकल', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.8', 'distance': '0.5 km'},
+    {'name': 'हडपसर भाजी मार्केट', 'category': 'भाजीपाला', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.6', 'distance': '0.6 km'},
+    {'name': 'स्वाद हॉटेल', 'category': 'खाद्यपदार्थ', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.7', 'distance': '0.8 km'},
+    {'name': 'फॅशन पॉईंट', 'category': 'कपडे', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.0', 'distance': '1.0 km'},
+    {'name': 'होम डेकोर', 'category': 'घर', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.2', 'distance': '1.2 km'},
+    {'name': 'इलेक्ट्रो शॉप', 'category': 'इलेक्ट्रॉनिक्स', 'pincode': '411028', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.3', 'distance': '1.5 km'},
+    // --- Buyer च्या तालुक्याचे (दुसरा पिनकोड) ---
+    {'name': 'सह्याद्री किराणा', 'category': 'किराणा', 'pincode': '411014', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.4', 'distance': '4.2 km'},
+    {'name': 'ताजा भाजी मंडई', 'category': 'भाजीपाला', 'pincode': '411014', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.3', 'distance': '4.8 km'},
+    {'name': 'आरोग्य मेडिकल', 'category': 'मेडिकल', 'pincode': '411014', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.6', 'distance': '5.0 km'},
+    {'name': 'चव हॉटेल', 'category': 'खाद्यपदार्थ', 'pincode': '412308', 'taluka': 'हवेली', 'district': 'पुणे', 'rating': '4.1', 'distance': '8.5 km'},
+    // --- Buyer च्या जिल्ह्याचे (दुसरा तालुका) ---
+    {'name': 'मुळशी किराणा स्टोअर', 'category': 'किराणा', 'pincode': '412115', 'taluka': 'मुळशी', 'district': 'पुणे', 'rating': '4.2', 'distance': '32 km'},
+    {'name': 'शेतकरी भाजी केंद्र', 'category': 'भाजीपाला', 'pincode': '412115', 'taluka': 'मुळशी', 'district': 'पुणे', 'rating': '4.4', 'distance': '35 km'},
+    {'name': 'जुन्नर कपडे', 'category': 'कपडे', 'pincode': '410502', 'taluka': 'जुन्नर', 'district': 'पुणे', 'rating': '4.0', 'distance': '85 km'},
+    {'name': 'बारामती मेडिकल', 'category': 'मेडिकल', 'pincode': '413102', 'taluka': 'बारामती', 'district': 'पुणे', 'rating': '4.5', 'distance': '98 km'},
   ];
+
+  // 0 = Buyer चा पिनकोड, 1 = त्याचा तालुका, 2 = त्याचा जिल्हा, 3 = जिल्ह्याबाहेर
+  int _level(Map<String, String> s) {
+    if (s['pincode'] == _buyerPincode) return 0;
+    if (s['taluka'] == _buyerTaluka && s['district'] == _buyerDistrict) return 1;
+    if (s['district'] == _buyerDistrict) return 2;
+    return 3;
+  }
+
+  double _km(Map<String, String> s) {
+    return double.tryParse(s['distance']!.replaceAll('km', '').trim()) ?? 9999;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filtered = category == null
-        ? _shops
-        : _shops.where((s) => s['category'] == category).toList();
+    final filtered = _shops
+        .where((s) => category == null || s['category'] == category)
+        .where((s) => _level(s) < 3)
+        .toList()
+      ..sort((a, b) {
+        final l = _level(a).compareTo(_level(b));
+        return l != 0 ? l : _km(a).compareTo(_km(b));
+      });
 
     return Scaffold(
       backgroundColor: AppColors.lightGrey,

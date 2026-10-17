@@ -709,3 +709,4 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 ## Update - Project map for AI
 - AI/developers: after PROJECT_STATUS.md, also read PROJECT_MAP.md (auto-generated map of every Dart file). Regenerate it before committing with: python3 tools/make_map.py
 - Note: firebase packages are listed in pubspec.yaml but Firebase is NOT initialized yet. Backend is still Stage 3.
+- Seller list (PincodeShopsScreen) now one continuous list ordered by buyer pincode, then taluka, then district, nearest first. Buyer location is a fixed demo value (411028, Haveli, Pune). Dummy shops only.
