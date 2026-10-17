@@ -696,3 +696,7 @@ Important navigation rule:
 - Do not recreate existing product detail or cart functionality unnecessarily.
 
 Global Shopping Home demo implementation is complete and has been tested by the user. Backend integration is not included.
+
+## Update - Global Shopping header
+- Global Shopping Home header compacted (padding, icon sizes, AMOLE font) - commit f788ffc, pushed.
+- buyer_home_screen.dart was accidentally damaged in Codespace and restored from commit 8368d35. No code lost.
