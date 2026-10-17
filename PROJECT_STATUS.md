@@ -705,3 +705,7 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 - Buyer Home redesigned (commit 207f33f): Search icon moved to header next to Cart, auto-sliding offers (offers_slider_widget.dart), 4x3 grid of 12 service icons (home_services_grid.dart), Gavatil Dukane banner and Lucky Draw below the grid, Nearby Sellers section removed.
 - Local Connect and Most Viral tabs in ad_feed_widget.dart now slide left-right with full-height posts.
 - Grid icons linked to ComingSoonScreen for now: Taxi, Services and Repair, Parcel Cargo, Resale or Rent, Jobs, Moms Miracle, Manufacturer. Grid icon colors are temporary, final colors pending from user.
+
+## Update - Project map for AI
+- AI/developers: after PROJECT_STATUS.md, also read PROJECT_MAP.md (auto-generated map of every Dart file). Regenerate it before committing with: python3 tools/make_map.py
+- Note: firebase packages are listed in pubspec.yaml but Firebase is NOT initialized yet. Backend is still Stage 3.
