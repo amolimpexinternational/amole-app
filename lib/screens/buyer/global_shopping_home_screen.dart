@@ -270,7 +270,7 @@ class _GlobalShoppingHomeScreenState
             Stack(
               children: [
                 Container(
-                  height: 145,
+                  height: 125,
                   width: double.infinity,
                   color: AppColors.lightGrey,
                   child: const Icon(
@@ -435,7 +435,7 @@ class _GlobalShoppingHomeScreenState
   Widget _buildTopHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
+      padding: const EdgeInsets.fromLTRB(8, 10, 4, 10),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryBlue, AppColors.royalBlue],
@@ -453,6 +453,10 @@ class _GlobalShoppingHomeScreenState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 20,
                     tooltip: 'मुख्य स्क्रीन',
                     icon: const Icon(
                       Icons.home_outlined,
@@ -472,7 +476,7 @@ class _GlobalShoppingHomeScreenState
                     'AMOLE',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -562,6 +566,10 @@ class _GlobalShoppingHomeScreenState
                       ),
                     ),
                     IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 20,
                       tooltip: 'Search',
                       icon: const Icon(
                         Icons.search,
@@ -579,6 +587,10 @@ class _GlobalShoppingHomeScreenState
                       },
                     ),
                     IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 20,
                       tooltip: 'Cart',
                       icon: const Icon(
                         Icons.shopping_cart_outlined,
@@ -596,6 +608,10 @@ class _GlobalShoppingHomeScreenState
                       },
                     ),
                     IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 20,
                       tooltip: 'My Favourite',
                       icon: const Icon(
                         Icons.favorite_border,
@@ -613,6 +629,10 @@ class _GlobalShoppingHomeScreenState
                       },
                     ),
                     IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 20,
                       tooltip: 'Notification',
                       icon: const Icon(
                         Icons.notifications_outlined,
@@ -628,6 +648,10 @@ class _GlobalShoppingHomeScreenState
                       },
                     ),
                     IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    visualDensity: VisualDensity.compact,
+                    iconSize: 20,
                       tooltip: 'Profile',
                       icon: const Icon(
                         Icons.account_circle_outlined,
@@ -688,7 +712,7 @@ class _GlobalShoppingHomeScreenState
                           crossAxisCount: 2,
                           crossAxisSpacing: 12,
                           mainAxisSpacing: 12,
-                          childAspectRatio: 0.64,
+                          childAspectRatio: 0.58,
                         ),
                         itemCount: products.length,
                         itemBuilder: (context, index) {
