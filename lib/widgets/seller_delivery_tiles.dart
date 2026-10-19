@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../screens/delivery/delivery_boy_home_screen.dart';
 import '../screens/seller/hotel_orders_screen.dart';
+import '../screens/seller/rider_home_screen.dart';
 import '../screens/seller/zatpat_delivery_screen.dart';
 
 class SellerDeliveryTiles extends StatelessWidget {
@@ -16,20 +17,20 @@ class SellerDeliveryTiles extends StatelessWidget {
           MaterialPageRoute(builder: (_) => page()),
         ),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Column(
             children: [
-              Icon(icon, color: color, size: 30),
+              Icon(color: color, icon, size: 28),
               const SizedBox(height: 6),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 11.5,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),
@@ -49,7 +50,7 @@ class SellerDeliveryTiles extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'डिलिव्हरी सेवा',
+            'डिलिव्हरी आणि राईड सेवा',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -62,14 +63,18 @@ class SellerDeliveryTiles extends StatelessWidget {
               _tile(context, 'ZatPat\nऑर्डर', Icons.bolt_outlined,
                   const Color(0xFFE53935),
                   () => const ZatPatDeliveryScreen()),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               _tile(context, 'हॉटेल\nऑर्डर', Icons.restaurant_outlined,
                   const Color(0xFFEF6C00),
                   () => const HotelOrdersScreen()),
-              const SizedBox(width: 8),
-              _tile(context, 'डिलिव्हरी बॉय\nपॅनल', Icons.two_wheeler_outlined,
+              const SizedBox(width: 6),
+              _tile(context, 'डिलिव्हरी\nबॉय', Icons.two_wheeler_outlined,
                   const Color(0xFF2E7D32),
                   () => const DeliveryBoyHomeScreen()),
+              const SizedBox(width: 6),
+              _tile(context, 'रायडर\nपॅनल', Icons.local_taxi_outlined,
+                  const Color(0xFF3949AB),
+                  () => const RiderHomeScreen()),
             ],
           ),
           const SizedBox(height: 4),
