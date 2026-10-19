@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../screens/delivery/delivery_boy_home_screen.dart';
 import '../screens/seller/hotel_orders_screen.dart';
+import '../screens/seller/parcel_provider_screen.dart';
 import '../screens/seller/rider_home_screen.dart';
 import '../screens/seller/service_provider_screen.dart';
 import '../screens/seller/zatpat_delivery_screen.dart';
@@ -81,6 +82,9 @@ class SellerDeliveryTiles extends StatelessWidget {
               _tile(context, width, 'सर्व्हिस\nपॅनल', Icons.handyman_outlined,
                   const Color(0xFF00838F),
                   () => const ServiceProviderScreen()),
+              _tile(context, width, 'कार्गो\nपॅनल', Icons.local_shipping_outlined,
+                  const Color(0xFF6D4C41),
+                  () => const ParcelProviderScreen()),
             ],
           ),
           const SizedBox(height: 4),
