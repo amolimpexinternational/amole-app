@@ -60,6 +60,8 @@ flutter analyze
 
 ### D. `seller_registration_screen.dart`: आणखी category
 `'DB'` च्या खाली जोडा: `{'name': 'रिक्षा / टॅक्सी सेवा', 'code': 'RT'}`, `{'name': 'लहान मुले (Baby Care)', 'code': 'KD'}`. रिक्षा सेलरसाठी वाहन आणि ड्रायव्हिंग लायसन्सची माहिती घेणारे फील्ड अजून बाकी.
+- `KD` श्रेणी जिथे जिथे श्रेणींची यादी आहे तिथे जोडा. शोधण्यासाठी हा command चालवा: `grep -rn "'OT'" lib`. खात्री करा की `add_product_screen.dart` आणि `edit_product_screen.dart` मध्ये `'KD':'लहान मुले'` आहे. यापैकी एखाद्या यादीत नसेल तर लहान मुलांचा प्रॉडक्ट edit करताना app आपटेल.
+- सेलरचे प्रॉडक्ट लिस्टिंग किंवा इतर screens मध्ये श्रेणीचे नाव दाखवण्यासाठी वेगळी यादी असेल तर तिथेही `KD` जोडा.
 
 ### E. Cart आणि ऑर्डरचा शेवट
 - Cart screen मध्ये ZatPat/Hotel Food च्या वस्तूंसाठी डिलिव्हरी चार्ज (`DeliveryRates.chargeForKm`) दाखवणे.
