@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/ride_rates.dart';
@@ -16,16 +17,20 @@ class RiderHomeScreen extends StatefulWidget {
 }
 
 class _RiderHomeScreenState extends State<RiderHomeScreen> {
+  // चाचणीसाठी false चे true करा: मग 15 मिनिटांऐवजी 10 सेकंदांत सूचना येते.
+  // चाचणी झाल्यावर पुन्हा false करा.
+  static const bool _testMode = false;
+  Duration get _reminderAfter =>
+      _testMode ? const Duration(seconds: 10) : const Duration(minutes: 15);
+
   bool _ready = false;
-  String _stand = '';
+  bool _reminderShown = false;
   Map<String, dynamic>? _active;
-  bool _reminderPending = false;
-  int _recharge = 100;
+  Timer? _timer;
   final List<String> _log = [];
 
-  final List<String> _stands = const ['हडपसर', 'मगरपट्टा', 'कोरेगाव पार्क'];
-
-  // status: new / confirmed / rejected
+  // Demo: खरे लोकेशन नसल्यामुळे रायडर "हडपसर" मध्ये आहे असे धरले आहे.
+  // kmAway = रायडरपासून pickup चे अंतर.
   final List<Map<String, dynamic>> _requests = [
     {
       'id': 'RD401',
@@ -36,7 +41,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       'fare': 133,
       'buyer': 'रमेश पाटील',
       'phone': '9800000011',
-      'kmFromStand': {'हडपसर': 0.6, 'मगरपट्टा': 2.4, 'कोरेगाव पार्क': 6.0},
+      'kmAway': 0.6,
       'status': 'new',
     },
     {
@@ -48,7 +53,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       'fare': 133,
       'buyer': 'सुनीता जाधव',
       'phone': '9800000012',
-      'kmFromStand': {'हडपसर': 2.2, 'मगरपट्टा': 0.4, 'कोरेगाव पार्क': 3.5},
+      'kmAway': 2.2,
       'status': 'new',
     },
     {
@@ -60,7 +65,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       'fare': 252,
       'buyer': 'अजय शिंदे',
       'phone': '9800000013',
-      'kmFromStand': {'हडपसर': 7.0, 'मगरपट्टा': 4.8, 'कोरेगाव पार्क': 1.1},
+      'kmAway': 7.0,
       'status': 'new',
     },
     {
@@ -72,7 +77,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       'fare': 70,
       'buyer': 'प्रिया देशमुख',
       'phone': '9800000014',
-      'kmFromStand': {'हडपसर': 1.8, 'मगरपट्टा': 3.9, 'कोरेगाव पार्क': 7.5},
+      'kmAway': 1.8,
       'status': 'new',
     },
   ];
@@ -80,63 +85,104 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   bool get _exhausted => RiderWallet.balance < RideRates.rideFee;
   bool get _low => RiderWallet.balance < RideRates.lowBalance;
 
-  double _fromStand(Map<String, dynamic> r) {
-    final v = (r['kmFromStand'] as Map)[_stand];
-    return v == null ? 999.0 : (v as num).toDouble();
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
-  // Ready ON + पुरेसे रिचार्ज + stand च्या 3 km मधली, जवळची आधी
+  // Ready ON + पुरेसे रिचार्ज + 3 km मधली, जवळची आधी
   List<Map<String, dynamic>> get _visible {
     if (!_ready || _exhausted) return [];
     final list = _requests
         .where((r) =>
-            r['status'] == 'new' && _fromStand(r) <= RideRates.riderRadiusKm)
+            r['status'] == 'new' &&
+            (r['kmAway'] as double) <= RideRates.riderRadiusKm)
         .toList();
-    list.sort((a, b) => _fromStand(a).compareTo(_fromStand(b)));
+    list.sort((a, b) =>
+        (a['kmAway'] as double).compareTo(b['kmAway'] as double));
     return list;
   }
 
-  void _toast(String msg, {Color color = Colors.green}) {
+  void _toast(String msg, {Color color = Colors.green, bool recharge = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: color),
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: color,
+        action: recharge
+            ? SnackBarAction(
+                label: 'रिचार्ज करा',
+                textColor: Colors.white,
+                onPressed: _showRecharge,
+              )
+            : null,
+      ),
     );
+  }
+
+  // राईड confirm झाल्यावर किंवा 250 मीटर हालचाल झाल्यावर 15 मिनिटांचा timer
+  void _startReminder() {
+    _timer?.cancel();
+    _reminderShown = false;
+    _timer = Timer(_reminderAfter, () {
+      if (!mounted) return;
+      setState(() => _reminderShown = true);
+      _toast('15 मिनिटे झाली. नवीन राईड घेण्यासाठी स्टेटस ON करा.',
+          color: AppColors.primaryBlue);
+    });
   }
 
   Future<void> _goReady() async {
-    final picked = await showDialog<String>(
+    final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => SimpleDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text('Set Your Stand'),
-        children: _stands
-            .map((s) => SimpleDialogOption(
-                  onPressed: () => Navigator.pop(ctx, s),
-                  child: Text(s, style: const TextStyle(fontSize: 15)),
-                ))
-            .toList(),
+        content: const Text(
+          'तुम्ही आत्ता जिथे आहात ते लोकेशन तुमचा Stand म्हणून निश्चित केले जाईल. '
+          'या लोकेशनच्या 3 km मधल्या राईडच्या सूचना तुम्हाला येतील.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('रद्द'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Set Your Stand'),
+          ),
+        ],
       ),
     );
-    if (picked == null || !mounted) return;
+    if (ok != true || !mounted) return;
+    _timer?.cancel();
     setState(() {
-      _stand = picked;
       _ready = true;
-      _reminderPending = false;
+      _reminderShown = false;
     });
-    _toast('तुमचा Stand निश्चित केला: $picked');
+    _toast('तुमचे सध्याचे लोकेशन निश्चित केले.');
   }
 
-  void _simulateMoved() {
-    setState(() {
-      _ready = false;
-      _reminderPending = true;
-    });
-    _toast('तुम्ही 250 मीटरहून जास्त हलला. Status आपोआप OFF झाला.',
+  // तुम्ही सांगितलेले खरे तंत्रज्ञान (tracelet, distanceFilter 250.0) हे
+  // 250 मीटर हालचाल झाल्यावर हेच function बोलावेल (Stage 3).
+  void _onMovedFar() {
+    setState(() => _ready = false);
+    _startReminder();
+    _toast('तुम्ही 250 मीटरहून जास्त हलला. स्टेटस आपोआप OFF झाला.',
         color: Colors.orange);
   }
 
-  void _simulateFifteen() {
-    setState(() => _reminderPending = false);
-    _toast('15 मिनिटे झाली. पुन्हा Ready To Ride ON करा.',
-        color: AppColors.primaryBlue);
+  // "स्टेटस ON करा" बटण
+  void _turnOnAgain() {
+    if (_exhausted) {
+      _toast('आधी रिचार्ज करा.', color: Colors.red, recharge: true);
+      return;
+    }
+    _timer?.cancel();
+    setState(() {
+      _ready = true;
+      _reminderShown = false;
+    });
+    _toast('स्टेटस पुन्हा ON झाला. तुमचे सध्याचे लोकेशन नव्याने निश्चित केले.');
   }
 
   void _confirm(Map<String, dynamic> r) {
@@ -146,11 +192,13 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       RiderWallet.ridesConfirmed += 1;
       _active = r;
       _ready = false;
-      _reminderPending = true;
     });
-    _toast('राईड स्वीकारली. ₹${RideRates.rideFee} कपात झाले.');
-    if (_low && !_exhausted) {
-      _toast('Balance low, रिचार्ज करा.', color: Colors.orange);
+    _startReminder();
+    if (_low) {
+      _toast('राईड स्वीकारली. Balance low आहे, रिचार्ज करा.',
+          color: Colors.orange, recharge: true);
+    } else {
+      _toast('राईड स्वीकारली. ₹${RideRates.rideFee} कपात झाले.');
     }
   }
 
@@ -161,9 +209,67 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     });
   }
 
-  void _doRecharge() {
-    setState(() => RiderWallet.balance += _recharge);
-    _toast('₹$_recharge रिचार्ज झाले. (Demo, Online पेमेंट)');
+  void _showRecharge() {
+    int amount = 100;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) => Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('राईड रिचार्ज',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textDark)),
+              const SizedBox(height: 4),
+              Text('सध्याची शिल्लक: ₹${RiderWallet.balance}',
+                  style: const TextStyle(
+                      fontSize: 13, color: AppColors.textLight)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: [100, 200, 300]
+                    .map((a) => ChoiceChip(
+                          label: Text('₹$a'),
+                          selected: amount == a,
+                          onSelected: (_) => setSheet(() => amount = a),
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    setState(() => RiderWallet.balance += amount);
+                    _toast('₹$amount रिचार्ज झाले. (Demo, Online पेमेंट)');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  child: Text('₹$amount Online पेमेंट करा'),
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'रिचार्जचे पैसे कंपनीकडे जमा होतात. ₹100 च्या पटीत रिचार्ज करता येते.',
+                style: TextStyle(fontSize: 11, color: AppColors.textLight),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _box({required Widget child, Color? color}) {
@@ -197,8 +303,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
           Text(
             'प्रत्येक confirm केलेल्या राईडला ₹${RideRates.rideFee} कपात होते. '
             'Reject केली तर कपात नाही.',
-            style:
-                const TextStyle(fontSize: 12, color: AppColors.textLight),
+            style: const TextStyle(fontSize: 12, color: AppColors.textLight),
           ),
           if (_exhausted) ...[
             const SizedBox(height: 8),
@@ -213,31 +318,18 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                 style: TextStyle(fontSize: 12, color: Colors.deepOrange)),
           ],
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            children: [100, 200, 300]
-                .map((a) => ChoiceChip(
-                      label: Text('₹$a'),
-                      selected: _recharge == a,
-                      onSelected: (_) => setState(() => _recharge = a),
-                    ))
-                .toList(),
-          ),
-          const SizedBox(height: 6),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _doRecharge,
+              onPressed: _showRecharge,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
+                backgroundColor:
+                    (_low || _exhausted) ? Colors.deepOrange : AppColors.primaryBlue,
                 foregroundColor: Colors.white,
               ),
-              child: Text('₹$_recharge रिचार्ज करा'),
+              child: const Text('रिचार्ज करा'),
             ),
           ),
-          const SizedBox(height: 4),
-          const Text('रिचार्जचे पैसे कंपनीकडे जमा होतात. ₹100 च्या पटीत रिचार्ज करता येते.',
-              style: TextStyle(fontSize: 11, color: AppColors.textLight)),
         ],
       ),
     );
@@ -256,7 +348,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                       color: AppColors.textDark)),
-              Text('तुमच्या stand पासून ${_fromStand(r)} km',
+              Text('तुमच्यापासून ${r['kmAway']} km',
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.textLight)),
             ],
@@ -334,6 +426,35 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     );
   }
 
+  Widget _reminderCard() {
+    return _box(
+      color: AppColors.primaryBlue.withValues(alpha: 0.08),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('🔔 15 मिनिटे झाली',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          const SizedBox(height: 4),
+          const Text('नवीन राईड घेण्यासाठी स्टेटस पुन्हा ON करा.',
+              style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _turnOnAgain,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('स्टेटस ON करा'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final items = _visible;
@@ -362,7 +483,8 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                   onChanged: (v) {
                     if (v) {
                       if (_exhausted) {
-                        _toast('आधी रिचार्ज करा.', color: Colors.red);
+                        _toast('आधी रिचार्ज करा.',
+                            color: Colors.red, recharge: true);
                         return;
                       }
                       _goReady();
@@ -377,30 +499,27 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                           color: AppColors.textDark)),
                   subtitle: Text(
                     _ready
-                        ? 'Stand: $_stand. 3 km मधल्या राईडच्या सूचना येतील.'
-                        : 'ON करताना Set Your Stand निवडावा लागेल.',
+                        ? 'तुमचे सध्याचे लोकेशन निश्चित आहे. 3 km मधल्या राईडच्या सूचना येतील.'
+                        : 'ON करताना तुमचे सध्याचे लोकेशन Stand म्हणून निश्चित होईल.',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
                 if (_ready)
                   OutlinedButton(
-                    onPressed: _simulateMoved,
-                    child: const Text('Demo: मी 250 मीटरहून जास्त हलले'),
-                  ),
-                if (_reminderPending)
-                  OutlinedButton(
-                    onPressed: _simulateFifteen,
-                    child: const Text('Demo: 15 मिनिटे झाली'),
+                    onPressed: _onMovedFar,
+                    child: const Text(
+                        'Demo (फक्त चाचणीसाठी): 250 मीटर हालचाल झाली'),
                   ),
               ],
             ),
           ),
+          if (_reminderShown) _reminderCard(),
           _walletCard(),
           _box(
             child: Text(
               'आतापर्यंत स्वीकारलेल्या राईड: ${RiderWallet.ridesConfirmed}',
-              style: const TextStyle(
-                  fontSize: 13, color: AppColors.textDark),
+              style:
+                  const TextStyle(fontSize: 13, color: AppColors.textDark),
             ),
           ),
           if (active != null) _activeCard(active),
@@ -430,7 +549,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 20),
               child: Center(
-                child: Text('या stand च्या 3 km मध्ये सध्या विनंती नाही',
+                child: Text('तुमच्या 3 km मध्ये सध्या विनंती नाही',
                     style: TextStyle(color: AppColors.textLight)),
               ),
             )
