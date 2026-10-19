@@ -11,6 +11,7 @@ import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
 import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
+import '../../widgets/seller_delivery_tiles.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -204,6 +205,8 @@ class _SellerDashboard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          const SellerDeliveryTiles(),
+          const SizedBox(height: 4),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('जाहिराती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
