@@ -50,6 +50,7 @@ class _SellerRegistrationScreenState extends State<SellerRegistrationScreen> {
     {'name': 'शेती', 'code': 'AG'},
     {'name': 'आर्थिक सेवा', 'code': 'FS'},
     {'name': 'गृहसेवा', 'code': 'HS'},
+    {'name': 'लोकल डिलिव्हरी सेवा / Delivery Boy', 'code': 'DB'},
     {'name': 'इतर', 'code': 'OT'},
   ];
   final List<String> _selectedCategories = [];
