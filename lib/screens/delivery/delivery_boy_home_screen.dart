@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/delivery_rates.dart';
@@ -12,17 +13,21 @@ class DeliveryBoyHomeScreen extends StatefulWidget {
 class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
   static const String _demoCode = '4821';
 
+  // चाचणीसाठी false चे true करा: मग 15 मिनिटांऐवजी 10 सेकंदांत सूचना येते.
+  // चाचणी झाल्यावर पुन्हा false करा.
+  static const bool _testMode = false;
+  Duration get _reminderAfter =>
+      _testMode ? const Duration(seconds: 10) : const Duration(minutes: 15);
+
   bool _online = false;
-  String _stand = '';
+  bool _reminderShown = false;
   Map<String, dynamic>? _active;
-  bool _reminderPending = false;
   String _codeError = '';
+  Timer? _timer;
   final TextEditingController _codeCtrl = TextEditingController();
 
-  final List<String> _stands = const ['हडपसर', 'मगरपट्टा', 'कोरेगाव पार्क'];
-
-  // Demo ऑर्डर. kmFromStand = निवडलेल्या stand पासून pickup चे अंतर.
-  // deliveryKm = pickup पासून ग्राहकापर्यंत (यावरून कमाई ठरते).
+  // Demo: खरे लोकेशन नसल्यामुळे बॉय "हडपसर" मध्ये आहे असे धरले आहे.
+  // kmAway = बॉयपासून pickup चे अंतर. deliveryKm = pickup पासून ग्राहकापर्यंत.
   // status: new / accepted / rejected / done
   final List<Map<String, dynamic>> _orders = [
     {
@@ -35,7 +40,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
         {'name': 'मिसळ पाव', 'detail': 'मध्यम तिखट, 2 पाव', 'qty': 2},
         {'name': 'वडापाव', 'detail': 'चटणी सह', 'qty': 2},
       ],
-      'kmFromStand': {'हडपसर': 0.8, 'मगरपट्टा': 3.2, 'कोरेगाव पार्क': 9.0},
+      'kmAway': 0.8,
       'shopPhone': '9811111111',
       'buyerPhone': '9800000001',
       'status': 'new',
@@ -50,7 +55,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
         {'name': 'तांदूळ 5kg', 'detail': 'दर्जेदार तांदूळ', 'qty': 1},
         {'name': 'साखर 1kg', 'detail': 'पॅक केलेली', 'qty': 2},
       ],
-      'kmFromStand': {'हडपसर': 0.3, 'मगरपट्टा': 2.5, 'कोरेगाव पार्क': 7.5},
+      'kmAway': 0.3,
       'shopPhone': '9811111112',
       'buyerPhone': '9800000002',
       'status': 'new',
@@ -64,7 +69,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
       'items': [
         {'name': 'लहान पार्सल', 'detail': 'कागदपत्रे', 'qty': 1},
       ],
-      'kmFromStand': {'हडपसर': 4.2, 'मगरपट्टा': 1.0, 'कोरेगाव पार्क': 3.0},
+      'kmAway': 4.2,
       'shopPhone': '9811111113',
       'buyerPhone': '9800000003',
       'status': 'new',
@@ -72,13 +77,13 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
     {
       'id': 'ZP204',
       'type': 'दुकान वस्तू',
-      'pickup': 'राज मेडिकल',
+      'pickup': 'राज मेडिकल, कोरेगाव पार्क',
       'drop': 'प्रिया देशमुख, गंगा नगर',
       'deliveryKm': 8.8,
       'items': [
         {'name': 'ORS पावडर', 'detail': 'लिंबू चव', 'qty': 3},
       ],
-      'kmFromStand': {'हडपसर': 1.1, 'मगरपट्टा': 5.9, 'कोरेगाव पार्क': 6.2},
+      'kmAway': 6.2,
       'shopPhone': '9811111114',
       'buyerPhone': '9800000004',
       'status': 'new',
@@ -87,27 +92,23 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
 
   @override
   void dispose() {
+    _timer?.cancel();
     _codeCtrl.dispose();
     super.dispose();
-  }
-
-  double _fromStand(Map<String, dynamic> o) {
-    final m = o['kmFromStand'] as Map;
-    final v = m[_stand];
-    return v == null ? 999.0 : (v as num).toDouble();
   }
 
   int _earning(Map<String, dynamic> o) =>
       DeliveryRates.chargeForKm((o['deliveryKm'] as num).toDouble());
 
-  // निवडलेल्या stand च्या 5 km मधल्या नवीन ऑर्डर, जवळच्या आधी
+  // ON असताना, 5 km मधल्या नवीन ऑर्डर, जवळच्या आधी
   List<Map<String, dynamic>> get _visible {
     final list = _orders
         .where((o) =>
             o['status'] == 'new' &&
-            _fromStand(o) <= DeliveryRates.boyRadiusKm)
+            (o['kmAway'] as double) <= DeliveryRates.boyRadiusKm)
         .toList();
-    list.sort((a, b) => _fromStand(a).compareTo(_fromStand(b)));
+    list.sort((a, b) =>
+        (a['kmAway'] as double).compareTo(b['kmAway'] as double));
     return list;
   }
 
@@ -125,37 +126,65 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
     );
   }
 
+  // ऑर्डर accept केल्यावर किंवा 250 मीटर हालचाल झाल्यावर 15 मिनिटांचा timer
+  void _startReminder() {
+    _timer?.cancel();
+    _reminderShown = false;
+    _timer = Timer(_reminderAfter, () {
+      if (!mounted) return;
+      setState(() => _reminderShown = true);
+      _toast('15 मिनिटे झाली. नवीन ऑर्डर घेण्यासाठी स्टेटस ON करा.',
+          color: AppColors.primaryBlue);
+    });
+  }
+
   Future<void> _goOnline() async {
-    final picked = await showDialog<String>(
+    final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => SimpleDialog(
+      builder: (ctx) => AlertDialog(
         title: const Text('Select My Stand'),
-        children: _stands
-            .map((s) => SimpleDialogOption(
-                  onPressed: () => Navigator.pop(ctx, s),
-                  child: Text(s, style: const TextStyle(fontSize: 15)),
-                ))
-            .toList(),
+        content: const Text(
+          'तुम्ही आत्ता जिथे आहात ते लोकेशन तुमचा Stand म्हणून निश्चित केले जाईल. '
+          'या लोकेशनच्या 5 km मधल्या ऑर्डरच्या सूचना तुम्हाला येतील.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('रद्द'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Select My Stand'),
+          ),
+        ],
       ),
     );
-    if (picked == null || !mounted) return;
+    if (ok != true || !mounted) return;
+    _timer?.cancel();
     setState(() {
-      _stand = picked;
       _online = true;
-      _reminderPending = false;
+      _reminderShown = false;
     });
-    _toast('तुमचे लोकेशन निश्चित केले: $picked');
+    _toast('तुमचे सध्याचे लोकेशन निश्चित केले.');
   }
 
-  void _goOffline() {
+  // तुम्ही सांगितलेले खरे तंत्रज्ञान (tracelet, distanceFilter 250.0) हे
+  // 250 मीटर हालचाल झाल्यावर हेच function बोलावेल (Stage 3).
+  void _onMovedFar() {
     setState(() => _online = false);
-  }
-
-  // Demo: डिलिव्हरी बॉयचे लोकेशन बदलले तर status आपोआप OFF
-  void _simulateLocationChange() {
-    setState(() => _online = false);
-    _toast('लोकेशन बदलले, म्हणून Status आपोआप OFF झाला.',
+    _startReminder();
+    _toast('तुम्ही 250 मीटरहून जास्त हलला. स्टेटस आपोआप OFF झाला.',
         color: Colors.orange);
+  }
+
+  // "स्टेटस ON करा" बटण
+  void _turnOnAgain() {
+    _timer?.cancel();
+    setState(() {
+      _online = true;
+      _reminderShown = false;
+    });
+    _toast('स्टेटस पुन्हा ON झाला. तुमचे सध्याचे लोकेशन नव्याने निश्चित केले.');
   }
 
   void _reject(Map<String, dynamic> o) {
@@ -168,18 +197,11 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
       o['status'] = 'accepted';
       _active = o;
       _online = false; // ऑर्डर accept केली की status OFF
-      _reminderPending = true;
       _codeError = '';
       _codeCtrl.clear();
     });
+    _startReminder();
     _toast('ऑर्डर स्वीकारली. दुकानदार आणि ग्राहकाला कळवले.');
-  }
-
-  // Demo: 15 मिनिटांनी ON करण्याची सूचना
-  void _simulateFifteenMinutes() {
-    setState(() => _reminderPending = false);
-    _toast('15 मिनिटे झाली. नवीन ऑर्डर घेण्यासाठी पुन्हा Status ON करा.',
-        color: AppColors.primaryBlue);
   }
 
   void _submitCode() {
@@ -300,7 +322,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
           ..._itemLines(o),
           const SizedBox(height: 8),
           Text(
-            'तुमच्या stand पासून ${_fromStand(o)} km · डिलिव्हरी अंतर ${o['deliveryKm']} km',
+            'तुमच्यापासून ${o['kmAway']} km · डिलिव्हरी अंतर ${o['deliveryKm']} km',
             style: const TextStyle(fontSize: 12, color: AppColors.textLight),
           ),
           const SizedBox(height: 4),
@@ -415,16 +437,35 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
               child: const Text('Submit करा, ऑर्डर पूर्ण'),
             ),
           ),
-          if (_reminderPending) ...[
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: _simulateFifteenMinutes,
-                child: const Text('Demo: 15 मिनिटे झाली'),
+        ],
+      ),
+    );
+  }
+
+  Widget _reminderCard() {
+    return _box(
+      color: AppColors.primaryBlue.withValues(alpha: 0.08),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('🔔 15 मिनिटे झाली',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          const SizedBox(height: 4),
+          const Text('नवीन ऑर्डर घेण्यासाठी स्टेटस पुन्हा ON करा.',
+              style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _turnOnAgain,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                foregroundColor: Colors.white,
               ),
+              child: const Text('स्टेटस ON करा'),
             ),
-          ],
+          ),
         ],
       ),
     );
@@ -459,7 +500,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
                     if (v) {
                       _goOnline();
                     } else {
-                      _goOffline();
+                      setState(() => _online = false);
                     }
                   },
                   title: Text(_online ? 'Status: ON' : 'Status: OFF',
@@ -468,19 +509,21 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
                           color: AppColors.textDark)),
                   subtitle: Text(
                     _online
-                        ? 'My Stand: $_stand. ऑर्डरच्या सूचना येतील.'
-                        : 'ON करताना तुमचा Stand निवडावा लागेल.',
+                        ? 'तुमचे सध्याचे लोकेशन निश्चित आहे. 5 km मधल्या ऑर्डरच्या सूचना येतील.'
+                        : 'ON करताना तुमचे सध्याचे लोकेशन Stand म्हणून निश्चित होईल.',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
                 if (_online)
                   OutlinedButton(
-                    onPressed: _simulateLocationChange,
-                    child: const Text('Demo: माझे लोकेशन बदलले'),
+                    onPressed: _onMovedFar,
+                    child: const Text(
+                        'Demo (फक्त चाचणीसाठी): 250 मीटर हालचाल झाली'),
                   ),
               ],
             ),
           ),
+          if (_reminderShown) _reminderCard(),
           _box(
             color: AppColors.primaryBlue.withValues(alpha: 0.08),
             child: Column(
@@ -522,7 +565,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
               child: Center(
-                child: Text('या stand च्या 5 km मध्ये सध्या ऑर्डर नाही',
+                child: Text('तुमच्या 5 km मध्ये सध्या ऑर्डर नाही',
                     style: TextStyle(color: AppColors.textLight)),
               ),
             )
