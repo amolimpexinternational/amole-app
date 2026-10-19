@@ -1,0 +1,297 @@
+import 'package:flutter/material.dart';
+import '../../constants/app_colors.dart';
+import '../../data/delivery_rates.dart';
+
+class HotelOrdersScreen extends StatefulWidget {
+  const HotelOrdersScreen({super.key});
+
+  @override
+  State<HotelOrdersScreen> createState() => _HotelOrdersScreenState();
+}
+
+class _HotelOrdersScreenState extends State<HotelOrdersScreen> {
+  // Demo: हॉटेलच्या 5 km मधले ON डिलिव्हरी बॉय
+  final List<Map<String, String>> _boys = const [
+    {'name': 'संतोष गायकवाड', 'phone': '9822222222', 'km': '1.2 km'},
+    {'name': 'अनिल पवार', 'phone': '9822222223', 'km': '2.8 km'},
+    {'name': 'मंगेश जाधव', 'phone': '9822222224', 'km': '4.5 km'},
+  ];
+
+  // status: new / accepted / boy / cancelled
+  final List<Map<String, dynamic>> _orders = [
+    {
+      'id': 'HF101',
+      'buyer': 'रमेश पाटील',
+      'items': 'मिसळ पाव x2, वडापाव (2) x1',
+      'amount': 190.0,
+      'km': 1.4,
+      'status': 'new',
+      'noBoy': false,
+      'reason': '',
+    },
+    {
+      'id': 'HF102',
+      'buyer': 'सुनीता जाधव',
+      'items': 'व्हेज थाळी x2',
+      'amount': 280.0,
+      'km': 3.9,
+      'status': 'new',
+      'noBoy': false,
+      'reason': '',
+    },
+  ];
+
+  void _toast(String msg, {Color color = Colors.green}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: color),
+    );
+  }
+
+  void _set(Map<String, dynamic> o, String status, {String reason = ''}) {
+    setState(() {
+      o['status'] = status;
+      o['reason'] = reason;
+    });
+  }
+
+  Widget _notice(String text, Color color) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(text,
+          style: const TextStyle(fontSize: 12, color: AppColors.textDark)),
+    );
+  }
+
+  Widget _boyRow(Map<String, String> b) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Row(
+        children: [
+          const Icon(Icons.two_wheeler_outlined,
+              size: 18, color: AppColors.primaryBlue),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(b['name']!,
+                style: const TextStyle(
+                    fontSize: 13, color: AppColors.textDark)),
+          ),
+          Text('${b['km']} · ${b['phone']}',
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryBlue)),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _statusBlock(Map<String, dynamic> o) {
+    final status = o['status'] as String;
+
+    if (status == 'new') {
+      return [
+        const Text('15 मिनिटांत स्वीकारा, नाहीतर ऑर्डर आपोआप cancel होईल.',
+            style: TextStyle(fontSize: 12, color: Colors.deepOrange)),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  _set(o, 'cancelled', reason: 'तुम्ही नाकारली');
+                  _toast('ऑर्डर नाकारली. ग्राहकाला कळवले.',
+                      color: Colors.red);
+                },
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.red,
+                  side: const BorderSide(color: Colors.red),
+                ),
+                child: const Text('Reject'),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  _set(o, 'accepted');
+                  _toast(
+                      'ऑर्डर स्वीकारली. जवळच्या डिलिव्हरी बॉयना सूचना गेली.');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Accept'),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {
+              _set(o, 'cancelled', reason: '15 मिनिटांत स्वीकारली नाही');
+              _toast('15 मिनिटे संपली. ऑर्डर आपोआप cancel झाली.',
+                  color: Colors.orange);
+            },
+            child: const Text('Demo: 15 मिनिटे संपली'),
+          ),
+        ),
+      ];
+    }
+
+    if (status == 'accepted') {
+      return [
+        _notice(
+            'डिलिव्हरी बॉय अरेंज करण्यासाठी खालच्या बॉयना संपर्क करा. '
+            'कोणीही तयार नसेल तर ऑर्डर पोहोचवण्याची जबाबदारी तुमची आहे.',
+            Colors.orange),
+        const Text('जवळचे डिलिव्हरी बॉय (ON)',
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textDark)),
+        ..._boys.map(_boyRow),
+        if (o['noBoy'] == true) ...[
+          const SizedBox(height: 8),
+          _notice(
+              '15 मिनिटांत कोणत्याही बॉयने ऑर्डर घेतली नाही. ग्राहकाला सूचना गेली, '
+              'आणि तुमचा नंबर पुन्हा दाखवला गेला.',
+              Colors.red),
+        ],
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton(
+            onPressed: () {
+              setState(() => o['status'] = 'boy');
+              _toast('डिलिव्हरी बॉयने ऑर्डर स्वीकारली.');
+            },
+            child: const Text('Demo: बॉयने स्वीकारले'),
+          ),
+        ),
+        if (o['noBoy'] != true)
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () => setState(() => o['noBoy'] = true),
+              child: const Text('Demo: 15 मिनिटांत बॉय मिळाला नाही'),
+            ),
+          ),
+        SizedBox(
+          width: double.infinity,
+          child: TextButton(
+            onPressed: () {
+              _set(o, 'cancelled', reason: 'तुम्ही cancel केली');
+              _toast('ऑर्डर cancel केली.', color: Colors.red);
+            },
+            child: const Text('ऑर्डर cancel करा',
+                style: TextStyle(color: Colors.red)),
+          ),
+        ),
+      ];
+    }
+
+    if (status == 'boy') {
+      return [
+        _notice(
+            '✅ डिलिव्हरी बॉय: संतोष गायकवाड · 9822222222\n'
+            'ग्राहकाला confirmation आणि बॉयचा नंबर गेला.',
+            Colors.green),
+        SizedBox(
+          width: double.infinity,
+          child: TextButton(
+            onPressed: () {
+              _set(o, 'cancelled', reason: 'तुम्ही cancel केली');
+              _toast('ऑर्डर cancel केली. अंतिम निर्णय तुमचा आहे.',
+                  color: Colors.red);
+            },
+            child: const Text('ऑर्डर cancel करा',
+                style: TextStyle(color: Colors.red)),
+          ),
+        ),
+      ];
+    }
+
+    return [_notice('Cancel: ${o['reason']}', Colors.red)];
+  }
+
+  Widget _orderCard(Map<String, dynamic> o) {
+    final km = (o['km'] as num).toDouble();
+    final charge = DeliveryRates.chargeForKm(km);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.lightGrey),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('#${o['id']} · ${o['buyer']}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: AppColors.textDark)),
+              Text('$km km',
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textLight)),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(o['items'] as String,
+              style: const TextStyle(
+                  fontSize: 13, color: AppColors.textDark)),
+          const SizedBox(height: 6),
+          Text(
+            'पदार्थ ₹${(o['amount'] as double).toStringAsFixed(0)} · '
+            'डिलिव्हरी ₹$charge · Online पेमेंट',
+            style: const TextStyle(
+                fontSize: 12, color: AppColors.textLight),
+          ),
+          const SizedBox(height: 10),
+          ..._statusBlock(o),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryBlue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('🍽️ हॉटेल ऑर्डर',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.bold)),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Text('आलेल्या ऑर्डर',
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark)),
+          const SizedBox(height: 8),
+          ..._orders.map(_orderCard),
+        ],
+      ),
+    );
+  }
+}
