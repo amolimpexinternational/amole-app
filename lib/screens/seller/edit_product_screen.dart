@@ -29,7 +29,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     'GR':'किराणा','FV':'फळे व भाजीपाला','DA':'दुग्धजन्य','BK':'बेकरी',
     'RS':'हॉटेल/रेस्तराँ','MD':'मेडिकल','EL':'इलेक्ट्रॉनिक्स','CF':'कपडे',
     'JW':'दागिने','BP':'ब्युटी','ED':'शिक्षण','AU':'वाहन','CH':'बांधकाम',
-    'AG':'शेती','FS':'आर्थिक','HS':'गृहसेवा','OT':'इतर'
+      'AG':'शेती','FS':'आर्थिक','HS':'गृहसेवा','KD':'लहान मुले','OT':'इतर'
   };
 
   double get mrp => double.tryParse(_mrpCtrl.text) ?? 0;
