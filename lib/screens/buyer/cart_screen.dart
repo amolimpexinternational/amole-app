@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
 import 'order_tracking_screen.dart';
+import 'zatpat_order_status_screen.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  // ZatPat / Hotel Food / Kirana मधून उघडल्यास डिलिव्हरी चार्ज आणि ऑर्डरचे नाव येते.
+  // इतर ठिकाणांसाठी (Global Shopping वगैरे) डिफॉल्ट 0, म्हणजे जुने वर्तन तसेच.
+  final int deliveryCharge;
+  final String orderTitle;
+  const CartScreen({
+    super.key,
+    this.deliveryCharge = 0,
+    this.orderTitle = 'ZatPat',
+  });
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -23,7 +32,8 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   double get _total =>
-      (_subtotal - _pointsToUse).clamp(0, double.infinity).toDouble();
+      (_subtotal - _pointsToUse).clamp(0, double.infinity).toDouble() +
+      widget.deliveryCharge;
 
   void _removeItem(String id) {
     setState(() {
@@ -316,6 +326,28 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ],
           ),
+          if (widget.deliveryCharge > 0) ...[
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'डिलिव्हरी चार्ज',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textLight,
+                  ),
+                ),
+                Text(
+                  '₹${widget.deliveryCharge}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textDark,
+                  ),
+                ),
+              ],
+            ),
+          ],
           if (_usePoints) ...[
             const SizedBox(height: 4),
             Row(
@@ -369,7 +401,17 @@ class _CartScreenState extends State<CartScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const OrderTrackingScreen(),
+                          builder: (_) => widget.deliveryCharge > 0
+                              ? ZatPatOrderStatusScreen(
+                                  title: widget.orderTitle,
+                                  orderId:
+                                      'ZP${DateTime.now().millisecondsSinceEpoch % 100000}',
+                                  sellerName: BuyerShoppingData
+                                      .cartItems.first['seller'] as String,
+                                  subtotal: _total - widget.deliveryCharge,
+                                  deliveryCharge: widget.deliveryCharge,
+                                )
+                              : const OrderTrackingScreen(),
                         ),
                       );
                     },

@@ -3,6 +3,7 @@ import '../../constants/app_colors.dart';
 import 'zatpat_feedback_screen.dart';
 
 class ZatPatOrderStatusScreen extends StatefulWidget {
+  final String title;
   final String orderId;
   final String sellerName;
   final double subtotal;
@@ -10,6 +11,7 @@ class ZatPatOrderStatusScreen extends StatefulWidget {
 
   const ZatPatOrderStatusScreen({
     super.key,
+    this.title = 'ZatPat',
     this.orderId = 'ZP301',
     this.sellerName = 'श्री गणेश किराणा',
     this.subtotal = 340,
@@ -169,7 +171,7 @@ class _ZatPatOrderStatusScreenState extends State<ZatPatOrderStatusScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: Text('⚡ ZatPat ऑर्डर #${widget.orderId}',
+        title: Text('⚡ ${widget.title} ऑर्डर #${widget.orderId}',
             style: const TextStyle(
                 color: Colors.white,
                 fontSize: 17,

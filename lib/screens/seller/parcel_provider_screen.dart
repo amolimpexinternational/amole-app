@@ -607,4 +607,70 @@ class _ParcelProviderScreenState extends State<ParcelProviderScreen> {
             child: Text(
               'आतापर्यंत स्वीकारलेली कामे: ${CargoWallet.jobsAccepted}',
               style:
-                  const TextStyle(fontSize: 13, c
+                  const TextStyle(fontSize: 13, color: AppColors.textDark),
+            ),
+          ),
+          if (active != null) _activeCard(active),
+          const Text('नवीन कामाच्या सूचना',
+              style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark)),
+          const SizedBox(height: 4),
+          const Text('तुमच्या वाहनाच्या, 10 km मधल्या Requirements',
+              style: TextStyle(fontSize: 11, color: AppColors.textLight)),
+          const SizedBox(height: 8),
+          if (_noBalance)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('रिचार्ज संपल्यामुळे सूचना बंद आहेत',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else if (!_ready)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('सूचना पाहण्यासाठी Ready To Ride ON करा',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else if (active != null)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('सध्याचे काम पूर्ण झाल्यावर नवीन सूचना दिसतील',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else if (items.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('तुमच्या 10 km मध्ये सध्या नवीन Requirement नाही',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else
+            ...items.map(_requestCard),
+          if (_log.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            const Text('सूचना',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark)),
+            const SizedBox(height: 6),
+            ..._log.map((t) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text('• $t',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textLight)),
+                )),
+          ],
+        ],
+      ),
+    );
+  }
+}

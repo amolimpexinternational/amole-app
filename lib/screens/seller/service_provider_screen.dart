@@ -580,4 +580,47 @@ class _ServiceProviderScreenState extends State<ServiceProviderScreen> {
           const SizedBox(height: 8),
           if (_noBalance)
             const Padding(
-              padding: EdgeInsets.symmetric(vert
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('रिचार्ज संपल्यामुळे सूचना बंद आहेत',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else if (active != null)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('सध्याचे काम पूर्ण झाल्यावर नवीन सूचना दिसतील',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else if (items.isEmpty)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(
+                child: Text('तुमच्या 20 km मध्ये सध्या नवीन Requirement नाही',
+                    style: TextStyle(color: AppColors.textLight)),
+              ),
+            )
+          else
+            ...items.map(_requestCard),
+          if (_log.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            const Text('सूचना',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark)),
+            const SizedBox(height: 6),
+            ..._log.map((t) => Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text('• $t',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textLight)),
+                )),
+          ],
+        ],
+      ),
+    );
+  }
+}

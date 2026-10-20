@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
 import 'cart_screen.dart';
+import '../../data/zatpat_data.dart';
+import '../../data/delivery_rates.dart';
 
 class ZatPatHomeScreen extends StatefulWidget {
-  const ZatPatHomeScreen({super.key});
+  final String? initialCategory;
+  final String? title;
+  const ZatPatHomeScreen({super.key, this.initialCategory, this.title});
 
   @override
   State<ZatPatHomeScreen> createState() => _ZatPatHomeScreenState();
@@ -12,7 +16,7 @@ class ZatPatHomeScreen extends StatefulWidget {
 
 class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
   static const double _maxKm = 10;
-  String _category = 'सर्व';
+  late String _category = widget.initialCategory ?? 'सर्व';
   String _query = '';
 
   final List<String> _categories = const [
@@ -63,7 +67,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
   List<Map<String, dynamic>> get _visible {
     final q = _query.trim();
     final list = _products.where((p) {
-      if (p['zatpat'] != true) return false;
+      if (!ZatPatData.isOn(p['seller'] as String, p['zatpat'] == true)) return false;
       if ((p['km'] as double) > _maxKm) return false;
       if (_category != 'सर्व' && p['category'] != _category) return false;
       if (q.isNotEmpty &&
@@ -125,7 +129,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     double? maxKm;
     for (final item in BuyerShoppingData.cartItems) {
       for (final p in _products) {
-        if (p['seller'] == item['seller'] && p['zatpat'] == true) {
+        if (p['seller'] == item['seller'] && ZatPatData.isOn(p['seller'] as String, p['zatpat'] == true)) {
           final km = p['km'] as double;
           if (maxKm == null || km > maxKm) maxKm = km;
           break;
@@ -133,7 +137,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
       }
     }
     if (maxKm == null) return 0;
-    return _chargeForKm(maxKm);
+    return DeliveryRates.chargeForKm(maxKm);
   }
 
   Widget _qtyControl(Map<String, dynamic> p) {
@@ -188,7 +192,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     final price = p['price'] as double;
     final mrp = p['mrp'] as double;
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
@@ -198,7 +202,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 70,
+            height: 52,
             width: double.infinity,
             decoration: BoxDecoration(
               color: AppColors.primaryBlue.withValues(alpha: 0.08),
@@ -273,7 +277,10 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
             ElevatedButton(
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
+                MaterialPageRoute(
+                    builder: (_) => CartScreen(
+                        deliveryCharge: _deliveryCharge(),
+                        orderTitle: widget.title ?? 'ZatPat')),
               ).then((_) => setState(() {})),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryBlue,
@@ -297,10 +304,10 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('⚡ ZatPat', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(widget.title ?? '⚡ ZatPat', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
             Text('तुमच्या 10 km मधली दुकाने', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
@@ -380,7 +387,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisExtent: 232,
+                      mainAxisExtent: 196,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),

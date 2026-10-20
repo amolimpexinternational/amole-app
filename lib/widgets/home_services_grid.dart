@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import '../screens/buyer/buyer_search_screen.dart';
 import '../screens/buyer/coming_soon_screen.dart';
 import '../screens/buyer/global_shopping_home_screen.dart';
-import '../screens/buyer/pincode_shops_screen.dart';
+import '../screens/buyer/hotel_food_home_screen.dart';
+import '../screens/buyer/listings_home_screen.dart';
+import '../screens/buyer/moms_miracle_screen.dart';
+import '../screens/buyer/parcel_booking_screen.dart';
+import '../screens/buyer/ride_booking_screen.dart';
+import '../screens/buyer/services_home_screen.dart';
+import '../screens/buyer/zatpat_home_screen.dart';
 
 class _GridItem {
   final String label;
@@ -21,30 +26,30 @@ class HomeServicesGrid extends StatelessWidget {
         _GridItem('Global Shopping', Icons.shopping_cart_outlined,
             const Color(0xFF1565C0), () => const GlobalShoppingHomeScreen()),
         _GridItem('Taxi / Rikshaw', Icons.local_taxi_outlined,
-            const Color(0xFFF9A825), () => _soon('Taxi / Rikshaw')),
+            const Color(0xFFF9A825), () => const RideBookingScreen()),
         _GridItem('ZatPat', Icons.bolt_outlined, const Color(0xFFE53935),
-            () => const PincodeShopsScreen()),
+            () => const ZatPatHomeScreen()),
         _GridItem('Hotel Food', Icons.restaurant_outlined,
-            const Color(0xFFEF6C00),
-            () => const BuyerSearchScreen(initialFilter: 'services')),
+            const Color(0xFFEF6C00), () => const HotelFoodHomeScreen()),
         _GridItem('Services & Repair', Icons.build_outlined,
-            const Color(0xFF546E7A), () => _soon('Services & Repair')),
+            const Color(0xFF546E7A), () => const ServicesHomeScreen()),
         _GridItem('Parcel Cargo', Icons.local_shipping_outlined,
-            const Color(0xFF6D4C41), () => _soon('Parcel Cargo')),
+            const Color(0xFF6D4C41), () => const ParcelBookingScreen()),
         _GridItem('Resale Or Rent', Icons.swap_horiz_outlined,
-            const Color(0xFF8E24AA), () => _soon('Resale Or Rent')),
+            const Color(0xFF8E24AA),
+            () => const ListingsHomeScreen(module: 'resalerent')),
         _GridItem('Kirana Mart', Icons.shopping_basket_outlined,
             const Color(0xFF2E7D32),
-            () => const PincodeShopsScreen(category: 'किराणा')),
+            () => const ZatPatHomeScreen(
+                initialCategory: 'किराणा', title: 'Kirana Mart')),
         _GridItem('Jobs', Icons.work_outline, const Color(0xFF3949AB),
-            () => _soon('Jobs')),
+            () => const ListingsHomeScreen(module: 'jobs')),
         _GridItem("Mom's Miracle", Icons.child_friendly_outlined,
-            const Color(0xFFD81B60), () => _soon("Mom's Miracle")),
+            const Color(0xFFD81B60), () => const MomsMiracleScreen()),
         _GridItem('Manufacturer', Icons.factory_outlined,
             const Color(0xFF00838F), () => _soon('Manufacturer')),
         _GridItem('Farmers & Vegetable', Icons.agriculture_outlined,
-            const Color(0xFF558B2F),
-            () => const PincodeShopsScreen(category: 'भाजीपाला')),
+            const Color(0xFF558B2F), () => _soon('Farmers & Vegetable')),
       ];
 
   @override

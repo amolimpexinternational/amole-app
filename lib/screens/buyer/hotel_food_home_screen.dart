@@ -212,7 +212,10 @@ class _CartBar extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
+                MaterialPageRoute(
+                    builder: (_) => CartScreen(
+                        deliveryCharge: _hotelDeliveryCharge(),
+                        orderTitle: 'Hotel Food')),
               ).then((_) => onBack()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryBlue,
