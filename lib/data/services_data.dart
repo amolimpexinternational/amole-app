@@ -15,6 +15,14 @@ class ServiceData {
     {'name': 'पेस्ट कंट्रोल', 'icon': Icons.pest_control},
     {'name': 'घर स्वच्छता', 'icon': Icons.cleaning_services},
     {'name': 'संगणक दुरुस्ती', 'icon': Icons.computer},
+    {'name': 'डिलिव्हरी बॉय', 'icon': Icons.delivery_dining},
+    {'name': 'RO / वॉटर प्युरिफायर', 'icon': Icons.water_drop},
+    {'name': 'फोटोग्राफर', 'icon': Icons.camera_alt},
+    {'name': 'इव्हेंट / डेकोरेशन', 'icon': Icons.celebration},
+    {'name': 'शिकवणी (Tutor)', 'icon': Icons.school},
+    {'name': 'सलून / ब्युटी', 'icon': Icons.content_cut},
+    {'name': 'ड्रायव्हर', 'icon': Icons.directions_car},
+    {'name': 'CCTV / सिक्युरिटी', 'icon': Icons.videocam},
   ];
 
   // paid = ज्याने सशुल्क plan घेतला आहे. फक्त हेच शोधात दिसतात.
