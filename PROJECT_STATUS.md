@@ -710,3 +710,4 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 - AI/developers: after PROJECT_STATUS.md, also read PROJECT_MAP.md (auto-generated map of every Dart file). Regenerate it before committing with: python3 tools/make_map.py
 - Note: firebase packages are listed in pubspec.yaml but Firebase is NOT initialized yet. Backend is still Stage 3.
 - Seller list (PincodeShopsScreen) now one continuous list ordered by buyer pincode, then taluka, then district, nearest first. Buyer location is a fixed demo value (411028, Haveli, Pune). Dummy shops only.
+- Update (Oct 2026): Global Shopping Home: एका screen वर 6 products (2x3), अखंड फिरणारी यादी, प्रत्येक product वर - 1 + आणि Cart मध्ये टाका. File: global_shopping_home_screen.dart. Commit: Global Shopping 6 products grid. बाकी: ZatPat/Hotel Food/Mom's Miracle चा कापणारा मजकूर, Buyer Home चे offer tabs.
