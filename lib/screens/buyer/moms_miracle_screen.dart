@@ -347,6 +347,7 @@ class _MomsMiracleScreenState extends State<MomsMiracleScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryBlue,
                 foregroundColor: Colors.white,
+                minimumSize: const Size(0, 44),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
               ),

@@ -208,6 +208,7 @@ class _ServicesHomeScreenState extends State<ServicesHomeScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
+              minimumSize: const Size(0, 40),
             ),
             child: const Text('संपर्क'),
           ),

@@ -711,3 +711,55 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 - Note: firebase packages are listed in pubspec.yaml but Firebase is NOT initialized yet. Backend is still Stage 3.
 - Seller list (PincodeShopsScreen) now one continuous list ordered by buyer pincode, then taluka, then district, nearest first. Buyer location is a fixed demo value (411028, Haveli, Pune). Dummy shops only.
 - Update (Oct 2026): Global Shopping Home: एका screen वर 6 products (2x3), अखंड फिरणारी यादी, प्रत्येक product वर - 1 + आणि Cart मध्ये टाका. File: global_shopping_home_screen.dart. Commit: Global Shopping 6 products grid. बाकी: ZatPat/Hotel Food/Mom's Miracle चा कापणारा मजकूर, Buyer Home चे offer tabs.
+
+---
+
+# 20. UPDATE — 20 OCTOBER 2026 (मोबाईल modules जोडले आणि जोडणी पूर्ण)
+
+## 20.1 काय झाले
+मोबाईलवरून GitHub app द्वारे नवीन Demo modules जोडले होते (HANDOFF प्रमाणे). Codespace मध्ये `flutter analyze` चालवून जोडणी पूर्ण केली. सर्व Demo/dummy डेटा आहे, Stage 3 नाही.
+
+नवीन modules: ZatPat, Hotel Food, Kirana Mart (ZatPat screen चे दुसरे रूप), Taxi/Rikshaw, Services & Repair, Resale/Rent/Jobs, Parcel Cargo, Mom's Miracle, Delivery Boy.
+
+## 20.2 दुरुस्त केलेले
+- `lib/screens/seller/parcel_provider_screen.dart` आणि `service_provider_screen.dart` मोबाईलवर paste करताना अर्ध्यावर तुटल्या होत्या (build error). दोन्ही पूर्ण code ने बदलल्या. आता 676 आणि 626 ओळी, शेवट `}`.
+- बाकी सर्व नवीन files पूर्ण आहेत (शेवटची ओळ तपासली).
+
+## 20.3 HANDOFF चे बदल (सर्व पूर्ण, `flutter analyze` मध्ये error शून्य)
+- **A:** `zatpat_home_screen.dart` ला पर्यायी `initialCategory` आणि `title` (Kirana Mart साठी).
+- **B:** त्याच file मध्ये दुकानदाराचा ON/OFF (`ZatPatData.isOn`) आणि डिलिव्हरी चार्ज `DeliveryRates.chargeForKm`. जुना `_chargeForKm` function अजून file मध्ये आहे (वापरात नाही, काढला तरी चालेल).
+- **C:** `lib/widgets/home_services_grid.dart` पूर्ण बदलली. 12 icon खऱ्या screens ला जोडले. फक्त Manufacturer आणि Farmers & Vegetable "Coming Soon" आहेत.
+- **D:** `seller_registration_screen.dart` मध्ये category `RT` (रिक्षा / टॅक्सी सेवा) आणि `KD` (लहान मुले) जोडल्या.
+- **E:** `CartScreen` ला पर्यायी `deliveryCharge` (डिफॉल्ट 0) आणि `orderTitle`. ZatPat/Hotel Food मधून उघडल्यास Cart मध्ये "डिलिव्हरी चार्ज" ओळ दिसते, ती Final Amount मध्ये जोडली जाते, आणि "ऑर्डर नक्की करा" ने `ZatPatOrderStatusScreen` उघडते (पर्यायी `title`, Hotel Food साठी "Hotel Food ऑर्डर"). इतर ठिकाणांहून (Global Shopping) Cart जुन्यासारखाच चालतो आणि जुना `OrderTrackingScreen` उघडतो.
+- **F:** तिन्ही `_testMode` = `false` तपासले.
+
+## 20.4 अजून बाकी
+- **App चालवून तपासणी अजून झालेली नाही** (HANDOFF §5 ची यादी). ही सर्वात आधी करायची.
+- रिक्षा सेलरच्या नोंदणीत वाहन आणि ड्रायव्हिंग लायसन्सची माहिती घेणारे फील्ड.
+- निर्णय बाकी: जुना `order_tracking_screen.dart` आणि `ZatPatOrderStatusScreen` एकत्र करायचे का.
+- Demo मर्यादा: Cart मधील डिलिव्हरी चार्ज Cart उघडतानाच काढला जातो. Cart मध्ये गेल्यावर वस्तू काढल्या तर तो बदलत नाही.
+- `kids_demo_products.dart` खरे प्रॉडक्ट आल्यावर काढायची.
+- `PROJECT_MAP.md` जुना आहे (17 ऑक्टोबर, 121 files). commit आधी `python3 tools/make_map.py` चालवायचे.
+
+## 20.5 व्यवसाय निर्णय (Stage 3 साठी, आत्ता करू नका)
+- **Global Shopping:** देशभर ऑर्डर पाठवण्यासाठी Shiprocket सारख्या शिपिंग कंपन्यांशी व्यावसायिक करार. त्यांचे शिपिंग शुल्क Stage 3 मध्ये येईल. स्थानिक डिलिव्हरी चार्ज Global Shopping ला लागू नाही.
+- **ZatPat, Hotel Food, Kirana Mart:** स्थानिक डिलिव्हरी बॉय Amole वर सेलर म्हणून (category `DB`) जोडले जातील.
+- Stage 3 ची बाकी यादी HANDOFF §7 प्रमाणेच आहे (tracelet लोकेशन, Firebase, Cashfree पेमेंट, शहरानुसार दर screens, Parcel चे मोठ्या वाहनांचे दर).
+
+## 20.6 फॉलो-अप — 21 ऑक्टोबर 2026 (app चालवून तपासणी आणि दुरुस्त्या)
+
+**तपासणीत सापडलेले कारण:** `lib/main.dart` ओळ 27 ते 31 मध्ये सामायिक theme मध्ये सर्व `ElevatedButton` ला `minimumSize: Size(double.infinity, 52)` आहे. म्हणून Row मध्ये ठेवलेले कोणतेही `ElevatedButton` पूर्ण रुंदी घेते आणि शेजारचा मजकूर अक्षरा-अक्षराने खाली मोडतो. theme बदलला नाही (इतर शेकडो ठिकाणी पूर्ण रुंदीची बटणे बरोबर आहेत). नियम: Row मध्ये `ElevatedButton` वापरल्यास त्याच्या `styleFrom` मध्ये `minimumSize: const Size(0, 44)` द्या.
+
+**दुरुस्त केलेले (बटण रुंदी):**
+- `zatpat_home_screen.dart` तळाचा "Cart बघा" बार (हाताने)
+- `hotel_food_home_screen.dart` `_CartBar`, `moms_miracle_screen.dart` `_bottomBar`, `services_home_screen.dart` "संपर्क" बटण (`apply_buttons.py` स्क्रिप्टने)
+
+**प्रयत्न करून परत घेतले:** `fix_global.py` (Global Shopping चे कार्ड बदलणारी स्क्रिप्ट) चालवल्यावर `_pick`, `_selectedQty`, `_changePick`, `_addSelected` आधीच file मध्ये असल्याने duplicate error आले. `git checkout -- lib/screens/buyer/global_shopping_home_screen.dart` ने file मूळ स्थितीत परत आणली. Global Shopping मध्ये +/− आधीपासून आहे. त्या स्क्रिप्टची गरज नाही, ती commit करायची नाही.
+
+**ZatPat:** बटण दुरुस्तीनंतर screen वापरकर्त्याला योग्य वाटली (Kirana Mart ही त्याच screen चे रूप आहे).
+
+## 20.7 अजून बाकी UI दुरुस्त्या (वापरकर्त्याने सांगितलेल्या)
+1. **Global Shopping:** प्रॉडक्ट कार्ड लहान करून एका ओळीत दोन दिसावेत, वर स्क्रोल करत पुढचे दिसावेत. कार्डवर "कार्ट मध्ये टाका" आणि +/− (किंमतही बदलावी). ही दुरुस्ती फक्त आकाराची आहे.
+2. **Hotel Food (`HotelMenuScreen`), Mom's Miracle, Services च्या सेवा screens:** प्रॉडक्ट Global Shopping सारखे दिसावेत (फोटो, नाव, किंमत, कार्ट मध्ये टाका, +/− ने किंमत बदलणे). बार दुरुस्त झाल्यावर किती राहते ते तपासायचे, उरलेले screenshot पाहून करायचे. Mom's Miracle मध्ये कार्डची उंची `mainAxisExtent: 290` ठोक आहे.
+3. **Services:** icon चा grid (`_categoryGrid`) खाली सरकवता यावा. तो `shrinkWrap` आणि `NeverScrollableScrollPhysics` सह आहे, म्हणून आजूबाजूची रचना (`build`, ओळ सुमारे 270 ते 340) वाचून ठरवायचे.
+4. **Stage 3 साठी:** सेलर म्हणून नोंदणी केलेले सर्व सेवा प्रोव्हायडर आणि "डिलिव्हरी बॉय" सेवा Services मध्ये दिसणे. आत्ता Demo मध्ये Delivery Boy चा icon जोडता येईल, ते वापरकर्ता सांगेल तेव्हा.
