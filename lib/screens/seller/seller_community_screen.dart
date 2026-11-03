@@ -209,10 +209,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
         title: const Text('Community'),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // Back Arrow (leading) काढून टाकला आहे जेणेकरून स्क्रीन काळी होणार नाही
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(46),
           child: Container(
