@@ -16,6 +16,7 @@ import 'buyer_favourite_screen.dart';
 import 'qr_payment_screen.dart';
 import 'pincode_shops_screen.dart';
 import 'coming_soon_screen.dart';
+import 'extra_income_screen.dart';
 import 'all_categories_screen.dart';
 import 'order_tracking_screen.dart';
 
@@ -305,6 +306,38 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                     Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
                     Text('माझा पैसा माझ्या खिशात 🛒', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Extra Income tab
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ExtraIncomeScreen(),
+              ),
+            ),
+            child: Container(
+              margin: const EdgeInsets.all(16),
+              height: 75,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF3949AB), Color(0xFF7E57C2)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('💰 Extra Income', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('अतिरिक्त कमाईच्या संधी', style: TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),
               ),
