@@ -37,6 +37,14 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
     super.dispose();
   }
 
+  // किंमत दर (Cost per Poll Reply) मोजण्यासाठी
+  double get _costPerReply {
+    if (_contentType == 'Text') return 0.10;
+    if (_contentType == 'Photo') return 0.25;
+    if (_contentType == 'Video') return 0.50;
+    return 0.10;
+  }
+
   Future<void> _pickFile() async {
     setState(() => _fileError = null);
     final files = await FilePicker.pickFiles(
@@ -55,9 +63,6 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
       return;
     }
 
-    // TODO (Stage 3 - Backend): actual video duration check needs a video
-    // player/metadata plugin once Firebase Storage upload is wired up.
-    // For now we only warn — Blueprint limit: max 180 seconds (3 min).
     setState(() {
       _pickedFileName = file.name;
       _fileError = null;
@@ -86,10 +91,6 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
         ? 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?' // default poll (Blueprint 6.3)
         : _pollQuestionController.text.trim();
 
-    // TODO (Stage 3 - Backend): upload _pickedFile bytes to Firebase Storage,
-    // save ad doc to Firestore with status 'Live' (Franchise's own ads skip
-    // approval per Blueprint ch. 6.4), Adv Generator = this Franchise
-    // (gets 10% of poll-reply revenue per Blueprint 6.8).
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -134,6 +135,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // === INFO BOX ===
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -147,7 +149,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'तुमची जाहिरात लगेच Live होईल — Approval लागणार नाही (Adv Generator: तुमची Franchise, 10% वाटा तुम्हाला)',
+                      'तुमची जाहिरात लगेच Live होईल — Approval लागणार नाही. (Adv Generator: तुमची Franchise, 10% वाटा तुम्हाला)',
                       style: TextStyle(color: Colors.green.shade900, fontSize: 12.5),
                     ),
                   ),
@@ -155,7 +157,8 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               ),
             ),
 
-            _sectionTitle('कन्टेंट प्रकार'),
+            // === १. कंटेंट प्रकार ===
+            _sectionTitle('१. कन्टेंट प्रकार'),
             SegmentedButton<String>(
               segments: const [
                 ButtonSegment(value: 'Text', label: Text('Text'), icon: Icon(Icons.text_fields)),
@@ -187,9 +190,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
             ] else ...[
               const SizedBox(height: 12),
               Text(
-                _contentType == 'Photo'
-                    ? 'कमाल आकार: ५ MB'
-                    : 'कमाल कालावधी: ३ मिनिटे (१८० सेकंद)',
+                _contentType == 'Photo' ? 'कमाल आकार: ५ MB' : 'कमाल कालावधी: ३ मिनिटे (१८० सेकंद)',
                 style: const TextStyle(fontSize: 12, color: AppColors.textLight),
               ),
               const SizedBox(height: 8),
@@ -227,7 +228,8 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               ],
             ],
 
-            _sectionTitle('Poll प्रश्न (ऐच्छिक)'),
+            // === २. पोल प्रश्न ===
+            _sectionTitle('२. Poll प्रश्न (ऐच्छिक)'),
             TextFormField(
               controller: _pollQuestionController,
               decoration: InputDecoration(
@@ -236,10 +238,11 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               ),
             ),
 
-            _sectionTitle('ऑडियन्स टार्गेटिंग'),
+            // === ३. ऑडियन्स टार्गेटिंग ===
+            _sectionTitle('३. ऑडियन्स टार्गेटिंग'),
             DropdownButtonFormField<String>(
               initialValue: _location,
-              decoration: InputDecoration(labelText: 'परिसर', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+              decoration: InputDecoration(labelText: 'परिसर (Location)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
               items: ['तालुका', 'जिल्हा', 'राज्य', 'देशभर']
                   .map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
               onChanged: (v) => setState(() => _location = v!),
@@ -247,7 +250,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _ageGroup,
-              decoration: InputDecoration(labelText: 'वयोगट', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+              decoration: InputDecoration(labelText: 'वयोगट (Age Group)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
               items: ['१३–२३', '२४–४०', '४०–६०', '६०+']
                   .map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
               onChanged: (v) => setState(() => _ageGroup = v!),
@@ -255,7 +258,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _gender,
-              decoration: InputDecoration(labelText: 'लिंग', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+              decoration: InputDecoration(labelText: 'लिंग (Gender)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
               items: ['दोन्ही', 'स्त्री', 'पुरुष']
                   .map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
               onChanged: (v) => setState(() => _gender = v!),
@@ -263,13 +266,14 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
               initialValue: _timeSlot,
-              decoration: InputDecoration(labelText: 'वेळ', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+              decoration: InputDecoration(labelText: 'वेळ (Time Slot)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
               items: ['सकाळी ७–१२', 'दुपारी १२–५', 'संध्याकाळी ५–१०', 'रात्री १०–७', 'Full Day']
                   .map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
               onChanged: (v) => setState(() => _timeSlot = v!),
             ),
 
-            _sectionTitle('बजेट व कालावधी'),
+            // === ४. बजेट व कालावधी ===
+            _sectionTitle('४. बजेट व कालावधी'),
             TextFormField(
               controller: _budgetController,
               keyboardType: TextInputType.number,
@@ -297,7 +301,25 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               onChanged: (v) => setState(() => _durationDays = v.round()),
             ),
 
-            const SizedBox(height: 20),
+            // === ५. किंमत तपशील ===
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.blue.shade200)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('अंदाजित खर्च (Cost Estimate)', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                  const SizedBox(height: 8),
+                  Text('प्रति पोल रिप्लाय: ₹${_costPerReply.toStringAsFixed(2)}', style: const TextStyle(fontSize: 13)),
+                  Text('कमाल कालावधी: $_durationDays दिवस', style: const TextStyle(fontSize: 13)),
+                  const SizedBox(height: 4),
+                  const Text('टीप: बजेट संपल्यास जाहिरात आपोआप बंद होईल.', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _submitAd,
               style: ElevatedButton.styleFrom(
