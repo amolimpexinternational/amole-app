@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/offers_slider_widget.dart'; // नवीन इम्पोर्ट
 import '../../data/ads_data.dart';
 import '../../data/local_posts_data.dart';
 import '../admin/admin_live_ads_screen.dart';
@@ -94,6 +95,10 @@ class FranchiseHomeScreen extends StatelessWidget {
                       ),
                     ),
 
+                  // === नवीन ॲड केलेला भाग: स्लायडर ===
+                  const OffersSliderWidget(),
+                  const SizedBox(height: 16),
+
                   const Text('आढावा', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 12),
                   
@@ -123,8 +128,6 @@ class FranchiseHomeScreen extends StatelessWidget {
                   _quickActionTile(icon: Icons.person_add_alt_1_outlined, label: 'Add Seller', subtitle: 'थेट सेलर जोडा (OTP verified)', color: AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAddSellerScreen()))),
                   _quickActionTile(icon: Icons.verified_user_outlined, label: 'Seller Verification', subtitle: 'नवीन सेलरचं GPS verification करा', color: AppColors.successGreen, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
                   _quickActionTile(icon: Icons.campaign_outlined, label: 'Create Ad', subtitle: 'जाहिरात लगेच Live होते, approval लागत नाही', color: AppColors.primaryOrange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()))),
-                  
-                  // इथे फक्त एकच 'Ad Approvals' बटण आहे, जे आता Ads आणि Top Offers दोन्ही हाताळेल
                   _quickActionTile(
                     icon: Icons.fact_check_outlined, 
                     label: 'Ad Approvals', 
