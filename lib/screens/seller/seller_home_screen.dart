@@ -1,7 +1,7 @@
-import '../../widgets/offers_slider_widget.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
+import '../../widgets/offers_slider_widget.dart'; // नवीन इम्पोर्ट
 import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
@@ -204,12 +204,16 @@ class _SellerDashboard extends StatelessWidget {
                   Icon(Icons.pending_actions, color: Colors.red.shade600, size: 20),
                   const SizedBox(width: 10),
                   Expanded(child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13))),
-                  const Icon(Icons.chevron_right,color: Colors.red),
+                  const Icon(Icons.chevron_right, color: Colors.red),
                 ],
               ),
             ),
           ),
 
+          const SizedBox(height: 16),
+
+          // === नवीन ॲड केलेला भाग: स्लायडर ===
+          const OffersSliderWidget(), 
           const SizedBox(height: 16),
 
           // === TOP OFFERS (होम स्क्रीनसाठी) ===
@@ -312,7 +316,6 @@ class _SellerDashboard extends StatelessWidget {
             const Text('ही ऑफर बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
             const SizedBox(height: 16),
 
-            // नवीन नियमांची सूचना
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -354,7 +357,6 @@ class _SellerDashboard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () { 
-                      // TODO: इमेज पिकर लॉजिक पुढील टप्प्यात
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('फोटो अपलोडचे तंत्रज्ञान पुढे जोडले जाईल')));
                     },
                     icon: const Icon(Icons.image_outlined),
@@ -366,7 +368,6 @@ class _SellerDashboard extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () { 
-                      // TODO: व्हिडिओ पिकर लॉजिक पुढील टप्प्यात
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('व्हिडिओ अपलोडचे तंत्रज्ञान पुढे जोडले जाईल')));
                     },
                     icon: const Icon(Icons.video_library_outlined),
