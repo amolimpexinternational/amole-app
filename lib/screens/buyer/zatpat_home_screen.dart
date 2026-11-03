@@ -189,113 +189,232 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
   }
 
   Widget _productCard(Map<String, dynamic> p) {
-    final price = p['price'] as double;
-    final mrp = p['mrp'] as double;
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.lightGrey),
-      ),
+  final id = _idOf(p);
+  
+  // Mom's Miracle सारखे quantity चेक करणे
+  final index = BuyerShoppingData.cartItems.indexWhere((item) => item['id'] == id);
+  final quantity = index == -1 ? 0 : (BuyerShoppingData.cartItems[index]['qty'] as int? ?? 0);
+  
+  final favourite = BuyerShoppingData.isFavourite(id); // तुझ्या डेटा मॉडेलनुसार
+
+  final mrp = (p['mrp'] as num).toDouble();
+  final price = (p['price'] as num).toDouble();
+  final discount = mrp > price ? ((mrp - price) / mrp * 100).round() : 0;
+
+  return Card(
+    margin: EdgeInsets.zero,
+    clipBehavior: Clip.antiAlias,
+    child: InkWell(
+      onTap: () {
+        // TODO: Product Detail Screen (पुढील टप्प्यात)
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 52,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(_iconOf(p['category'] as String), color: AppColors.primaryBlue, size: 34),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            p['name'] as String,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            '${p['seller']} · ${p['km']} km',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 11, color: AppColors.textLight),
-          ),
-          const SizedBox(height: 4),
-          Row(
+          Stack(
             children: [
-              Text('₹${price.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-              const SizedBox(width: 6),
-              if (mrp > price)
-                Text(
-                  '₹${mrp.toStringAsFixed(0)}',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textLight, decoration: TextDecoration.lineThrough),
+              Container(
+                height: 110, // Mom's Miracle सारखी उंची
+                width: double.infinity,
+                color: AppColors.lightGrey,
+                child: const Icon(Icons.storefront, size: 54, color: AppColors.primaryBlue),
+              ),
+              Positioned(
+                top: 4,
+                right: 4,
+                child: Material(
+                  color: Colors.white,
+                  shape: const CircleBorder(),
+                  child: IconButton(
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      favourite ? Icons.favorite : Icons.favorite_border,
+                      color: favourite ? Colors.red : AppColors.textLight,
+                    ),
+                    onPressed: () {
+                      BuyerShoppingData.toggleFavourite({
+                        'id': id,
+                        'name': p['name'].toString(),
+                        'price': price,
+                        'seller': p['seller'].toString(),
+                        'description': '',
+                        'image': '',
+                        'mrp': mrp,
+                        'discount': discount.toDouble(),
+                        'stock': 100,
+                        'deliveryAvailable': true,
+                        'isReturnable': true,
+                      });
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ),
+              if (discount > 0)
+                Positioned(
+                  left: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.successGreen,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      '$discount% OFF',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
             ],
           ),
-          const SizedBox(height: 6),
-          _qtyControl(p),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  p['name'].toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  p['seller'].toString(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Text(
+                      '₹${price.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.successGreen,
+                      ),
+                    ),
+                    if (discount > 0) ...[
+                      const SizedBox(width: 6),
+                      Text(
+                        '₹${mrp.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          decoration: TextDecoration.lineThrough,
+                          color: AppColors.textLight,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 8),
+                
+                // बटणांचा भाग (Mom's Miracle सारखाच)
+                if (quantity == 0)
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        BuyerShoppingData.addToCart(
+                          id: id, 
+                          name: p['name'].toString(), 
+                          price: price, 
+                          seller: p['seller'].toString(), 
+                          qty: 1,
+                          description: '', image: '', mrp: mrp, discount: discount.toDouble(), stock: 100, deliveryAvailable: true, isReturnable: true,
+                        );
+                        setState(() {});
+                      },
+                      child: const Text('Cart मध्ये टाका'),
+                    ),
+                  )
+                else
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          BuyerShoppingData.removeFromCart(id);
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.remove_circle_outline),
+                      ),
+                      Text('$quantity',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          BuyerShoppingData.addToCart(
+                            id: id, 
+                            name: p['name'].toString(), 
+                            price: price, 
+                            seller: p['seller'].toString(), 
+                            qty: 1,
+                            description: '', image: '', mrp: mrp, discount: discount.toDouble(), stock: 100, deliveryAvailable: true, isReturnable: true,
+                          );
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.add_circle_outline),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _bottomBar() {
-    final count = BuyerShoppingData.cartCount;
-    if (count == 0) return const SizedBox.shrink();
-    final subtotal = BuyerShoppingData.cartSubtotal;
-    final delivery = _deliveryCharge();
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$count वस्तू · ₹${subtotal.toStringAsFixed(0)}',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textDark),
-                  ),
-                  if (delivery > 0)
-                    Text(
-                      '+ डिलिव्हरी ₹$delivery',
-                      style: const TextStyle(fontSize: 12, color: AppColors.textLight),
-                    ),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => CartScreen(
-                        deliveryCharge: _deliveryCharge(),
-                        orderTitle: widget.title ?? 'ZatPat')),
-              ).then((_) => setState(() {})),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 44),
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              child: const Text('Cart बघा', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
+  final count = BuyerShoppingData.cartCount;
+  if (count == 0) return const SizedBox.shrink();
+  return SafeArea(
+    child: Container(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
-    );
-  }
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '$count वस्तू · ₹${BuyerShoppingData.cartSubtotal.toStringAsFixed(0)}',
+              style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CartScreen()),
+            ).then((_) => setState(() {})),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(0, 44),
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+            ),
+            child: const Text('Cart बघा',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -388,7 +507,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisExtent: 196,
+                      mainAxisExtent: 290,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
