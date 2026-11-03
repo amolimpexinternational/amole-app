@@ -12,6 +12,7 @@ import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
 import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
+import 'expenses_wallet_screen.dart'; // नवीन इम्पोर्ट ॲड केला
 import '../../widgets/seller_delivery_tiles.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -65,9 +66,6 @@ class _SellerDashboard extends StatefulWidget {
 
 class _SellerDashboardState extends State<_SellerDashboard> {
   bool _isShopOpen = true; // Shop Status
-
-  // डेमो साठी आपण गृहीत धरूया की हा सेलर एक 'Rider' किंवा 'Cargo' आहे. 
-  // प्रत्यक्षात हे डेटाबेसवरून येईल.
   final bool _isRiderOrCargo = true; 
 
   void _toggleShopStatus(bool value) {
@@ -76,7 +74,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
     });
 
     if (value && _isRiderOrCargo) {
-      // जर दुकान उघडले आणि हा रायडर असेल तर Stand विचारा
       _showSelectStandBottomSheet();
     } else if (!value) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -154,29 +151,21 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     ),
                     Row(
                       children: [
-// Expenses Wallet बटन
-GestureDetector(
-  onTap: () {
-    // TODO: Expenses Wallet स्क्रीनवर पाठवण्यासाठी (पुढील टप्प्यात)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Expenses Wallet पुढील टप्प्यात जोडले जाईल')),
-    );
-  },
-  child: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-    decoration: BoxDecoration(
-      color: Colors.purple.shade400, 
-      borderRadius: BorderRadius.circular(20)
-    ),
-    child: const Row(
-      children: [
-        Icon(Icons.account_balance_wallet, color: Colors.white, size: 14), // वॉलेट आयकॉन
-        SizedBox(width: 4),
-        Text('Expenses Wallet: ₹0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
-      ],
-    ),
-  ),
-),
+                        // === Expenses Wallet (नवीन अपडेट) ===
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen()));
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                            decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
+                            child: const Row(children: [
+                              Icon(Icons.account_balance_wallet, color: Colors.white, size: 14),
+                              SizedBox(width: 4),
+                              Text('₹250', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                            ]),
+                          ),
+                        ),
                         const SizedBox(width: 4),
                         IconButton(
                           padding: EdgeInsets.zero,
@@ -379,16 +368,16 @@ GestureDetector(
     );
   }
 
-  // === ऑफर ॲड करण्यासाठी विंडो (डिस्काउंट काढला आणि स्क्रोल बंद केला) ===
+  // === ऑफर ॲड करण्यासाठी विंडो ===
   void _showAddOfferBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: false, // खाली स्क्रोल होणे बंद केले
+      isScrollControlled: false,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (context) => Padding(
         padding: const EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 24),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // कंटेंटनुसार उंची
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('नवीन टॉप ऑफर ॲड करा', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
