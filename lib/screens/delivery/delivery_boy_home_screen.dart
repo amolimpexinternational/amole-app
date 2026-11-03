@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart'; // GPS साठी इम्पोर्ट
 import '../../constants/app_colors.dart';
 import '../../data/delivery_rates.dart';
 
@@ -13,8 +14,6 @@ class DeliveryBoyHomeScreen extends StatefulWidget {
 class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
   static const String _demoCode = '4821';
 
-  // चाचणीसाठी false चे true करा: मग 15 मिनिटांऐवजी 10 सेकंदांत सूचना येते.
-  // चाचणी झाल्यावर पुन्हा false करा.
   static const bool _testMode = false;
   Duration get _reminderAfter =>
       _testMode ? const Duration(seconds: 10) : const Duration(minutes: 15);
@@ -26,9 +25,10 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
   Timer? _timer;
   final TextEditingController _codeCtrl = TextEditingController();
 
-  // Demo: खरे लोकेशन नसल्यामुळे बॉय "हडपसर" मध्ये आहे असे धरले आहे.
-  // kmAway = बॉयपासून pickup चे अंतर. deliveryKm = pickup पासून ग्राहकापर्यंत.
-  // status: new / accepted / rejected / done
+  // GPS ट्रॅकिंगसाठी व्हेरिएबल्स
+  Position? _standPosition;
+  StreamSubscription<Position>? _positionStream;
+
   final List<Map<String, dynamic>> _orders = [
     {
       'id': 'ZP201',
@@ -94,13 +94,13 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
   void dispose() {
     _timer?.cancel();
     _codeCtrl.dispose();
+    _stopGpsTracking(); // ॲप बंद झाल्यावर GPS बंद
     super.dispose();
   }
 
   int _earning(Map<String, dynamic> o) =>
       DeliveryRates.chargeForKm((o['deliveryKm'] as num).toDouble());
 
-  // ON असताना, 5 km मधल्या नवीन ऑर्डर, जवळच्या आधी
   List<Map<String, dynamic>> get _visible {
     final list = _orders
         .where((o) =>
@@ -126,7 +126,50 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
     );
   }
 
-  // ऑर्डर accept केल्यावर किंवा 250 मीटर हालचाल झाल्यावर 15 मिनिटांचा timer
+  // === GPS सुरू करण्याचे फंक्शन ===
+  Future<void> _startGpsTracking() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _toast('GPS परवानगी नाकारली! स्टँड सेट करता येणार नाही.', color: Colors.red);
+        return;
+      }
+    }
+
+    _standPosition = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+    );
+
+    _positionStream?.cancel();
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 250, // २५० मीटर हालचाल
+      ),
+    ).listen((Position position) {
+      if (_standPosition == null) return;
+
+      double distance = Geolocator.distanceBetween(
+        _standPosition!.latitude,
+        _standPosition!.longitude,
+        position.latitude,
+        position.longitude,
+      );
+
+      if (distance >= 250) {
+        _onMovedFar();
+      }
+    });
+  }
+
+  // === GPS बंद करण्याचे फंक्शन ===
+  void _stopGpsTracking() {
+    _positionStream?.cancel();
+    _positionStream = null;
+    _standPosition = null;
+  }
+
   void _startReminder() {
     _timer?.cancel();
     _reminderShown = false;
@@ -145,7 +188,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
         title: const Text('Select My Stand'),
         content: const Text(
           'तुम्ही आत्ता जिथे आहात ते लोकेशन तुमचा Stand म्हणून निश्चित केले जाईल. '
-          'या लोकेशनच्या 5 km मधल्या ऑर्डरच्या सूचना तुम्हाला येतील.',
+          'तुम्ही 250 मीटरहून जास्त हलल्यास स्टेटस आपोआप OFF होईल.',
         ),
         actions: [
           TextButton(
@@ -160,31 +203,31 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
       ),
     );
     if (ok != true || !mounted) return;
+
+    // GPS सुरू करा
+    await _startGpsTracking();
+
     _timer?.cancel();
     setState(() {
       _online = true;
       _reminderShown = false;
     });
-    _toast('तुमचे सध्याचे लोकेशन निश्चित केले.');
+    _toast('तुमचे स्टँड निश्चित केले. GPS सुरू आहे.');
   }
 
-  // तुम्ही सांगितलेले खरे तंत्रज्ञान (tracelet, distanceFilter 250.0) हे
-  // 250 मीटर हालचाल झाल्यावर हेच function बोलावेल (Stage 3).
+  // २५० मीटर हालचाल झाल्यावर ऑटोमॅटिक कॉल होईल
   void _onMovedFar() {
+    if (!mounted) return;
+    _stopGpsTracking();
     setState(() => _online = false);
     _startReminder();
     _toast('तुम्ही 250 मीटरहून जास्त हलला. स्टेटस आपोआप OFF झाला.',
         color: Colors.orange);
   }
 
-  // "स्टेटस ON करा" बटण
   void _turnOnAgain() {
     _timer?.cancel();
-    setState(() {
-      _online = true;
-      _reminderShown = false;
-    });
-    _toast('स्टेटस पुन्हा ON झाला. तुमचे सध्याचे लोकेशन नव्याने निश्चित केले.');
+    _goOnline(); // पुन्हा GPS सुरू होईल
   }
 
   void _reject(Map<String, dynamic> o) {
@@ -196,10 +239,11 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
     setState(() {
       o['status'] = 'accepted';
       _active = o;
-      _online = false; // ऑर्डर accept केली की status OFF
+      _online = false;
       _codeError = '';
       _codeCtrl.clear();
     });
+    _stopGpsTracking(); // ऑर्डर मिळाल्यावर GPS बंद
     _startReminder();
     _toast('ऑर्डर स्वीकारली. दुकानदार आणि ग्राहकाला कळवले.');
   }
@@ -500,6 +544,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
                     if (v) {
                       _goOnline();
                     } else {
+                      _stopGpsTracking(); // OFF केल्यावर GPS बंद
                       setState(() => _online = false);
                     }
                   },
@@ -509,16 +554,26 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
                           color: AppColors.textDark)),
                   subtitle: Text(
                     _online
-                        ? 'तुमचे सध्याचे लोकेशन निश्चित आहे. 5 km मधल्या ऑर्डरच्या सूचना येतील.'
+                        ? 'GPS ट्रॅकिंग सुरू. 250 मीटर हालचाल झाल्यास स्टेटस आपोआप OFF होईल.'
                         : 'ON करताना तुमचे सध्याचे लोकेशन Stand म्हणून निश्चित होईल.',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
+                // Demo बटण काढून टाकले आहे
                 if (_online)
-                  OutlinedButton(
-                    onPressed: _onMovedFar,
-                    child: const Text(
-                        'Demo (फक्त चाचणीसाठी): 250 मीटर हालचाल झाली'),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        Icon(Icons.gps_fixed, size: 14, color: Colors.green),
+                        SizedBox(width: 4),
+                        Text('GPS सक्रिय आहे (खरा ट्रॅकिंग)',
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
               ],
             ),
