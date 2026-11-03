@@ -14,31 +14,30 @@ class AddProductScreen extends StatefulWidget {
 class _AddProductScreenState extends State<AddProductScreen> {
   final _nameCtrl = TextEditingController();
   final _mrpCtrl = TextEditingController();
-  final _discountCtrl = TextEditingController(text: '0');
   final _stockCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
   final _keywordsCtrl = TextEditingController();
   String _category = 'GR';
   bool _isActive = true;
   bool _isReturnable = true;
-  bool _deliveryAvailable = true;
   File? _image;
 
   final Map<String, String> _catNames = {
     'GR':'किराणा','FV':'फळे व भाजीपाला','DA':'दुग्धजन्य','BK':'बेकरी',
     'RS':'हॉटेल/रेस्तराँ','MD':'मेडिकल','EL':'इलेक्ट्रॉनिक्स','CF':'कपडे',
     'JW':'दागिने','BP':'ब्युटी','ED':'शिक्षण','AU':'वाहन','CH':'बांधकाम',
-        'AG':'शेती','FS':'आर्थिक','HS':'गृहसेवा','KD':'लहान मुले','OT':'इतर'
+    'AG':'शेती','FS':'आर्थिक','HS':'गृहसेवा','KD':'लहान मुले','OT':'इतर'
   };
 
   double get mrp => double.tryParse(_mrpCtrl.text) ?? 0;
-  double get discount => double.tryParse(_discountCtrl.text) ?? 0;
-  double get sellingPrice => mrp - (mrp * discount / 100);
 
   @override
   void dispose() {
-    _nameCtrl.dispose(); _mrpCtrl.dispose(); _discountCtrl.dispose();
-    _stockCtrl.dispose(); _descCtrl.dispose(); _keywordsCtrl.dispose();
+    _nameCtrl.dispose(); 
+    _mrpCtrl.dispose(); 
+    _stockCtrl.dispose(); 
+    _descCtrl.dispose(); 
+    _keywordsCtrl.dispose();
     super.dispose();
   }
 
@@ -80,14 +79,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: _nameCtrl.text.trim(),
       mrp: mrp,
-      discount: discount,
+      discount: 0, // डिस्काउंट काढून टाकल्यामुळे 0 केले
       stock: int.tryParse(_stockCtrl.text) ?? 0,
       category: _category,
       description: _descCtrl.text.trim(),
       keywords: _keywordsCtrl.text.trim(),
       isActive: _isActive,
       isReturnable: _isReturnable,
-      deliveryAvailable: _deliveryAvailable,
+      deliveryAvailable: false, // डिलिव्हरी सेटिंग काढून टाकल्यामुळे false केले
     );
     ProductDatabase.addProduct(p);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -209,29 +208,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
 
           _sectionTitle('किंमत आणि Stock'),
-          Row(children: [
-            Expanded(child: _field('MRP (₹) *', _mrpCtrl, kb: TextInputType.number)),
-            const SizedBox(width: 12),
-            Expanded(child: _field('Discount (%)', _discountCtrl, kb: TextInputType.number)),
-          ]),
-          if (mrp > 0)
-            Container(
-              margin: const EdgeInsets.only(bottom: 14),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.primaryBlue.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(10)),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                const Text('Selling Price:', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
-                Text('₹${sellingPrice.toStringAsFixed(0)}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
-              ]),
-            ),
+          // फक्त MRP चा पर्याय ठेवला आहे (डिस्काउंट काढला)
+          _field('MRP (₹) *', _mrpCtrl, kb: TextInputType.number),
           _field('Stock (किती शिल्लक) *', _stockCtrl, kb: TextInputType.number),
 
           _sectionTitle('Settings'),
           _toggle('Active', 'Product Customer ला लगेच दिसेल', _isActive, (v) => setState(() => _isActive = v)),
-          _toggle('Home Delivery', 'या Product वर Delivery उपलब्ध', _deliveryAvailable, (v) => setState(() => _deliveryAvailable = v)),
+          // Home Delivery चा टॉगल काढून टाकला आहे
           _toggle('Returnable', 'Customer परत करू शकतो', _isReturnable, (v) => setState(() => _isReturnable = v)),
 
           const SizedBox(height: 8),
