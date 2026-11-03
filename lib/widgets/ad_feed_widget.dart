@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wakelock_plus/wakelock_plus.dart'; // नवीन ॲड केले
 import '../constants/app_colors.dart';
 import '../screens/buyer/seller_profile_screen.dart';
 
@@ -79,8 +80,21 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
     });
   }
 
+  // === जेव्हा बायर जाहिरात टॅबवर (व्हिडिओ) असेल तेव्हा स्क्रीन ऑन ठेवा, अन्यथा बंद ===
+  void _updateWakelock() {
+    if (_selectedTab == 0) {
+      // जाहिरात टॅबवर - स्क्रीन ऑन ठेवा (व्हिडिओ पाहण्यासाठी)
+      WakelockPlus.enable();
+    } else {
+      // इतर टॅबवर - बॅटरी वाचवण्यासाठी बंद करा
+      WakelockPlus.disable();
+    }
+  }
+
   @override
   void dispose() {
+    // विजेट बंद होताच वेकलॉक पूर्णपणे बंद करा
+    WakelockPlus.disable();
     _pageController.dispose();
     super.dispose();
   }
@@ -95,7 +109,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
       if (ad['type'] == 'video') reward = 0.175;
       else if (ad['type'] == 'photo') reward = 0.0875;
       else reward = 0.035;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ धन्यवाद! तुम्हाला ₹${reward.toStringAsFixed(3)} रिवॉर्ड मिळाले'),
@@ -269,7 +283,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         final offer = _myOffers[index];
         return GestureDetector(
           onTap: () {
-            // मुद्दा ६: ऑफरवर क्लिक केल्यावर ओपन होणे
             Navigator.push(context, MaterialPageRoute(builder: (_) => OfferDetailScreen(offer: offer)));
           },
           child: Container(
@@ -318,9 +331,8 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   }
 
   Widget _buildCreateOfferTab(BuildContext context) {
-    // मुद्दा ७ आणि ८: डिस्काउंट काढला, फोटो उपलोड ॲड केला आणि स्क्रोलिंग काढले
     return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(), // स्क्रोलिंग बंद
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -331,8 +343,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
           children: [
             const Text('नवीन Offer तयार करा', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
             const SizedBox(height: 16),
-            
-            // फोटो अपलोड
+
             Center(
               child: GestureDetector(
                 onTap: () {
@@ -364,7 +375,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             const SizedBox(height: 12),
             const TextField(decoration: InputDecoration(labelText: 'Description', hintText: 'Offer बद्दल सांगा...', border: OutlineInputBorder()), maxLines: 2),
             const SizedBox(height: 16),
-            
+
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(color: AppColors.primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
@@ -375,7 +386,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
               ]),
             ),
             const SizedBox(height: 16),
-            
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -394,16 +405,20 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   Widget build(BuildContext context) {
     final double adsFeedHeight = (MediaQuery.of(context).size.width - 32) * 5 / 4 + 200;
 
+    // टॅब बदलला की वेकलॉक अपडेट करा
+    _updateWakelock();
+
     return Column(
       children: [
-        // === टॅब्स ===
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(10)),
           child: Row(
             children: List.generate(_tabs.length, (i) => Expanded(
               child: GestureDetector(
-                onTap: () => setState(() => _selectedTab = i),
+                onTap: () {
+                  setState(() => _selectedTab = i);
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -423,9 +438,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         ),
         const SizedBox(height: 8),
 
-        // === टॅब कंटेंट ===
         if (_selectedTab == 0) ...[
-          // जाहिराती (PageView)
           SizedBox(
             height: adsFeedHeight,
             child: PageView.builder(
@@ -449,15 +462,13 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             )),
           ),
           const SizedBox(height: 8),
-        ] 
-        else if (_selectedTab == 1) 
+        ]
+        else if (_selectedTab == 1)
         ...[
-          // My Offers
           SizedBox(height: 300, child: _buildMyOffersTab())
-        ] 
-        else if (widget.isSeller && _selectedTab == 2) 
+        ]
+        else if (widget.isSeller && _selectedTab == 2)
         ...[
-          // Create Offer
           _buildCreateOfferTab(context)
         ],
       ],
@@ -466,7 +477,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
 }
 
 // =========================================================================
-// === मुद्दा ६: ऑफरवर क्लिक केल्यावर उघडणारी नवीन स्क्रीन ===
+// === ऑफरवर क्लिक केल्यावर उघडणारी नवीन स्क्रीन ===
 // =========================================================================
 class OfferDetailScreen extends StatelessWidget {
   final Map<String, dynamic> offer;
