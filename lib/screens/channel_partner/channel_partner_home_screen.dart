@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/offers_slider_widget.dart'; // नवीन इम्पोर्ट ॲड केला
 import 'cp_franchise_screen.dart';
 import 'cp_seller_screen.dart';
 import 'cp_buyer_screen.dart';
@@ -190,6 +191,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // === Approvals अलर्ट ===
                     InkWell(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen())),
                       child: Container(
@@ -204,6 +206,12 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         ]),
                       ),
                     ),
+
+                    // === नवीन ॲड केलेला भाग: स्लायडर ===
+                    const OffersSliderWidget(),
+                    const SizedBox(height: 16),
+
+                    // === KPI ग्रिड ===
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -221,6 +229,8 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
+                    
+                    // === Quick Actions ===
                     const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                     const SizedBox(height: 12),
                     Row(
@@ -245,6 +255,8 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24),
+                    
+                    // === Franchise List ===
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
