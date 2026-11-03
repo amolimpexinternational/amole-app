@@ -64,6 +64,7 @@ class _SellerDashboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // === HEADER ===
           Container(
             padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
             decoration: const BoxDecoration(
@@ -186,7 +187,10 @@ class _SellerDashboard extends StatelessWidget {
               ],
             ),
           ),
+          
           const SizedBox(height: 16),
+          
+          // === नवीन ऑर्डर्स अलर्ट ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen())),
             child: Container(
@@ -204,9 +208,53 @@ class _SellerDashboard extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(height: 16),
+
+          // === नवीन ॲड केलेला भाग: TOP OFFERS (होम स्क्रीनसाठी) ===
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.amber.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.amber.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.local_offer_outlined, color: Colors.amber.shade800),
+                          const SizedBox(width: 8),
+                          const Text('Top Offers (होम स्क्रीन)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                        ],
+                      ),
+                      TextButton.icon(
+                        onPressed: () => _showAddOfferBottomSheet(context),
+                        icon: const Icon(Icons.add, size: 16, color: AppColors.primaryBlue),
+                        label: const Text('ऑफर ॲड करा', style: TextStyle(fontSize: 13, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('बायरच्या ॲपमध्ये वरती दिसणाऱ्या ऑफर्ससाठी फोटो/व्हिडिओ अपलोड करा.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // === इतर डॅशबोर्ड घटक ===
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
+          
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('जाहिराती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
@@ -214,11 +262,13 @@ class _SellerDashboard extends StatelessWidget {
           const SizedBox(height: 8),
           const AdFeedWidget(isSeller: true),
           const SizedBox(height: 8),
+          
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('माझा आढावा — 30 दिवस', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 12),
+          
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -242,29 +292,105 @@ class _SellerDashboard extends StatelessWidget {
     );
   }
 
+  // === नवीन ॲड केलेले फंक्शन: ऑफर ॲड करण्यासाठी विंडो ===
+  void _showAddOfferBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          top: 24, left: 24, right: 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('नवीन टॉप ऑफर ॲड करा', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 8),
+            const Text('ही ऑफर बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'ऑफरचे नाव / शीर्षक (उदा. 50% सूट)',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () { 
+                      // TODO: इमेज पिकर लॉजिक पुढील टप्प्यात
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('फोटो अपलोडचे तंत्रज्ञान पुढे जोडले जाईल')));
+                    },
+                    icon: const Icon(Icons.image_outlined),
+                    label: const Text('फोटो निवडा'),
+                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () { 
+                      // TODO: व्हिडिओ पिकर लॉजिक पुढील टप्प्यात
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('व्हिडिओ अपलोडचे तंत्रज्ञान पुढे जोडले जाईल')));
+                    },
+                    icon: const Icon(Icons.video_library_outlined),
+                    label: const Text('व्हिडिओ निवडा'),
+                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ऑफर यशस्वीरित्या ॲड झाली (डेमो)')));
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: const Text('अपलोड करा', style: TextStyle(color: Colors.white, fontSize: 16)),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _kpiCard(String title, String value, String subtitle, IconData icon, Color color, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+              Icon(icon, color: color, size: 22),
+            ]),
+            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+            Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-            Icon(icon, color: color, size: 22),
-          ]),
-          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-          Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-        ],
-      ),
-    ),
     );
   }
 
