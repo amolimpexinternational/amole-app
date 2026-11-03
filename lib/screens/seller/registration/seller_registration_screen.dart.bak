@@ -27,6 +27,12 @@ class _SellerRegistrationScreenState
   final _keywordsController = TextEditingController();
   final _businessContactController = TextEditingController();
 
+  // नवीन ॲड केलेले KYC Controllers
+  final _aadhaarController = TextEditingController();
+  final _panController = TextEditingController();
+  final _vehicleController = TextEditingController();
+  final _licenseController = TextEditingController();
+
   String? _selectedCategory;
   File? _businessImage;
 
@@ -54,6 +60,11 @@ class _SellerRegistrationScreenState
     _pinCodeController.dispose();
     _keywordsController.dispose();
     _businessContactController.dispose();
+    // नवीन controllers dispose
+    _aadhaarController.dispose();
+    _panController.dispose();
+    _vehicleController.dispose();
+    _licenseController.dispose();
     super.dispose();
   }
 
@@ -190,6 +201,8 @@ class _SellerRegistrationScreenState
       );
       return;
     }
+
+    // TODO: Stage 3 - Firebase मध्ये सर्व डेटा (आधार, पॅन, गाडी, लायसन सह) सेव्ह करा
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -481,6 +494,80 @@ class _SellerRegistrationScreenState
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade700,
+                ),
+              ),
+
+              // === नवीन ॲड केलेला भाग: KYC Details ===
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.verified_user_outlined, color: Colors.blue, size: 18),
+                        SizedBox(width: 8),
+                        Text('Optional KYC Details', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue, fontSize: 14)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'या माहितीची सक्ती नाही. तुम्ही ही माहिती नंतर KYC करताना Franchise ला देखील देऊ शकता.',
+                      style: TextStyle(fontSize: 11, color: Colors.blue.shade700),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              TextFormField(
+                controller: _aadhaarController,
+                keyboardType: TextInputType.number,
+                maxLength: 12,
+                decoration: _inputDecoration(
+                  label: 'Aadhaar Number (आधार क्रमांक)',
+                  icon: Icons.credit_card,
+                  hint: '12-digit Aadhaar',
+                ).copyWith(counterText: ''),
+              ),
+              const SizedBox(height: 14),
+
+              TextFormField(
+                controller: _panController,
+                textCapitalization: TextCapitalization.characters,
+                maxLength: 10,
+                decoration: _inputDecoration(
+                  label: 'PAN Number (पॅन क्रमांक)',
+                  icon: Icons.badge_outlined,
+                  hint: '10-character PAN',
+                ).copyWith(counterText: ''),
+              ),
+              const SizedBox(height: 14),
+
+              TextFormField(
+                controller: _vehicleController,
+                textCapitalization: TextCapitalization.characters,
+                decoration: _inputDecoration(
+                  label: 'Vehicle Number (गाडी नंबर)',
+                  icon: Icons.directions_car_outlined,
+                  hint: 'उदा. MH-12-AB-1234',
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              TextFormField(
+                controller: _licenseController,
+                textCapitalization: TextCapitalization.characters,
+                decoration: _inputDecoration(
+                  label: 'Driving License (लायसन नंबर)',
+                  icon: Icons.drive_eta_outlined,
+                  hint: 'उदा. MH1220180012345',
                 ),
               ),
 
