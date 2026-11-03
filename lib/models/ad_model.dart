@@ -7,6 +7,12 @@ class AdModel {
   String sellerName;
   String category;
   String location;
+  
+  // === नवीन ॲड केलेली Target Audience फील्ड्स ===
+  String ageGroup;
+  String gender;
+  String timeSlot;
+  
   String type; // photo | video | text
   String title;
   String desc;
@@ -30,6 +36,12 @@ class AdModel {
     required this.sellerName,
     required this.category,
     required this.location,
+    
+    // नवीन फील्ड्स डिफॉल्ट व्हॅल्यू सह
+    this.ageGroup = 'सर्व वयोगट',
+    this.gender = 'सर्व',
+    this.timeSlot = 'Full Day',
+    
     required this.type,
     required this.title,
     required this.desc,

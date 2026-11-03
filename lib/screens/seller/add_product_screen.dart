@@ -22,11 +22,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
   String _category = 'GR';
   bool _isActive = true;
   bool _isReturnable = true;
-  bool _promoterAdd = false;
+  bool _promoterAdd = false; // प्रमोटर जोड (Home Delivery च्या जागी)
   
   File? _mainImage;
-  List<File> _extraImages = [];
-  final List<String> _multiPhotoCategories = ['CF', 'JW'];
+  List<File> _extraImages = []; // ४ एक्स्ट्रा फोटोसाठी
+
+  // ज्या कॅटेगरीजना एक्स्ट्रा फोटो लागतात
+  final List<String> _multiPhotoCategories = ['CF', 'JW']; // Clothes, Jewellery
 
   final Map<String, String> _catNames = {
     'GR':'किराणा','FV':'फळे व भाजीपाला','DA':'दुग्धजन्य','BK':'बेकरी',
@@ -35,12 +37,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
     'AG':'शेती','FS':'आर्थिक','HS':'गृहसेवा','KD':'लहान मुले','OT':'इतर'
   };
 
+  // किंमत गणित
   double get mrp => double.tryParse(_mrpCtrl.text) ?? 0;
   double get discount => double.tryParse(_discountCtrl.text) ?? 0;
   double get sellingPrice => mrp - (mrp * discount / 100);
-  double get companyComm => sellingPrice * 0.10;
-  double get promoterComm => _promoterAdd ? (sellingPrice * 0.05) : 0;
-  double get netIncome => sellingPrice - companyComm - promoterComm;
+  
+  double get companyComm => sellingPrice * 0.10; // १०% कंपनी
+  double get promoterComm => _promoterAdd ? (sellingPrice * 0.05) : 0; // ५% प्रमोटर
+  double get netIncome => sellingPrice - companyComm - promoterComm; // सेलरला मिळणारी रक्कम
 
   @override
   void dispose() {
@@ -56,7 +60,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
       if (isMain) {
         _mainImage = File(img.path);
       } else {
-        if (_extraImages.length < 4) _extraImages.add(File(img.path));
+        if (_extraImages.length < 4) {
+          _extraImages.add(File(img.path));
+        }
       }
     });
   }
@@ -96,24 +102,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
       isActive: _isActive,
       isReturnable: _isReturnable,
       deliveryAvailable: false, 
-      isPromoterAdd: _promoterAdd,
+      isPromoterAdd: _promoterAdd, // हे नवीन ॲड केले आहे
     );
     ProductDatabase.addProduct(p);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Product जोडला! ✅'), backgroundColor: Colors.green));
     Navigator.pop(context);
   }
 
-  Widget _field(String label, TextEditingController ctrl, {TextInputType kb = TextInputType.text, int maxLines = 1, String? hint}) =>
+  Widget _field(String label, TextEditingController ctrl, {TextInputType kb = TextInputType.text, int maxLines = 1, String? hint, bool readOnly = false}) =>
     Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextField(
         controller: ctrl,
         keyboardType: kb,
         maxLines: maxLines,
+        readOnly: readOnly,
         onChanged: (_) => setState(() {}),
         decoration: InputDecoration(
           labelText: label, hintText: hint,
-          filled: true, fillColor: Colors.white,
+          filled: true, fillColor: readOnly ? Colors.grey.shade100 : Colors.white,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2)),
         ),
@@ -160,6 +167,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // === Category ===
           _sectionTitle('Category निवडा'),
           Container(
             margin: const EdgeInsets.only(bottom: 14),
@@ -171,6 +179,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onChanged: (v) => setState(() => _category = v!),
             ),
           ),
+
+          // === Photos ===
           _sectionTitle('फोटो'),
           Center(
             child: GestureDetector(
@@ -204,30 +214,41 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     width: 65, height: 65,
                     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey.shade300)),
                     child: index < _extraImages.length
-                      ? Stack(children: [
-                          ClipRRect(borderRadius: BorderRadius.circular(9), child: Image.file(_extraImages[index], fit: BoxFit.cover, width: 65, height: 65)),
-                          Positioned(top: 0, right: 0, child: GestureDetector(
-                            onTap: () => setState(() => _extraImages.removeAt(index)),
-                            child: const CircleAvatar(radius: 8, backgroundColor: Colors.red, child: Icon(Icons.close, size: 10, color: Colors.white)),
-                          )),
-                        ])
+                      ? Stack(
+                          children: [
+                            ClipRRect(borderRadius: BorderRadius.circular(9), child: Image.file(_extraImages[index], fit: BoxFit.cover, width: 65, height: 65)),
+                            Positioned(
+                              top: 0, right: 0,
+                              child: GestureDetector(
+                                onTap: () => setState(() => _extraImages.removeAt(index)),
+                                child: const CircleAvatar(radius: 8, backgroundColor: Colors.red, child: Icon(Icons.close, size: 10, color: Colors.white)),
+                              ),
+                            )
+                          ],
+                        )
                       : const Icon(Icons.add, color: AppColors.textLight),
                   ),
                 );
               }),
             ),
           ],
+
+          // === Product Details ===
           _sectionTitle('Product माहिती'),
           _field('Product नाव *', _nameCtrl, hint: 'उदा: Organic Mango'),
           _field('Description', _descCtrl, maxLines: 3, hint: 'Product बद्दल सांगा...'),
           _field('Search Keywords', _keywordsCtrl, hint: 'उदा: mango, आंबा, फळे'),
+
+          // === Price & Stock ===
           _sectionTitle('किंमत आणि Stock'),
           Row(children: [
             Expanded(child: _field('MRP (₹) *', _mrpCtrl, kb: TextInputType.number)),
             const SizedBox(width: 12),
             Expanded(child: _field('Discount (%)', _discountCtrl, kb: TextInputType.number)),
           ]),
+          
           if (mrp > 0) ...[
+            // गणिताचा भाग
             Container(
               margin: const EdgeInsets.only(bottom: 14),
               padding: const EdgeInsets.all(12),
@@ -259,11 +280,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
             ),
           ],
+          
           _field('Stock (किती शिल्लक) *', _stockCtrl, kb: TextInputType.number),
+
+          // === Settings ===
           _sectionTitle('Settings'),
           _toggle('Active', 'Product Customer ला लगेच दिसेल', _isActive, (v) => setState(() => _isActive = v)),
           _toggle('प्रमोटर जोड (Promoter Add)', 'प्रमोटरला ५% कमिशन मिळेल', _promoterAdd, (v) => setState(() => _promoterAdd = v)),
           _toggle('Returnable', 'Customer परत करू शकतो', _isReturnable, (v) => setState(() => _isReturnable = v)),
+
           const SizedBox(height: 8),
           SizedBox(
             width: double.infinity, height: 52,

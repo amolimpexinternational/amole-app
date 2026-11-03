@@ -18,6 +18,7 @@ class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
     {'name': 'मंगेश जाधव', 'phone': '9822222224', 'km': '4.5 km'},
   ];
 
+  // status: new / accepted / boy / rejected / cancelled
   final List<Map<String, dynamic>> _orders = [
     {
       'id': 'ZP101',
@@ -260,6 +261,7 @@ class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
       ];
     }
 
+    // rejected / cancelled
     return [_chip('Cancel: ${o['reason']}', Colors.red.shade700)];
   }
 
@@ -324,6 +326,9 @@ class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // 'Add delivery partner' चा टॅब पूर्णपणे काढून टाकला आहे.
+          // आता थेट ऑर्डर्सची यादी दिसेल.
+          
           const Text('आलेल्या ऑर्डर',
               style: TextStyle(
                   fontSize: 17,

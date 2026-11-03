@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart'; // GPS साठी इम्पोर्ट
 import '../../constants/app_colors.dart';
 import '../../data/ride_rates.dart';
 
@@ -17,8 +18,6 @@ class RiderHomeScreen extends StatefulWidget {
 }
 
 class _RiderHomeScreenState extends State<RiderHomeScreen> {
-  // चाचणीसाठी false चे true करा: मग 15 मिनिटांऐवजी 10 सेकंदांत सूचना येते.
-  // चाचणी झाल्यावर पुन्हा false करा.
   static const bool _testMode = false;
   Duration get _reminderAfter =>
       _testMode ? const Duration(seconds: 10) : const Duration(minutes: 15);
@@ -29,8 +28,10 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   Timer? _timer;
   final List<String> _log = [];
 
-  // Demo: खरे लोकेशन नसल्यामुळे रायडर "हडपसर" मध्ये आहे असे धरले आहे.
-  // kmAway = रायडरपासून pickup चे अंतर.
+  // GPS ट्रॅकिंगसाठी व्हेरिएबल्स
+  Position? _standPosition;
+  StreamSubscription<Position>? _positionStream;
+
   final List<Map<String, dynamic>> _requests = [
     {
       'id': 'RD401',
@@ -88,10 +89,10 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    _stopGpsTracking(); // ॲप बंद झाल्यावर GPS बंद
     super.dispose();
   }
 
-  // Ready ON + पुरेसे रिचार्ज + 3 km मधली, जवळची आधी
   List<Map<String, dynamic>> get _visible {
     if (!_ready || _exhausted) return [];
     final list = _requests
@@ -120,7 +121,55 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     );
   }
 
-  // राईड confirm झाल्यावर किंवा 250 मीटर हालचाल झाल्यावर 15 मिनिटांचा timer
+  // === GPS सुरू करण्याचे फंक्शन ===
+  Future<void> _startGpsTracking() async {
+    // १. परवानगी तपासणे
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _toast('GPS परवानगी नाकारली! स्टँड सेट करता येणार नाही.', color: Colors.red);
+        return;
+      }
+    }
+
+    // २. सध्याचे लोकेशन (Stand) सेव्ह करणे
+    _standPosition = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+    );
+
+    // ३. लोकेशन स्ट्रीम सुरू करणे (फक्त २५० मीटर हालचाल झाल्यावर अपडेट होईल)
+    _positionStream?.cancel();
+    _positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 250, // २५० मीटर हालचाल
+      ),
+    ).listen((Position position) {
+      if (_standPosition == null) return;
+
+      // सध्याचे लोकेशन आणि स्टँड मधील अंतर मोजणे
+      double distance = Geolocator.distanceBetween(
+        _standPosition!.latitude,
+        _standPosition!.longitude,
+        position.latitude,
+        position.longitude,
+      );
+
+      // जर २५० मीटर पेक्षा जास्त अंतर गेले असेल तर स्टेटस OFF करा
+      if (distance >= 250) {
+        _onMovedFar();
+      }
+    });
+  }
+
+  // === GPS बंद करण्याचे फंक्शन ===
+  void _stopGpsTracking() {
+    _positionStream?.cancel();
+    _positionStream = null;
+    _standPosition = null;
+  }
+
   void _startReminder() {
     _timer?.cancel();
     _reminderShown = false;
@@ -139,7 +188,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
         title: const Text('Set Your Stand'),
         content: const Text(
           'तुम्ही आत्ता जिथे आहात ते लोकेशन तुमचा Stand म्हणून निश्चित केले जाईल. '
-          'या लोकेशनच्या 3 km मधल्या राईडच्या सूचना तुम्हाला येतील.',
+          'तुम्ही 250 मीटरहून जास्त हलल्यास स्टेटस आपोआप OFF होईल.',
         ),
         actions: [
           TextButton(
@@ -154,35 +203,34 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       ),
     );
     if (ok != true || !mounted) return;
+
+    // GPS सुरू करा
+    await _startGpsTracking();
+
     _timer?.cancel();
     setState(() {
       _ready = true;
       _reminderShown = false;
     });
-    _toast('तुमचे सध्याचे लोकेशन निश्चित केले.');
+    _toast('तुमचे स्टँड निश्चित केले. GPS सुरू आहे.');
   }
 
-  // तुम्ही सांगितलेले खरे तंत्रज्ञान (tracelet, distanceFilter 250.0) हे
-  // 250 मीटर हालचाल झाल्यावर हेच function बोलावेल (Stage 3).
+  // जेव्हा २५० मीटर हालचाल होईल तेव्हा हे ऑटोमॅटिक कॉल होईल
   void _onMovedFar() {
+    if (!mounted) return;
+    _stopGpsTracking(); // GPS बंद करा (बॅटरी वाचवण्यासाठी)
     setState(() => _ready = false);
     _startReminder();
     _toast('तुम्ही 250 मीटरहून जास्त हलला. स्टेटस आपोआप OFF झाला.',
         color: Colors.orange);
   }
 
-  // "स्टेटस ON करा" बटण
   void _turnOnAgain() {
     if (_exhausted) {
       _toast('आधी रिचार्ज करा.', color: Colors.red, recharge: true);
       return;
     }
-    _timer?.cancel();
-    setState(() {
-      _ready = true;
-      _reminderShown = false;
-    });
-    _toast('स्टेटस पुन्हा ON झाला. तुमचे सध्याचे लोकेशन नव्याने निश्चित केले.');
+    _goReady(); // पुन्हा GPS सुरू होईल
   }
 
   void _confirm(Map<String, dynamic> r) {
@@ -193,6 +241,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       _active = r;
       _ready = false;
     });
+    _stopGpsTracking(); // राईड मिळाल्यावर GPS बंद करा
     _startReminder();
     if (_low) {
       _toast('राईड स्वीकारली. Balance low आहे, रिचार्ज करा.',
@@ -489,6 +538,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                       }
                       _goReady();
                     } else {
+                      _stopGpsTracking(); // OFF केल्यावर GPS बंद
                       setState(() => _ready = false);
                     }
                   },
@@ -499,16 +549,26 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
                           color: AppColors.textDark)),
                   subtitle: Text(
                     _ready
-                        ? 'तुमचे सध्याचे लोकेशन निश्चित आहे. 3 km मधल्या राईडच्या सूचना येतील.'
+                        ? 'GPS ट्रॅकिंग सुरू. 250 मीटर हालचाल झाल्यास स्टेटस आपोआप OFF होईल.'
                         : 'ON करताना तुमचे सध्याचे लोकेशन Stand म्हणून निश्चित होईल.',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
+                // Demo बटण काढून टाकले आहे. आता खरा GPS काम करतोय.
                 if (_ready)
-                  OutlinedButton(
-                    onPressed: _onMovedFar,
-                    child: const Text(
-                        'Demo (फक्त चाचणीसाठी): 250 मीटर हालचाल झाली'),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        Icon(Icons.gps_fixed, size: 14, color: Colors.green),
+                        SizedBox(width: 4),
+                        Text('GPS सक्रिय आहे (खरा ट्रॅकिंग)',
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
               ],
             ),

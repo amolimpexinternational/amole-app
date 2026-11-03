@@ -4,9 +4,7 @@ import 'buyer_search_screen.dart';
 import 'global_shopping_home_screen.dart';
 import 'buyer_profile_screen.dart';
 import 'reward_wallet_screen.dart';
-import 'my_wall_screen.dart';
 import 'lucky_draw_screen.dart';
-import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
 import '../../widgets/offers_slider_widget.dart';
 import '../../widgets/home_services_grid.dart';
@@ -86,7 +84,6 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         
           // Header
           Container(
             padding: const EdgeInsets.fromLTRB(12, 14, 12, 18),
@@ -275,16 +272,15 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                     ),
                   ],
                 ),
-                
               ],
             ),
           ),
-
 
           const OffersSliderWidget(),
           const SizedBox(height: 14),
           const HomeServicesGrid(),
           const SizedBox(height: 4),
+
           // Banner Ad
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
@@ -367,9 +363,11 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ),
             ),
           ),
+          
+          // ॲड फीड (यात आता फक्त जाहिराती आणि माय ऑफर्स आहेत)
           const AdFeedWidget(),
+          
           const SizedBox(height: 8),
-
           const SizedBox(height: 16),
         ],
       ),
@@ -385,10 +383,17 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 1) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const MyWallScreen()));
+            // My Wall ऐवजी Extra Income
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else if (index == 2) {
-            // अंगठ्याजवळ सहज पोहोचणारं मधलं स्थान — QR Scan
+            // QR Scan
             Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
+          } else if (index == 3) {
+            // माझे मेसेज (सर्व नोटिफिकेशन्स)
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
+          } else if (index == 4) {
+            // परिसर ऐवजी प्रमोटर डॅशबोर्ड
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else {
             setState(() => _currentIndex = index);
           }
@@ -396,14 +401,14 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primaryBlue,
         unselectedItemColor: AppColors.textLight,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-        unselectedLabelStyle: const TextStyle(fontSize: 11),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+        unselectedLabelStyle: const TextStyle(fontSize: 10),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'होम'),
-          BottomNavigationBarItem(icon: Icon(Icons.dynamic_feed_outlined), activeIcon: Icon(Icons.dynamic_feed), label: 'My Wall'),
+          BottomNavigationBarItem(icon: Icon(Icons.monetization_on_outlined), activeIcon: Icon(Icons.monetization_on), label: 'एक्स्ट्रा इनकम'), // My Wall काढले
           BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), activeIcon: Icon(Icons.qr_code_scanner), label: 'QR Pay'),
-          BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), activeIcon: Icon(Icons.chat_bubble), label: 'माझे मेसेज'),
-          BottomNavigationBarItem(icon: Icon(Icons.people_outline), activeIcon: Icon(Icons.people), label: 'परिसर'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications_active_outlined), activeIcon: Icon(Icons.notifications_active), label: 'माझे मेसेज'),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_customize_outlined), activeIcon: Icon(Icons.dashboard_customize), label: 'प्रमोटर'), // परिसर काढले
         ],
       ),
     );

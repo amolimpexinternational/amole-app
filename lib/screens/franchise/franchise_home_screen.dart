@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/offers_slider_widget.dart'; // नवीन इम्पोर्ट
 import '../../data/ads_data.dart';
 import '../../data/local_posts_data.dart';
 import '../admin/admin_live_ads_screen.dart';
@@ -37,6 +38,7 @@ class FranchiseHomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // === HEADER ===
             Container(
               padding: const EdgeInsets.fromLTRB(20, 48, 20, 20),
               decoration: const BoxDecoration(
@@ -68,11 +70,13 @@ class FranchiseHomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+            
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // === KYC अलर्ट ===
                   if (pendingVerifications > 0)
                     InkWell(
                       borderRadius: BorderRadius.circular(10),
@@ -90,8 +94,15 @@ class FranchiseHomeScreen extends StatelessWidget {
                         ]),
                       ),
                     ),
+
+                  // === नवीन ॲड केलेला भाग: स्लायडर ===
+                  const OffersSliderWidget(),
+                  const SizedBox(height: 16),
+
                   const Text('आढावा', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 12),
+                  
+                  // === KPI ग्रिड ===
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -108,13 +119,22 @@ class FranchiseHomeScreen extends StatelessWidget {
                       _kpi(context, 'Most Viral पोस्ट', '$viralPostsCount', '1000+ Response', Icons.local_fire_department_outlined, Colors.redAccent, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminViralPostsScreen()))),
                     ],
                   ),
+                  
                   const SizedBox(height: 24),
                   const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 12),
+                  
+                  // === Quick Actions ===
                   _quickActionTile(icon: Icons.person_add_alt_1_outlined, label: 'Add Seller', subtitle: 'थेट सेलर जोडा (OTP verified)', color: AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAddSellerScreen()))),
                   _quickActionTile(icon: Icons.verified_user_outlined, label: 'Seller Verification', subtitle: 'नवीन सेलरचं GPS verification करा', color: AppColors.successGreen, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
                   _quickActionTile(icon: Icons.campaign_outlined, label: 'Create Ad', subtitle: 'जाहिरात लगेच Live होते, approval लागत नाही', color: AppColors.primaryOrange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()))),
-                  _quickActionTile(icon: Icons.fact_check_outlined, label: 'Ad Approvals', subtitle: 'इतरांनी सबमिट केलेल्या जाहिराती Approve/Edit/Delete करा', color: Colors.deepPurple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAdScreen()))),
+                  _quickActionTile(
+                    icon: Icons.fact_check_outlined, 
+                    label: 'Ad Approvals', 
+                    subtitle: 'जाहिराती आणि टॉप ऑफर्स (₹5000) अप्रूव्ह करा', 
+                    color: Colors.deepPurple, 
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAdScreen()))
+                  ),
                 ],
               ),
             ),
@@ -124,6 +144,7 @@ class FranchiseHomeScreen extends StatelessWidget {
     );
   }
 
+  // === KPI कार्ड ===
   Widget _kpi(BuildContext context, String title, String value, String subtitle, IconData icon, Color color, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -146,6 +167,7 @@ class FranchiseHomeScreen extends StatelessWidget {
     );
   }
 
+  // === Quick Action टाइल ===
   Widget _quickActionTile({required IconData icon, required String label, required String subtitle, required Color color, required VoidCallback onTap}) {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),

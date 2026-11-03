@@ -1,4 +1,3 @@
-import '../seller/seller_type_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
@@ -8,6 +7,7 @@ import 'contact_screen.dart';
 import '../admin/admin_home_screen.dart';
 import '../channel_partner/channel_partner_home_screen.dart';
 import '../franchise/franchise_home_screen.dart';
+import '../seller/seller_type_selection_screen.dart'; // नवीन स्क्रीनचे इम्पोर्ट
 
 class RoleSelectionScreen extends StatefulWidget {
   const RoleSelectionScreen({super.key});
@@ -26,8 +26,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('सूचना'),
         content: const Text('हे फक्त विक्रेते व दुकानदारांसाठी आहे.'),
-                 actions: [
-          // 'रद्द करा' - मोठे आणि ठळक बटण (चुकीच्या क्लिकपासून संरक्षण)
+        actions: [
+          // 'रद्द करा' हे मोठे आणि मुख्य बटण
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,
@@ -37,7 +37,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             onPressed: () => Navigator.pop(context, false),
             child: const Text('रद्द करा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
           ),
-          // 'पुढे चला' - छोटे आणि साधे बटण
+          // 'पुढे चला' हे छोटे आणि दुय्यम बटण
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: const Text('पुढे चला', style: TextStyle(color: AppColors.textLight, fontSize: 13)),
@@ -45,7 +45,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         ],
       ),
     );
-       if (proceed == true) {
+
+    if (proceed == true) {
       // रोल सेव्ह करा आणि नवीन SellerTypeSelectionScreen वर पाठवा
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('selected_role', _selectedRole!);
