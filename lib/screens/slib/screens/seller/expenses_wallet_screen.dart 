@@ -1,0 +1,241 @@
+import 'package:flutter/material.dart';
+import '../../constants/app_colors.dart';
+
+class ExpensesWalletScreen extends StatefulWidget {
+  const ExpensesWalletScreen({super.key});
+
+  @override
+  State<ExpensesWalletScreen> createState() => _ExpensesWalletScreenState();
+}
+
+class _ExpensesWalletScreenState extends State<ExpensesWalletScreen> {
+  // सध्याची शिल्लक (Demo)
+  double _currentBalance = 250.0;
+  
+  // निवडलेली रिचार्ज रक्कम
+  double _selectedAmount = 500.0;
+  final TextEditingController _customAmountCtrl = TextEditingController();
+
+  // डेमो ट्रान्झॅक्शन हिस्ट्री
+  final List<Map<String, dynamic>> _transactions = [
+    {'title': 'Ad Campaign - Diwali Offer', 'amount': -150.0, 'date': 'आज, 10:30 AM', 'type': 'debit'},
+    {'title': 'Wallet Recharge', 'amount': 500.0, 'date': 'काल, 4:00 PM', 'type': 'credit'},
+    {'title': 'Monthly Subscription', 'amount': -100.0, 'date': '15 ऑक्टो, 9:00 AM', 'type': 'debit'},
+  ];
+
+  final List<double> _presetAmounts = [100, 500, 1000, 2000];
+
+  @override
+  void dispose() {
+    _customAmountCtrl.dispose();
+    super.dispose();
+  }
+
+  void _rechargeWallet() {
+    double amountToRecharge = _selectedAmount;
+    
+    // जर कस्टम रक्कम टाकली असेल तर ती वापरा
+    if (_customAmountCtrl.text.isNotEmpty) {
+      amountToRecharge = double.tryParse(_customAmountCtrl.text) ?? 0;
+    }
+
+    if (amountToRecharge < 100) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('किमान ₹100 रिचार्ज करा'), backgroundColor: Colors.red),
+      );
+      return;
+    }
+
+    // Payment Gateway चा डेमो (पुढे Razorpay/Cashfree जोडू)
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('रिचार्ज यशस्वी! 🎉'),
+        content: Text('तुमच्या Expenses Wallet मध्ये ₹${amountToRecharge.toStringAsFixed(0)} जमा झाले आहेत.'),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              setState(() {
+                _currentBalance += amountToRecharge;
+                _transactions.insert(0, {
+                  'title': 'Wallet Recharge',
+                  'amount': amountToRecharge,
+                  'date': 'आत्ता',
+                  'type': 'credit',
+                });
+                _customAmountCtrl.clear();
+                _selectedAmount = 500.0;
+              });
+            },
+            child: const Text('ठीक आहे'),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        title: const Text('Expenses Wallet'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // === १. बॅलन्स कार्ड ===
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppColors.primaryBlue, AppColors.royalBlue],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [BoxShadow(color: AppColors.primaryBlue.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('सध्याची शिल्लक', style: TextStyle(color: Colors.white70, fontSize: 14)),
+                    Icon(Icons.account_balance_wallet, color: Colors.white, size: 28),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text('₹${_currentBalance.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                const Text('जाहिराती आणि सबस्क्रिप्शनसाठी वापरा', style: TextStyle(color: Colors.white70, fontSize: 12)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // === २. रिचार्ज विभाग ===
+          const Text('वॉलेट रिचार्ज करा', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          const SizedBox(height: 12),
+          
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: _presetAmounts.map((amt) {
+              final isSelected = _selectedAmount == amt && _customAmountCtrl.text.isEmpty;
+              return ChoiceChip(
+                label: Text('₹${amt.toStringAsFixed(0)}'),
+                selected: isSelected,
+                onSelected: (_) {
+                  setState(() {
+                    _selectedAmount = amt;
+                    _customAmountCtrl.clear();
+                  });
+                },
+                selectedColor: AppColors.primaryBlue,
+                labelStyle: TextStyle(
+                  color: isSelected ? Colors.white : AppColors.textDark,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 12),
+
+          // कस्टम रक्कम
+          TextField(
+            controller: _customAmountCtrl,
+            keyboardType: TextInputType.number,
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              hintText: 'किंवा स्वतःची रक्कम टाका (उदा. 1500)',
+              prefixIcon: const Icon(Icons.currency_rupee, color: AppColors.primaryBlue),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: _rechargeWallet,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.successGreen,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text(
+                '₹${_customAmountCtrl.text.isNotEmpty ? _customAmountCtrl.text : _selectedAmount.toStringAsFixed(0)} रिचार्ज करा',
+                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text('🔒 सुरक्षित पेमेंट (Razorpay/Cashfree)', style: TextStyle(fontSize: 11, color: AppColors.textLight), textAlign: TextAlign.center),
+
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 16),
+
+          // === ३. ट्रान्झॅक्शन हिस्ट्री ===
+          const Text('व्यवहारांचा इतिहास (Transactions)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          const SizedBox(height: 12),
+          
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _transactions.length,
+            itemBuilder: (context, index) {
+              final tx = _transactions[index];
+              final isCredit = tx['type'] == 'credit';
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.lightGrey),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: isCredit ? Colors.green.shade50 : Colors.red.shade50,
+                      child: Icon(
+                        isCredit ? Icons.arrow_downward : Icons.arrow_upward,
+                        color: isCredit ? Colors.green : Colors.red,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(tx['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
+                          Text(tx['date'], style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '${isCredit ? '+' : ''}₹${(tx['amount'] as double).abs().toStringAsFixed(0)}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isCredit ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
