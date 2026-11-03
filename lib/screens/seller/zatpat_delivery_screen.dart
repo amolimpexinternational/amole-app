@@ -11,8 +11,6 @@ class ZatPatDeliveryScreen extends StatefulWidget {
 }
 
 class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
-  late bool _on = ZatPatData.isOn(ZatPatData.demoSeller, true);
-
   // Demo: जवळचे ON डिलिव्हरी बॉय (दुकानाच्या 5 km मधले)
   final List<Map<String, String>> _boys = const [
     {'name': 'संतोष गायकवाड', 'phone': '9822222222', 'km': '1.2 km'},
@@ -20,7 +18,6 @@ class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
     {'name': 'मंगेश जाधव', 'phone': '9822222224', 'km': '4.5 km'},
   ];
 
-  // status: new / accepted / boy / rejected / cancelled
   final List<Map<String, dynamic>> _orders = [
     {
       'id': 'ZP101',
@@ -263,7 +260,6 @@ class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
       ];
     }
 
-    // rejected / cancelled
     return [_chip('Cancel: ${o['reason']}', Colors.red.shade700)];
   }
 
@@ -328,47 +324,13 @@ class _ZatPatDeliveryScreenState extends State<ZatPatDeliveryScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.lightGrey),
-            ),
-            child: SwitchListTile(
-              value: _on,
-              onChanged: (v) {
-                setState(() => _on = v);
-                ZatPatData.setOn(ZatPatData.demoSeller, v);
-              },
-              title: const Text('Add delivery partner',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark)),
-              subtitle: Text(
-                _on
-                    ? 'ON: तुमची दुकाने आणि वस्तू ZatPat मध्ये दिसतात.'
-                    : 'OFF: तुमच्या वस्तू ZatPat मध्ये दिसणार नाहीत.',
-                style: const TextStyle(fontSize: 12),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
           const Text('आलेल्या ऑर्डर',
               style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textDark)),
           const SizedBox(height: 8),
-          if (!_on)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(
-                child: Text('ऑर्डर घेण्यासाठी वरचे बटण ON करा',
-                    style: TextStyle(color: AppColors.textLight)),
-              ),
-            )
-          else
-            ..._orders.map(_orderCard),
+          ..._orders.map(_orderCard),
         ],
       ),
     );

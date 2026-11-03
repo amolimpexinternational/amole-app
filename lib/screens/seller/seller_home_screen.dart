@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
+import '../../widgets/offers_slider_widget.dart';
 import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
@@ -11,6 +12,7 @@ import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
 import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
+import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -55,8 +57,19 @@ class _SellerHomeScreenState extends State<SellerHomeScreen> {
   }
 }
 
-class _SellerDashboard extends StatelessWidget {
+class _SellerDashboard extends StatefulWidget {
   const _SellerDashboard();
+
+  @override
+  State<_SellerDashboard> createState() => _SellerDashboardState();
+}
+
+class _SellerDashboardState extends State<_SellerDashboard> {
+  bool _isShopOpen = true;
+
+  void _toggleShopStatus(bool value) {
+    setState(() => _isShopOpen = value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +77,7 @@ class _SellerDashboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // === HEADER ===
           Container(
             padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
             decoration: const BoxDecoration(
@@ -88,6 +102,7 @@ class _SellerDashboard extends StatelessWidget {
                     ),
                     Row(
                       children: [
+                        // माझे उत्पन्न (Income) बटन — आकार लहान
                         GestureDetector(
                           onTap: () {
                             showModalBottomSheet(
@@ -121,7 +136,7 @@ class _SellerDashboard extends StatelessWidget {
                                     const SizedBox(height: 12),
                                     Container(
                                       padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+                                      decoration: BoxDecoration(color: AppColors.primaryBlue.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
                                       child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                                         Row(children: [Icon(Icons.account_balance_wallet_outlined, color: AppColors.primaryBlue, size: 22), SizedBox(width: 8), Text('एकूण', style: TextStyle(fontSize: 15))]),
                                         Text('₹18,570', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
@@ -150,19 +165,56 @@ class _SellerDashboard extends StatelessWidget {
                             );
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                             decoration: BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(20)),
                             child: const Row(children: [
-                              Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 16),
+                              Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 14),
                               SizedBox(width: 4),
-                              Text('₹18,570', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                              Text('₹18,570', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                             ]),
                           ),
                         ),
-                        const SizedBox(width: 6),
-                        IconButton(icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())), tooltip: 'Subscription'),
-                        IconButton(icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))),
-                        IconButton(icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))),
+                        const SizedBox(width: 4),
+
+                        // === Expenses Wallet ===
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen()));
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
+                            child: const Row(children: [
+                              Icon(Icons.account_balance_wallet, color: Colors.white, size: 14),
+                              SizedBox(width: 4),
+                              Text('₹250', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                            ]),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+
+                        // === लहान आयकॉन्स ===
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          iconSize: 18,
+                          icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          iconSize: 18,
+                          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          iconSize: 18,
+                          icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))
+                        ),
                       ],
                     ),
                   ],
@@ -170,7 +222,7 @@ class _SellerDashboard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -186,7 +238,10 @@ class _SellerDashboard extends StatelessWidget {
               ],
             ),
           ),
+          
           const SizedBox(height: 16),
+          
+          // === नवीन ऑर्डर्स अलर्ट ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen())),
             child: Container(
@@ -199,26 +254,103 @@ class _SellerDashboard extends StatelessWidget {
                   Icon(Icons.pending_actions, color: Colors.red.shade600, size: 20),
                   const SizedBox(width: 10),
                   Expanded(child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13))),
-                  Icon(Icons.chevron_right,color: Colors.red),
+                  const Icon(Icons.chevron_right, color: Colors.red),
                 ],
               ),
             ),
           ),
+
+          const SizedBox(height: 12),
+
+          // === Shop Open / Close Status ===
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: _isShopOpen ? Colors.green.shade50 : Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: _isShopOpen ? Colors.green.shade300 : Colors.grey.shade400),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(_isShopOpen ? Icons.storefront : Icons.store_mall_directory_outlined, color: _isShopOpen ? Colors.green.shade700 : Colors.grey.shade700),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_isShopOpen ? 'Shop Open' : 'Shop Closed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: _isShopOpen ? Colors.green.shade800 : Colors.grey.shade800)),
+                          Text(_isShopOpen ? 'ऑर्डर्स स्वीकारल्या जात आहेत' : 'नवीन ऑर्डर्स बंद आहेत', style: TextStyle(fontSize: 11, color: _isShopOpen ? Colors.green.shade600 : Colors.grey.shade600)),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Switch(value: _isShopOpen, onChanged: _toggleShopStatus, activeThumbColor: Colors.green.shade600),
+                ],
+              ),
+            ),
+          ),
+
           const SizedBox(height: 16),
+
+          // === स्लायडर ===
+          const OffersSliderWidget(), 
+          const SizedBox(height: 16),
+
+          // === TOP OFFERS ===
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.amber.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.amber.shade200)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(children: [
+                        Icon(Icons.local_offer_outlined, color: Colors.amber.shade800),
+                        const SizedBox(width: 8),
+                        const Text('Top Offers (होम स्क्रीन)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                      ]),
+                      TextButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.add, size: 16, color: AppColors.primaryBlue),
+                        label: const Text('ऑफर ॲड करा', style: TextStyle(fontSize: 13, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('बायरच्या ॲपमध्ये वरती दिसणाऱ्या ऑफर्ससाठी फोटो/व्हिडिओ अपलोड करा.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+          
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
+          
+          // === जाहिरात विभाग (जसाचा तसा) ===
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text('जाहिराती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            child: Text('जाहिरात विभाग', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 8),
           const AdFeedWidget(isSeller: true),
           const SizedBox(height: 8),
+          
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('माझा आढावा — 30 दिवस', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 12),
+          
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -246,25 +378,25 @@ class _SellerDashboard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+              Icon(icon, color: color, size: 22),
+            ]),
+            Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
+            Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+          ],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-            Icon(icon, color: color, size: 22),
-          ]),
-          Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-          Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-        ],
-      ),
-    ),
     );
   }
 
@@ -283,8 +415,6 @@ class _SellerDashboard extends StatelessWidget {
             _viewerTile('अनिल जोशी', 'आज सकाळी 10:30', Icons.person_outlined),
             _viewerTile('संगीता राणे', 'काल दुपारी 2:15', Icons.person_outlined),
             _viewerTile('रमेश पाटील', 'काल सायं 5:00', Icons.person_outlined),
-            _viewerTile('प्रिया देशमुख', '2 दिवसांपूर्वी', Icons.person_outlined),
-            _viewerTile('सुनील कदम', '3 दिवसांपूर्वी', Icons.person_outlined),
           ],
         ),
       ),
@@ -294,7 +424,7 @@ class _SellerDashboard extends StatelessWidget {
   Widget _viewerTile(String name, String time, IconData icon) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+        backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
         child: Icon(icon, color: AppColors.primaryBlue, size: 20),
       ),
       title: Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
@@ -308,8 +438,6 @@ class _SellerDashboard extends StatelessWidget {
       {'name': 'अनिल जोशी', 'purchase': '₹1,200', 'visits': '5 वेळा'},
       {'name': 'संगीता राणे', 'purchase': '₹3,500', 'visits': '12 वेळा'},
       {'name': 'रमेश पाटील', 'purchase': '₹850', 'visits': '3 वेळा'},
-      {'name': 'प्रिया देशमुख', 'purchase': '₹450', 'visits': '2 वेळा'},
-      {'name': 'सुनील कदम', 'purchase': '₹2,100', 'visits': '8 वेळा'},
     ];
     showModalBottomSheet(
       context: context,
@@ -335,7 +463,7 @@ class _SellerDashboard extends StatelessWidget {
                   final c = customers[index];
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                      backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
                       child: Text(c['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
                     ),
                     title: Text(c['name']!, style: const TextStyle(fontWeight: FontWeight.w600)),

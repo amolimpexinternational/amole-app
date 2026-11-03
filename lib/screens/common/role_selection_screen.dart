@@ -1,3 +1,4 @@
+import '../seller/seller_type_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
@@ -25,20 +26,35 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('सूचना'),
         content: const Text('हे फक्त विक्रेते व दुकानदारांसाठी आहे.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('रद्द करा'),
-          ),
+                 actions: [
+          // 'रद्द करा' - मोठे आणि ठळक बटण (चुकीच्या क्लिकपासून संरक्षण)
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryBlue,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('रद्द करा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+          ),
+          // 'पुढे चला' - छोटे आणि साधे बटण
+          TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('पुढे चला'),
+            child: const Text('पुढे चला', style: TextStyle(color: AppColors.textLight, fontSize: 13)),
           ),
         ],
       ),
     );
-    if (proceed == true) {
-      await _confirmRoleAndGoToTerms();
+       if (proceed == true) {
+      // रोल सेव्ह करा आणि नवीन SellerTypeSelectionScreen वर पाठवा
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_role', _selectedRole!);
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SellerTypeSelectionScreen()),
+        );
+      }
     }
   }
 

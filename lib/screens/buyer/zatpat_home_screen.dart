@@ -189,106 +189,177 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
   }
 
   Widget _productCard(Map<String, dynamic> p) {
-    final price = p['price'] as double;
-    final mrp = p['mrp'] as double;
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.lightGrey),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 52,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.primaryBlue.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(_iconOf(p['category'] as String), color: AppColors.primaryBlue, size: 34),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            p['name'] as String,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            '${p['seller']} · ${p['km']} km',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 11, color: AppColors.textLight),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text('₹${price.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-              const SizedBox(width: 6),
-              if (mrp > price)
-                Text(
-                  '₹${mrp.toStringAsFixed(0)}',
-                  style: const TextStyle(fontSize: 11, color: AppColors.textLight, decoration: TextDecoration.lineThrough),
-                ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          _qtyControl(p),
-        ],
-      ),
-    );
-  }
+    final id = _idOf(p);
+    final quantity = BuyerShoppingData.cartItems
+        .firstWhere((e) => e['id'] == id, orElse: () => {'qty': 0})['qty'] as int;
+    final mrp = (p['mrp'] as num).toDouble();
+    final price = (p['price'] as num).toDouble();
+    final discount = mrp > price ? ((mrp - price) / mrp * 100).round() : 0;
 
-  Widget _bottomBar() {
-    final count = BuyerShoppingData.cartCount;
-    if (count == 0) return const SizedBox.shrink();
-    final subtotal = BuyerShoppingData.cartSubtotal;
-    final delivery = _deliveryCharge();
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-        ),
-        child: Row(
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          // TODO: Product Detail Screen (पुढील टप्प्यात)
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
+            Stack(
+              children: [
+                Container(
+                  height: 110,
+                  width: double.infinity,
+                  color: AppColors.lightGrey,
+                  child: const Icon(Icons.storefront, size: 54, color: AppColors.primaryBlue),
+                ),
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Material(
+                    color: Colors.white,
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: const Icon(Icons.favorite_border, color: AppColors.textLight),
+                      onPressed: () {
+                        // Favourite logic (पुढील टप्प्यात)
+                      },
+                    ),
+                  ),
+                ),
+                if (discount > 0)
+                  Positioned(
+                    left: 6,
+                    top: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.successGreen,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '$discount% OFF',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$count वस्तू · ₹${subtotal.toStringAsFixed(0)}',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textDark),
+                    p['name'].toString(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  if (delivery > 0)
-                    Text(
-                      '+ डिलिव्हरी ₹$delivery',
-                      style: const TextStyle(fontSize: 12, color: AppColors.textLight),
+                  const SizedBox(height: 2),
+                  Text(
+                    p['seller'].toString(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        '₹${price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.successGreen,
+                        ),
+                      ),
+                      if (discount > 0) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          '₹${mrp.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            decoration: TextDecoration.lineThrough,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (quantity == 0)
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          BuyerShoppingData.addToCart(id: id, name: p['name'].toString(), price: price, seller: p['seller'].toString(), qty: 1);
+                          setState(() {});
+                        },
+                        child: const Text('Cart मध्ये टाका'),
+                      ),
+                    )
+                  else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () {
+                            BuyerShoppingData.removeFromCart(id);
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.remove_circle_outline),
+                        ),
+                        Text('$quantity',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () {
+                            BuyerShoppingData.addToCart(id: id, name: p['name'].toString(), price: price, seller: p['seller'].toString(), qty: 1);
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.add_circle_outline),
+                        ),
+                      ],
                     ),
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => CartScreen(
-                        deliveryCharge: _deliveryCharge(),
-                        orderTitle: widget.title ?? 'ZatPat')),
-              ).then((_) => setState(() {})),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 44),
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _bottomBar() {
+    final count = BuyerShoppingData.cartCount;
+    if (count == 0) return const SizedBox.shrink();
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        decoration: const BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)]),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Text('$count वस्तू', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textLight)),
+                  const SizedBox(width: 6),
+                  Text('· ₹${BuyerShoppingData.cartSubtotal.toStringAsFixed(0)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                ],
               ),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())).then((_) => setState(() {})),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white, minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12)),
               child: const Text('Cart बघा', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
@@ -296,6 +367,7 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
