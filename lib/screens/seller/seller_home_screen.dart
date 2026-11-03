@@ -154,21 +154,29 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     ),
                     Row(
                       children: [
-                        // Express Wallet
-                        GestureDetector(
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Express Wallet पुढील टप्प्यात जोडले जाईल')));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
-                            child: const Row(children: [
-                              Icon(Icons.flash_on, color: Colors.white, size: 14),
-                              SizedBox(width: 2),
-                              Text('₹0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                            ]),
-                          ),
-                        ),
+// Expenses Wallet बटन
+GestureDetector(
+  onTap: () {
+    // TODO: Expenses Wallet स्क्रीनवर पाठवण्यासाठी (पुढील टप्प्यात)
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Expenses Wallet पुढील टप्प्यात जोडले जाईल')),
+    );
+  },
+  child: Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+    decoration: BoxDecoration(
+      color: Colors.purple.shade400, 
+      borderRadius: BorderRadius.circular(20)
+    ),
+    child: const Row(
+      children: [
+        Icon(Icons.account_balance_wallet, color: Colors.white, size: 14), // वॉलेट आयकॉन
+        SizedBox(width: 4),
+        Text('Expenses Wallet: ₹0', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+      ],
+    ),
+  ),
+),
                         const SizedBox(width: 4),
                         IconButton(
                           padding: EdgeInsets.zero,
