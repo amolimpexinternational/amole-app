@@ -27,7 +27,6 @@ class _GlobalShoppingHomeScreenState
 
   String _searchQuery = '';
   String _selectedCategory = 'सर्व';
-  final Map<dynamic, int> _pick = {};
 
   final List<Map<String, dynamic>> _categories = [
     {'label': 'सर्व', 'icon': Icons.grid_view_rounded},
@@ -247,62 +246,53 @@ class _GlobalShoppingHomeScreenState
     );
   }
 
-  int _selectedQty(ProductModel product) {
-    final picked = _pick[product.id];
-    if (picked != null) return picked;
-    final inCart = _cartQuantity(product);
-    return inCart > 0 ? inCart : 1;
-  }
-
-  void _changePick(ProductModel product, int change) {
-    final next = _selectedQty(product) + change;
-    if (next < 1 || next > product.stock) return;
-    setState(() {
-      _pick[product.id] = next;
-    });
-  }
-
-  void _addSelected(ProductModel product) {
-    if (product.stock <= 0) return;
-    final qty = _selectedQty(product);
-    final index = BuyerShoppingData.cartItems.indexWhere(
-      (item) => item['id'] == product.id,
-    );
-
-    if (index == -1) {
-      BuyerShoppingData.addToCart(
-        id: product.id,
-        name: product.name,
-        price: product.sellingPrice,
-        qty: qty,
-        seller: product.sellerName,
-        description: product.description,
-        image: product.image,
-        mrp: product.mrp,
-        discount: product.discount,
-        stock: product.stock,
-        deliveryAvailable: product.deliveryAvailable,
-        isReturnable: product.isReturnable,
-      );
-    } else {
-      BuyerShoppingData.cartItems[index]['qty'] = qty;
-    }
-
-    setState(() {
-      _pick[product.id] = qty;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${product.name} x $qty Cart मध्ये जोडले'),
-        duration: const Duration(seconds: 2),
+  Widget _bottomBar() {
+    final count = BuyerShoppingData.cartCount;
+    if (count == 0) return const SizedBox.shrink();
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                '$count वस्तू · ₹${BuyerShoppingData.cartSubtotal.toStringAsFixed(0)}',
+                style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CartScreen()),
+              ).then((_) {
+                if (mounted) setState(() {});
+              }),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(0, 44),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+              ),
+              child: const Text('Cart बघा',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildProductCard(ProductModel product) {
-    final inCart = _cartQuantity(product);
-    final qty = _selectedQty(product);
+    final quantity = _cartQuantity(product);
+    final shownQty = quantity > 0 ? quantity : 1;
     final favourite = BuyerShoppingData.isFavourite(product.id);
 
     return Card(
@@ -429,7 +419,7 @@ class _GlobalShoppingHomeScreenState
                   Row(
                     children: [
                       Text(
-                        '₹${(product.sellingPrice * qty).toStringAsFixed(0)}',
+                        '₹${(product.sellingPrice * shownQty).toStringAsFixed(0)}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -439,7 +429,7 @@ class _GlobalShoppingHomeScreenState
                       if (product.discount > 0) ...[
                         const SizedBox(width: 6),
                         Text(
-                          '₹${(product.mrp * qty).toStringAsFixed(0)}',
+                          '₹${(product.mrp * shownQty).toStringAsFixed(0)}',
                           style: const TextStyle(
                             fontSize: 10,
                             decoration: TextDecoration.lineThrough,
@@ -450,57 +440,59 @@ class _GlobalShoppingHomeScreenState
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 30,
-                          minHeight: 28,
+                  if (quantity == 0)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 32,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.zero,
                         ),
-                        visualDensity: VisualDensity.compact,
-                        onPressed: () => _changePick(product, -1),
-                        icon: const Icon(Icons.remove_circle_outline),
-                      ),
-                      Text(
-                        '$qty',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                        onPressed: () => _addToCart(product),
+                        child: const Text(
+                          'Cart मध्ये टाका',
+                          style: TextStyle(fontSize: 12),
                         ),
                       ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 30,
-                          minHeight: 28,
-                        ),
-                        visualDensity: VisualDensity.compact,
-                        onPressed: qty < product.stock
-                            ? () => _changePick(product, 1)
-                            : null,
-                        icon: const Icon(Icons.add_circle_outline),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 30,
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                      ),
-                      onPressed: () => _addSelected(product),
-                      child: Text(
-                        inCart == 0
-                            ? 'Cart मध्ये टाका'
-                            : 'Cart अपडेट करा',
-                        style: const TextStyle(fontSize: 12),
+                    )
+                  else
+                    SizedBox(
+                      height: 32,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(
+                              minWidth: 32,
+                              minHeight: 32,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            onPressed: () => _changeQuantity(product, -1),
+                            icon: const Icon(Icons.remove_circle_outline),
+                          ),
+                          Text(
+                            '$quantity',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(
+                              minWidth: 32,
+                              minHeight: 32,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                            onPressed: quantity < product.stock
+                                ? () => _changeQuantity(product, 1)
+                                : null,
+                            icon: const Icon(Icons.add_circle_outline),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -761,10 +753,11 @@ class _GlobalShoppingHomeScreenState
     final screenH =
         media.size.height - media.padding.top - media.padding.bottom;
     final cardW = (media.size.width - 32 - 12) / 2;
-    final cardH = (screenH - 24 - 8) / 3;
+    final cardH = (screenH - 24 - 8 - 64) / 3;
     final ratio = (cardW / cardH).clamp(0.5, 1.0).toDouble();
 
     return Scaffold(
+      bottomNavigationBar: _bottomBar(),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
