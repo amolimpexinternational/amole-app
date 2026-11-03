@@ -4,9 +4,7 @@ import 'buyer_search_screen.dart';
 import 'global_shopping_home_screen.dart';
 import 'buyer_profile_screen.dart';
 import 'reward_wallet_screen.dart';
-// import 'my_wall_screen.dart'; // काढून टाकले
 import 'lucky_draw_screen.dart';
-import 'seller_profile_screen.dart';
 import '../../widgets/ad_feed_widget.dart';
 import '../../widgets/offers_slider_widget.dart';
 import '../../widgets/home_services_grid.dart';
@@ -282,7 +280,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           const SizedBox(height: 14),
           const HomeServicesGrid(),
           const SizedBox(height: 4),
-          
+
           // Banner Ad
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
@@ -365,7 +363,10 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ),
             ),
           ),
+          
+          // ॲड फीड (यात आता फक्त जाहिराती आणि माय ऑफर्स आहेत)
           const AdFeedWidget(),
+          
           const SizedBox(height: 8),
           const SizedBox(height: 16),
         ],
@@ -391,7 +392,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             // माझे मेसेज (सर्व नोटिफिकेशन्स)
             Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
           } else if (index == 4) {
-            // परिसर ऐवजी प्रमोटर डॅशबोर्ड (सध्या ExtraIncomeScreen ला जोडले आहे, पुढे स्वतंत्र स्क्रीन बनवू)
+            // परिसर ऐवजी प्रमोटर डॅशबोर्ड
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else {
             setState(() => _currentIndex = index);
