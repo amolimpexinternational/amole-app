@@ -203,7 +203,7 @@ class _SellerDashboard extends StatelessWidget {
                   Icon(Icons.pending_actions, color: Colors.red.shade600, size: 20),
                   const SizedBox(width: 10),
                   Expanded(child: Text('3 नवीन ऑर्डर्स प्रतीक्षेत!', style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 13))),
-                  Icon(Icons.chevron_right,color: Colors.red),
+                  const Icon(Icons.chevron_right,color: Colors.red),
                 ],
               ),
             ),
@@ -211,7 +211,7 @@ class _SellerDashboard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // === नवीन ॲड केलेला भाग: TOP OFFERS (होम स्क्रीनसाठी) ===
+          // === TOP OFFERS (होम स्क्रीनसाठी) ===
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
@@ -243,15 +243,14 @@ class _SellerDashboard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Text('बायरच्या ॲपमध्ये वरती दिसणाऱ्या ऑफर्ससाठी फोटो/व्हिडिओ अपलोड करा.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+                  const Text('बायरच्या ॲपमध्ये वरती दिसणाऱ्या ऑफर्ससाठी फोटो/व्हिडिओ अपलोड करा. (फ्रँचायझी अप्रूव्हल आवश्यक)', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
                 ],
               ),
             ),
           ),
 
           const SizedBox(height: 16),
-
-          // === इतर डॅशबोर्ड घटक ===
+          
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
           
@@ -292,7 +291,7 @@ class _SellerDashboard extends StatelessWidget {
     );
   }
 
-  // === नवीन ॲड केलेले फंक्शन: ऑफर ॲड करण्यासाठी विंडो ===
+  // === ऑफर ॲड करण्यासाठी विंडो (नियमांसह) ===
   void _showAddOfferBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -311,6 +310,37 @@ class _SellerDashboard extends StatelessWidget {
             const SizedBox(height: 8),
             const Text('ही ऑफर बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
             const SizedBox(height: 16),
+
+            // नवीन नियमांची सूचना
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blue.shade200)
+              ),
+              child: const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                      SizedBox(width: 6),
+                      Text('महत्त्वाची सूचना', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.blue)),
+                    ],
+                  ),
+                  SizedBox(height: 6),
+                  Text(
+                    '१. ही ऑफर प्रथम तुमच्या फ्रँचायझीकडे अप्रूव्हलसाठी जाईल.\n'
+                    '२. अप्रूव्हल झाल्यावर २४ तासांसाठी ऑफर सक्रिय राहील.\n'
+                    '३. यासाठी तुम्हाला ₹५,०००/- फी भरावी लागेल.',
+                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
             TextField(
               decoration: InputDecoration(
                 labelText: 'ऑफरचे नाव / शीर्षक (उदा. 50% सूट)',
@@ -345,20 +375,20 @@ class _SellerDashboard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ऑफर यशस्वीरित्या ॲड झाली (डेमो)')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('₹5000 फी भरून ऑफर फ्रँचायझीकडे अप्रूव्हलसाठी पाठवली आहे (डेमो)')));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBlue,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                child: const Text('अपलोड करा', style: TextStyle(color: Colors.white, fontSize: 16)),
+                child: const Text('₹5,000 भरा आणि अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
               ),
             ),
             const SizedBox(height: 24),
