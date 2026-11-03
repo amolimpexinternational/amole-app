@@ -1,3 +1,4 @@
+import '../../widgets/offers_slider_widget.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
