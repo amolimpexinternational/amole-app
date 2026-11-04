@@ -1,3 +1,4 @@
+import 'weekly_market_screen.dart';
 import 'buyer_messages_screen.dart';
 import 'weekly_market_screen.dart';
 import 'promoter_dashboard_screen.dart';
@@ -284,34 +285,34 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           const HomeServicesGrid(),
           const SizedBox(height: 4),
 
-          // Banner Ad
-          GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              height: 75,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('माझा पैसा माझ्या खिशात 🛒', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // === १. Banner Ad — आपल्या गावातील दुकाने ===
+GestureDetector(
+  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    height: 75,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('माझा पैसा माझ्या खिशात 🛒', style: TextStyle(color: Colors.white70, fontSize: 11)),
+        ],
+      ),
+    ),
+  ),
+),
 
-// === आठवडी बाजार बॅनर ===
+// === २. आठवडी बाजार बॅनर (नवीन — मुद्दा ११) ===
 GestureDetector(
   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
   child: Container(
@@ -338,61 +339,62 @@ GestureDetector(
   ),
 ),
 const SizedBox(height: 16),
-          // Extra Income tab
-          GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const ExtraIncomeScreen(),
-              ),
-            ),
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              height: 75,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF3949AB), Color(0xFF7E57C2)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('💰 Extra Income', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('अतिरिक्त कमाईच्या संधी', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                  ],
-                ),
-              ),
-            ),
-          ),
 
-          // Ad Block 2 — Lucky Draw
-          GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              height: 100,
-              decoration: BoxDecoration(
-                color: AppColors.primaryBlue.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.2)),
-              ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('🎟️ आजचा Lucky Draw', style: TextStyle(color: AppColors.primaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('फक्त ₹5 मध्ये तिकीट घ्या — दर दिवशी ४:०० PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
-                  ],
-                ),
-              ),
-            ),
-          ),
+// === ३. Extra Income tab ===
+GestureDetector(
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const ExtraIncomeScreen(),
+    ),
+  ),
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    height: 75,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF3949AB), Color(0xFF7E57C2)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('💰 Extra Income', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('अतिरिक्त कमाईच्या संधी', style: TextStyle(color: Colors.white70, fontSize: 11)),
+        ],
+      ),
+    ),
+  ),
+),
+
+// === ४. Ad Block 2 — Lucky Draw ===
+GestureDetector(
+  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    height: 100,
+    decoration: BoxDecoration(
+      color: AppColors.primaryBlue.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.2)),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('🎟️ आजचा Lucky Draw', style: TextStyle(color: AppColors.primaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('फक्त ₹5 मध्ये तिकीट घ्या — दर दिवशी ४:०० PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+        ],
+      ),
+    ),
+  ),
+),
           
           // ॲड फीड (यात आता फक्त जाहिराती आणि माय ऑफर्स आहेत)
           const AdFeedWidget(),
