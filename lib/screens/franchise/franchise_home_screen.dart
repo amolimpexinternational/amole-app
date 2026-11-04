@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../widgets/offers_slider_widget.dart'; // टॉप ऑफर स्लायडरसाठी
 import '../../data/ads_data.dart';
 import '../../data/local_posts_data.dart';
-import '../../widgets/offers_slider_widget.dart';
 import '../admin/admin_live_ads_screen.dart';
-import '../admin/admin_viral_posts_screen.dart';
 import 'franchise_notification_screen.dart';
 import 'franchise_profile_screen.dart';
 import 'franchise_kyc_screen.dart';
@@ -15,54 +14,10 @@ import 'franchise_ad_screen.dart';
 import 'franchise_create_ad_screen.dart';
 import 'franchise_add_seller_screen.dart';
 import 'franchise_wallet_screen.dart';
+import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजारासाठी
 
 class FranchiseHomeScreen extends StatelessWidget {
   const FranchiseHomeScreen({super.key});
-
-  // === टॉप ऑफर ॲड करण्यासाठी विंडो ===
-  void _showAddTopOfferSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom + 20, left: 20, right: 20, top: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('नवीन टॉप ऑफर ॲड करा', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-            const SizedBox(height: 6),
-            const Text('हा कंटेंट बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-            const SizedBox(height: 16),
-            TextField(decoration: InputDecoration(labelText: 'ऑफर शीर्षक', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14))),
-            const SizedBox(height: 12),
-            TextField(decoration: InputDecoration(labelText: 'थोडक्यात माहिती (Description)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14))),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.image_outlined, size: 18), label: const Text('फोटो'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)))),
-                const SizedBox(width: 12),
-                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.video_library_outlined, size: 18), label: const Text('व्हिडिओ'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)))),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ऑफर अप्रूव्हलसाठी पाठवली (डेमो)'), backgroundColor: Colors.green));
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                child: const Text('अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +30,6 @@ class FranchiseHomeScreen extends StatelessWidget {
     const String monthlyBusiness = "₹85,000";
 
     final liveAdsCount = AdsData.liveAds.where((a) => a.location.contains(areaKeyword)).length;
-    final viralPostsCount = LocalPostsData.posts.where((p) => p.responsePoints >= 1000).length;
 
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
@@ -140,7 +94,7 @@ class FranchiseHomeScreen extends StatelessWidget {
                       ),
                     ),
 
-                  // === नवीन ॲड केलेला भाग: स्लायडर ===
+                  // === टॉप ऑफर स्लायडर ===
                   const OffersSliderWidget(),
                   const SizedBox(height: 16),
 
@@ -161,8 +115,9 @@ class FranchiseHomeScreen extends StatelessWidget {
                       _kpi(context, 'या महिन्याचा व्यवसाय', monthlyBusiness, 'एकूण', Icons.trending_up, AppColors.successGreen, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseRevenueScreen()))),
                       _kpi(context, 'Pending Verifications', '$pendingVerifications', 'GPS प्रलंबित', Icons.pending_actions, AppColors.primaryOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
                       _kpi(context, 'Live जाहिराती', '$liveAdsCount', '$franchiseName अंतर्गत', Icons.campaign_outlined, Colors.deepOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminLiveAdsScreen(locationKeyword: areaKeyword, title: '$franchiseName — Live जाहिराती')))),
-                      // === 'Most Viral पोस्ट' काढून 'टॉप ऑफर ॲड करा' ===
-                      _kpi(context, 'टॉप ऑफर ॲड करा', '+', 'होम स्क्रीनवर दिसेल', Icons.local_offer_outlined, Colors.deepPurple, () => _showAddTopOfferSheet(context)),
+                      
+                      // === मुद्दा ६: मोस्ट व्हायरल काढून टॉप ऑफर कंटेंट टाकला ===
+                      _kpi(context, 'टॉप ऑफर कंटेंट', '३', 'मॅनेज करा', Icons.local_offer_outlined, Colors.pink, () => _showManageOffersSheet(context)),
                     ],
                   ),
                   
@@ -174,10 +129,59 @@ class FranchiseHomeScreen extends StatelessWidget {
                   _quickActionTile(icon: Icons.person_add_alt_1_outlined, label: 'Add Seller', subtitle: 'थेट सेलर जोडा (OTP verified)', color: AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAddSellerScreen()))),
                   _quickActionTile(icon: Icons.verified_user_outlined, label: 'Seller Verification', subtitle: 'नवीन सेलरचं GPS verification करा', color: AppColors.successGreen, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
                   _quickActionTile(icon: Icons.campaign_outlined, label: 'Create Ad', subtitle: 'जाहिरात लगेच Live होते, approval लागत नाही', color: AppColors.primaryOrange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()))),
-                  _quickActionTile(icon: Icons.fact_check_outlined, label: 'Ad Approvals', subtitle: 'जाहिराती आणि टॉप ऑफर्स (₹5000) अप्रूव्ह करा', color: Colors.deepPurple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAdScreen()))),
+                  _quickActionTile(icon: Icons.fact_check_outlined, label: 'Ad Approvals', subtitle: 'जाहिराती आणि टॉप ऑफर्स अप्रूव्ह करा', color: Colors.deepPurple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAdScreen()))),
+                  
+                  // === मुद्दा ११: आठवडी बाजार ===
+                  _quickActionTile(icon: Icons.storefront, label: 'आठवडी बाजार', subtitle: 'वस्तू जोडा आणि विक्री करा (₹50/प्रॉडक्ट)', color: Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // === टॉप ऑफर कंटेंट मॅनेज करण्यासाठी विंडो ===
+  void _showManageOffersSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('टॉप ऑफर कंटेंट मॅनेज करा', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            // डेमो ऑफर लिस्ट
+            ListTile(
+              leading: const Icon(Icons.local_offer, color: Colors.pink),
+              title: const Text('दिवाळी धमाका 20% सूट'),
+              subtitle: const Text('Status: Live'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(icon: const Icon(Icons.edit, color: Colors.blue), onPressed: () {}),
+                  IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () {}),
+                ],
+              ),
+            ),
+            const Divider(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('नवीन ऑफर ॲड करण्याची स्क्रीन पुढे जोडली जाईल')));
+                },
+                icon: const Icon(Icons.add, color: Colors.white),
+                label: const Text('नवीन ऑफर ॲड करा', style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
+              ),
+            )
           ],
         ),
       ),
