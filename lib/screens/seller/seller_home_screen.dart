@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
-import '../../widgets/offers_slider_widget.dart'; 
+import '../../widgets/offers_slider_widget.dart';
 import 'seller_orders_screen.dart';
 import 'seller_products_screen.dart';
 import 'seller_qr_screen.dart';
@@ -12,7 +12,7 @@ import 'seller_profile_detail_screen.dart';
 import 'seller_advertisements_screen.dart';
 import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
-import 'expenses_wallet_screen.dart'; // नवीन इम्पोर्ट ॲड केला
+import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
 
 class SellerHomeScreen extends StatefulWidget {
@@ -65,55 +65,54 @@ class _SellerDashboard extends StatefulWidget {
 }
 
 class _SellerDashboardState extends State<_SellerDashboard> {
-  bool _isShopOpen = true; // Shop Status
-  final bool _isRiderOrCargo = true; 
+  bool _isShopOpen = true;
 
   void _toggleShopStatus(bool value) {
-    setState(() {
-      _isShopOpen = value;
-    });
-
-    if (value && _isRiderOrCargo) {
-      _showSelectStandBottomSheet();
-    } else if (!value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('तुमचे दुकान बंद झाले आहे. नवीन ऑर्डर्स येणे बंद होईल.')),
-      );
-    }
+    setState(() => _isShopOpen = value);
   }
 
-  void _showSelectStandBottomSheet() {
+  // === टॉप ऑफर ॲड करण्यासाठी विंडो ===
+  void _showAddTopOfferSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(24),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          left: 20, right: 20, top: 20,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.location_on, size: 50, color: AppColors.primaryBlue),
+            const Text('नवीन टॉप ऑफर ॲड करा', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 6),
+            const Text('हा कंटेंट बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
             const SizedBox(height: 16),
-            const Text('सिलेक्ट युवर स्टँड (Select Your Stand)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            const Text('कृपया तुम्ही जिथून काम सुरू करत आहात ते ठिकाण (Stand) निवडा.', textAlign: TextAlign.center, style: TextStyle(color: AppColors.textLight)),
-            const SizedBox(height: 24),
+            TextField(decoration: InputDecoration(labelText: 'ऑफर शीर्षक', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14))),
+            const SizedBox(height: 12),
+            TextField(decoration: InputDecoration(labelText: 'थोडक्यात माहिती (Description)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14))),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.image_outlined, size: 18), label: const Text('फोटो'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)))),
+                const SizedBox(width: 12),
+                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.video_library_outlined, size: 18), label: const Text('व्हिडिओ'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)))),
+              ],
+            ),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('तुमचा स्टँड लोकेशन सेव्ह झाला आहे!')));
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ऑफर फ्रँचायझीकडे अप्रूव्हलसाठी पाठवली (डेमो)')));
                 },
-                icon: const Icon(Icons.my_location),
-                label: const Text('चालू लोकेशन निवडा (Use Current Location)'),
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14)),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                child: const Text('अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
               ),
             ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('रद्द करा', style: TextStyle(color: Colors.red)),
-            )
           ],
         ),
       ),
@@ -151,13 +150,80 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     ),
                     Row(
                       children: [
-                        // === Expenses Wallet (नवीन अपडेट) ===
+                        // माझे उत्पन्न (Income) — लहान
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen()));
+                            showModalBottomSheet(
+                              context: context,
+                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                              builder: (_) => Padding(
+                                padding: const EdgeInsets.all(24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('माझी कमाई', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                                    const SizedBox(height: 20),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12)),
+                                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                        const Row(children: [Icon(Icons.currency_rupee, color: Colors.green, size: 22), SizedBox(width: 8), Text('एकूण पैसे', style: TextStyle(fontSize: 16))]),
+                                        Text('₹18,450', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green.shade700)),
+                                      ]),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(color: Colors.amber.shade50, borderRadius: BorderRadius.circular(12)),
+                                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                        const Row(children: [Icon(Icons.stars, color: Colors.amber, size: 22), SizedBox(width: 8), Text('Loyalty Points', style: TextStyle(fontSize: 16))]),
+                                        Text('120 pts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber.shade700)),
+                                      ]),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(color: AppColors.primaryBlue.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
+                                      child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                        Row(children: [Icon(Icons.account_balance_wallet_outlined, color: AppColors.primaryBlue, size: 22), SizedBox(width: 8), Text('एकूण', style: TextStyle(fontSize: 15))]),
+                                        Text('₹18,570', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+                                      ]),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton.icon(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()));
+                                        },
+                                        icon: const Icon(Icons.bar_chart, color: Colors.white),
+                                        label: const Text('पूर्ण तपशील बघा', style: TextStyle(color: Colors.white, fontSize: 15)),
+                                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(20)),
+                            child: const Row(children: [
+                              Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 14),
+                              SizedBox(width: 4),
+                              Text('₹18,570', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                            ]),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        // Expenses Wallet
+                        GestureDetector(
+                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen())),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                             decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
                             child: const Row(children: [
                               Icon(Icons.account_balance_wallet, color: Colors.white, size: 14),
@@ -167,28 +233,10 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                          iconSize: 22,
-                          icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white), 
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())), 
-                          tooltip: 'Subscription'
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                          iconSize: 22,
-                          icon: const Icon(Icons.notifications_outlined, color: Colors.white), 
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                          iconSize: 22,
-                          icon: const Icon(Icons.account_circle_outlined, color: Colors.white), 
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))
-                        ),
+                        // लहान आयकॉन्स
+                        IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 28, minHeight: 28), iconSize: 18, icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen()))),
+                        IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 28, minHeight: 28), iconSize: 18, icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))),
+                        IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 28, minHeight: 28), iconSize: 18, icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))),
                       ],
                     ),
                   ],
@@ -196,15 +244,11 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(children: [
-                        Icon(Icons.verified_outlined, color: Colors.white, size: 18),
-                        SizedBox(width: 8),
-                        Text('Free Plan — पहिलं वर्ष', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
-                      ]),
+                      Row(children: [Icon(Icons.verified_outlined, color: Colors.white, size: 18), SizedBox(width: 8), Text('Free Plan — पहिलं वर्ष', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold))]),
                       Text('265 दिवस शिल्लक', style: TextStyle(color: Colors.white70, fontSize: 12)),
                     ],
                   ),
@@ -215,7 +259,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           
           const SizedBox(height: 16),
           
-          // === नवीन ऑर्डर्स अलर्ट ===
+          // नवीन ऑर्डर्स अलर्ट
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen())),
             child: Container(
@@ -236,7 +280,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
           const SizedBox(height: 12),
 
-          // === Shop Open / Close Status ===
+          // Shop Open / Close Status
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
@@ -249,33 +293,15 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        _isShopOpen ? Icons.storefront : Icons.store_mall_directory_outlined, 
-                        color: _isShopOpen ? Colors.green.shade700 : Colors.grey.shade700
-                      ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _isShopOpen ? 'Shop Open' : 'Shop Closed',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: _isShopOpen ? Colors.green.shade800 : Colors.grey.shade800),
-                          ),
-                          Text(
-                            _isShopOpen ? 'ऑर्डर्स स्वीकारल्या जात आहेत' : 'नवीन ऑर्डर्स बंद आहेत',
-                            style: TextStyle(fontSize: 11, color: _isShopOpen ? Colors.green.shade600 : Colors.grey.shade600),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Switch(
-                    value: _isShopOpen,
-                    onChanged: _toggleShopStatus,
-                    activeColor: Colors.green.shade600,
-                  ),
+                  Row(children: [
+                    Icon(_isShopOpen ? Icons.storefront : Icons.store_mall_directory_outlined, color: _isShopOpen ? Colors.green.shade700 : Colors.grey.shade700),
+                    const SizedBox(width: 10),
+                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(_isShopOpen ? 'Shop Open' : 'Shop Closed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: _isShopOpen ? Colors.green.shade800 : Colors.grey.shade800)),
+                      Text(_isShopOpen ? 'ऑर्डर्स स्वीकारल्या जात आहेत' : 'नवीन ऑर्डर्स बंद आहेत', style: TextStyle(fontSize: 11, color: _isShopOpen ? Colors.green.shade600 : Colors.grey.shade600)),
+                    ]),
+                  ]),
+                  Switch(value: _isShopOpen, onChanged: _toggleShopStatus, activeThumbColor: Colors.green.shade600),
                 ],
               ),
             ),
@@ -283,54 +309,17 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
           const SizedBox(height: 16),
 
-          // === स्लायडर ===
+          // स्लायडर
           const OffersSliderWidget(), 
           const SizedBox(height: 16),
 
-          // === TOP OFFERS (होम स्क्रीनसाठी) ===
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.amber.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.amber.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.local_offer_outlined, color: Colors.amber.shade800),
-                          const SizedBox(width: 8),
-                          const Text('Top Offers (होम स्क्रीन)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                        ],
-                      ),
-                      TextButton.icon(
-                        onPressed: () => _showAddOfferBottomSheet(context),
-                        icon: const Icon(Icons.add, size: 16, color: AppColors.primaryBlue),
-                        label: const Text('ऑफर ॲड करा', style: TextStyle(fontSize: 13, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
-                        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('बायरच्या ॲपमध्ये वरती दिसणाऱ्या ऑफर्ससाठी फोटो/व्हिडिओ अपलोड करा. (फ्रँचायझी अप्रूव्हल आवश्यक)', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-                ],
-              ),
-            ),
-          ),
+          // === 'Top Offers (होम स्क्रीन)' टॅब काढून टाकला आहे ===
+          // आता खालच्या KPI मध्ये 'टॉप ऑफर ॲड करा' बटण आहे.
 
-          const SizedBox(height: 16),
-          
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
           
-          // === नाव बदलले: जाहिरात विभाग ===
+          // जाहिरात विभाग
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('जाहिरात विभाग', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
@@ -359,91 +348,12 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
               _kpiCard('नवीन जाहिराती', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
-              _kpiCard('सक्रिय जाहिराती', '2', 'चालू आहेत', Icons.campaign_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
+              // === 'सक्रिय जाहिराती' काढून 'टॉप ऑफर ॲड करा' ===
+              _kpiCard('टॉप ऑफर ॲड करा', '+', 'होम स्क्रीनवर दिसेल', Icons.local_offer_outlined, Colors.deepPurple, onTap: () => _showAddTopOfferSheet(context)),
             ],
           ),
           const SizedBox(height: 24),
         ],
-      ),
-    );
-  }
-
-  // === ऑफर ॲड करण्यासाठी विंडो ===
-  void _showAddOfferBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: false,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('नवीन टॉप ऑफर ॲड करा', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-            const SizedBox(height: 8),
-            const Text('ही ऑफर बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 13, color: AppColors.textLight)),
-            const SizedBox(height: 16),
-
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'ऑफरचे शीर्षक (उदा. 50% सूट)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'थोडक्यात माहिती (Description)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () { 
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('फोटो अपलोडचे तंत्रज्ञान पुढे जोडले जाईल')));
-                    },
-                    icon: const Icon(Icons.image_outlined, size: 18),
-                    label: const Text('फोटो'),
-                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () { 
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('व्हिडिओ अपलोडचे तंत्रज्ञान पुढे जोडले जाईल')));
-                    },
-                    icon: const Icon(Icons.video_library_outlined, size: 18),
-                    label: const Text('व्हिडिओ'),
-                    style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ऑफर फ्रँचायझीकडे अप्रूव्हलसाठी पाठवली आहे (डेमो)')));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                child: const Text('अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -456,7 +366,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 8, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -489,8 +399,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
             _viewerTile('अनिल जोशी', 'आज सकाळी 10:30', Icons.person_outlined),
             _viewerTile('संगीता राणे', 'काल दुपारी 2:15', Icons.person_outlined),
             _viewerTile('रमेश पाटील', 'काल सायं 5:00', Icons.person_outlined),
-            _viewerTile('प्रिया देशमुख', '2 दिवसांपूर्वी', Icons.person_outlined),
-            _viewerTile('सुनील कदम', '3 दिवसांपूर्वी', Icons.person_outlined),
           ],
         ),
       ),
@@ -499,10 +407,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
   Widget _viewerTile(String name, String time, IconData icon) {
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-        child: Icon(icon, color: AppColors.primaryBlue, size: 20),
-      ),
+      leading: CircleAvatar(backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1), child: Icon(icon, color: AppColors.primaryBlue, size: 20)),
       title: Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
       subtitle: Text(time, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
       dense: true,
@@ -514,8 +419,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
       {'name': 'अनिल जोशी', 'purchase': '₹1,200', 'visits': '5 वेळा'},
       {'name': 'संगीता राणे', 'purchase': '₹3,500', 'visits': '12 वेळा'},
       {'name': 'रमेश पाटील', 'purchase': '₹850', 'visits': '3 वेळा'},
-      {'name': 'प्रिया देशमुख', 'purchase': '₹450', 'visits': '2 वेळा'},
-      {'name': 'सुनील कदम', 'purchase': '₹2,100', 'visits': '8 वेळा'},
     ];
     showModalBottomSheet(
       context: context,
@@ -528,10 +431,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
         expand: false,
         builder: (ctx, scrollController) => Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('ग्राहक यादी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
+            const Padding(padding: EdgeInsets.all(16), child: Text('ग्राहक यादी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
             const Divider(height: 1),
             Expanded(
               child: ListView.builder(
@@ -540,21 +440,14 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                 itemBuilder: (context, index) {
                   final c = customers[index];
                   return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                      child: Text(c['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
-                    ),
+                    leading: CircleAvatar(backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1), child: Text(c['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold))),
                     title: Text(c['name']!, style: const TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: Text('एकूण खरेदी: ${c['purchase']} | ${c['visits']}'),
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => SellerCustomerProfileScreen(
-                          customerName: c['name']!,
-                          totalPurchase: c['purchase']!,
-                          visits: c['visits']!,
-                        ),
+                        builder: (_) => SellerCustomerProfileScreen(customerName: c['name']!, totalPurchase: c['purchase']!, visits: c['visits']!),
                       ));
                     },
                   );
