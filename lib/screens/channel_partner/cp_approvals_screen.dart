@@ -41,17 +41,37 @@ class _AdsApprovalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: replace with real data from Firestore (collection: advertisements, district-scoped).
-    // Query order: status == 'pending' orderBy submittedAt ASC (oldest first) first,
-    // then status == 'live' orderBy submittedAt ASC. Ads with status == 'ended' are
-    // auto-deleted by a scheduled job and never queried here.
     final List<Map<String, String>> pendingAds = [
-      {'title': 'पाटील किराणा स्टोअर — Photo Ad', 'subtitle': 'हडपसर फ्रँचाइजी • बजेट ₹300 • 3 दिवसांपूर्वी सबमिट', 'age': 'सर्वात जुनी'},
-      {'title': 'श्री साई मेडिकल — Text Ad', 'subtitle': 'कोथरूड फ्रँचाइजी • बजेट ₹150 • 1 दिवसापूर्वी सबमिट', 'age': ''},
+      {
+        'title': 'पाटील किराणा स्टोअर — Photo Ad',
+        'subtitle': 'हडपसर फ्रँचाइजी • बजेट ₹300 • 3 दिवसांपूर्वी सबमिट',
+        'sentBy': 'फ्रँचाइजी: हडपसर फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543210',
+        'age': 'सर्वात जुनी'
+      },
+      {
+        'title': 'श्री साई मेडिकल — Text Ad',
+        'subtitle': 'कोथरूड फ्रँचाइजी • बजेट ₹150 • 1 दिवसापूर्वी सबमिट',
+        'sentBy': 'फ्रँचाइजी: कोथरूड फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543211',
+        'age': ''
+      },
     ];
     final List<Map<String, String>> liveAds = [
-      {'title': 'न्यू फॅशन पॉइंट — Video Ad', 'subtitle': 'वडगाव फ्रँचाइजी • बजेट ₹500 • 5 दिवसांपूर्वी मंजूर', 'age': ''},
-      {'title': 'भोसरी जनरल स्टोअर्स — Photo Ad', 'subtitle': 'भोसरी फ्रँचाइजी • बजेट ₹200 • 6 दिवसांपूर्वी मंजूर', 'age': ''},
+      {
+        'title': 'न्यू फॅशन पॉईंट — Video Ad',
+        'subtitle': 'वडगाव फ्रँचाइजी • बजेट ₹500 • 5 दिवसांपूर्वी मंजूर',
+        'sentBy': 'फ्रँचाइजी: वडगाव फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543212',
+        'age': ''
+      },
+      {
+        'title': 'भोसरी जनरल स्टोअर्स — Photo Ad',
+        'subtitle': 'भोसरी फ्रँचाइजी • बजेट ₹200 • 6 दिवसांपूर्वी मंजूर',
+        'sentBy': 'फ्रँचाइजी: भोसरी फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543213',
+        'age': ''
+      },
     ];
 
     if (pendingAds.isEmpty && liveAds.isEmpty) {
@@ -97,14 +117,16 @@ class _AdsApprovalTab extends StatelessWidget {
               ]),
             ),
           ]),
+          // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
+          const SizedBox(height: 8),
+          Text(ad['sentBy']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+          Text(ad['phone']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
           Row(children: [
             Expanded(
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed)),
-                onPressed: () {
-                  // TODO: update advertisements doc -> status: rejected
-                },
+                onPressed: () {},
                 child: const Text('नाकारा'),
               ),
             ),
@@ -112,9 +134,7 @@ class _AdsApprovalTab extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen),
-                onPressed: () {
-                  // TODO: update advertisements doc -> status: live
-                },
+                onPressed: () {},
                 child: const Text('मंजूर करा', style: TextStyle(color: AppColors.white)),
               ),
             ),
@@ -140,6 +160,8 @@ class _AdsApprovalTab extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
             Text(ad['subtitle']!, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
+            Text(ad['sentBy']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
+            Text(ad['phone']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
           ]),
         ),
         Container(
@@ -158,17 +180,44 @@ class _OnboardingApprovalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: replace with real data from Firestore (collections: sellers + franchises,
-    // district-scoped). Query order: status == 'pending' orderBy submittedAt ASC (oldest
-    // first), then status == 'verified'/'active' orderBy submittedAt ASC.
     final List<Map<String, String>> pendingOnboarding = [
-      {'title': 'कोथरूड फ्रँचाइजी — नवीन Seller', 'subtitle': 'श्री साई मेडिकल • 4 दिवसांपूर्वी विनंती • 72-तास मुदत जवळ', 'icon': 'seller'},
-      {'title': 'नवीन Franchise विनंती', 'subtitle': 'खडकी पिनकोड • 2 दिवसांपूर्वी विनंती', 'icon': 'franchise'},
-      {'title': 'हडपसर फ्रँचाइजी — नवीन Seller', 'subtitle': 'न्यू फॅशन पॉइंट • 1 दिवसापूर्वी विनंती', 'icon': 'seller'},
+      {
+        'title': 'कोथरूड फ्रँचाइजी — नवीन Seller',
+        'subtitle': 'श्री साई मेडिकल • 4 दिवसांपूर्वी विनंती • 72-तास मुदत जवळ',
+        'sentBy': 'फ्रँचाइजी: कोथरूड फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543214',
+        'icon': 'seller'
+      },
+      {
+        'title': 'नवीन Franchise विनंती',
+        'subtitle': 'खडकी पिनकोड • 2 दिवसांपूर्वी विनंती',
+        'sentBy': 'फ्रँचाइजी: खडकी फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543215',
+        'icon': 'franchise'
+      },
+      {
+        'title': 'हडपसर फ्रँचाइजी — नवीन Seller',
+        'subtitle': 'न्यू फॅशन पॉईंट • 1 दिवसापूर्वी विनंती',
+        'sentBy': 'फ्रँचाइजी: हडपसर फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543216',
+        'icon': 'seller'
+      },
     ];
     final List<Map<String, String>> approvedOnboarding = [
-      {'title': 'पाटील किराणा स्टोअर', 'subtitle': 'हडपसर फ्रँचाइजी • 6 दिवसांपूर्वी मंजूर', 'icon': 'seller'},
-      {'title': 'वडगाव फ्रँचाइजी', 'subtitle': '10 दिवसांपूर्वी मंजूर', 'icon': 'franchise'},
+      {
+        'title': 'पाटील किराणा स्टोअर',
+        'subtitle': 'हडपसर फ्रँचाइजी • 6 दिवसांपूर्वी मंजूर',
+        'sentBy': 'फ्रँचाइजी: हडपसर फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543217',
+        'icon': 'seller'
+      },
+      {
+        'title': 'वडगाव फ्रँचाइजी',
+        'subtitle': '10 दिवसांपूर्वी मंजूर',
+        'sentBy': 'फ्रँचाइजी: वडगाव फ्रँचाइजी',
+        'phone': 'मोबाईल: +91 9876543218',
+        'icon': 'franchise'
+      },
     ];
 
     if (pendingOnboarding.isEmpty && approvedOnboarding.isEmpty) {
@@ -215,14 +264,16 @@ class _OnboardingApprovalTab extends StatelessWidget {
               ]),
             ),
           ]),
+          // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
+          const SizedBox(height: 8),
+          Text(r['sentBy']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+          Text(r['phone']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
           Row(children: [
             Expanded(
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed)),
-                onPressed: () {
-                  // TODO: update doc -> status: rejected
-                },
+                onPressed: () {},
                 child: const Text('नाकारा'),
               ),
             ),
@@ -230,9 +281,7 @@ class _OnboardingApprovalTab extends StatelessWidget {
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen),
-                onPressed: () {
-                  // TODO: update doc -> status: verified/active
-                },
+                onPressed: () {},
                 child: const Text('मंजूर करा', style: TextStyle(color: AppColors.white)),
               ),
             ),
@@ -259,6 +308,8 @@ class _OnboardingApprovalTab extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(r['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
             Text(r['subtitle']!, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
+            Text(r['sentBy']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
+            Text(r['phone']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
           ]),
         ),
         Container(
