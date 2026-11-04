@@ -12,17 +12,18 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
   final List<Map<String, String>> _adRequests = [
-    {'title': 'किराणा दुकान जाहिरात', 'by': 'हडपसर फ्रँचाइजी', 'date': '2026-06-20', 'status': 'pending', 'days': '5 दिवसांपूर्वी'},
-    {'title': 'मेडिकल स्टोअर ऑफर', 'by': 'कोथरूड फ्रँचाइजी', 'date': '2026-06-22', 'status': 'pending', 'days': '3 दिवसांपूर्वी'},
-    {'title': 'रेस्टॉरंट डील', 'by': 'वडगाव फ्रँचाइजी', 'date': '2026-06-24', 'status': 'approved', 'days': '1 दिवसापूर्वी'},
+    {'title': 'किराणा दुकान जाहिरात', 'by': 'हडपसर फ्रँचाइजी', 'sentBy': 'हडपसर फ्रँचाइजी', 'phone': '+91 9876543210', 'date': '2026-06-20', 'status': 'pending', 'days': '5 दिवसांपूर्वी'},
+    {'title': 'मेडिकल स्टोअर ऑफर', 'by': 'कोथरूड फ्रँचाइजी', 'sentBy': 'कोथरूड फ्रँचाइजी', 'phone': '+91 9876543211', 'date': '2026-06-22', 'status': 'pending', 'days': '3 दिवसांपूर्वी'},
+    {'title': 'रेस्टॉरंट डील', 'by': 'वडगाव फ्रँचाइजी', 'sentBy': 'वडगाव फ्रँचाइजी', 'phone': '+91 9876543212', 'date': '2026-06-24', 'status': 'approved', 'days': '1 दिवसापूर्वी'},
   ];
 
   final List<Map<String, String>> _onboardingRequests = [
-    {'title': 'राज इलेक्ट्रॉनिक्स', 'type': 'Seller', 'by': 'हडपसर फ्रँचाइजी', 'days': '7 दिवसांपूर्वी', 'status': 'pending'},
-    {'title': 'स्वाद हॉटेल', 'type': 'Seller', 'by': 'कोथरूड फ्रँचाइजी', 'days': '4 दिवसांपूर्वी', 'status': 'pending'},
-    {'title': 'नागपूर फ्रँचाइजी', 'type': 'Franchise', 'by': 'नागपूर CP', 'days': '2 दिवसांपूर्वी', 'status': 'pending'},
-    {'title': 'पुणे उत्तर फ्रँचाइजी', 'type': 'Franchise', 'by': 'पुणे CP', 'days': '1 दिवसापूर्वी', 'status': 'approved'},
+    {'title': 'राज इलेक्ट्रॉनिक्स', 'type': 'Seller', 'by': 'हडपसर फ्रँचाइजी', 'sentBy': 'हडपसर फ्रँचाइजी', 'phone': '+91 9876543213', 'days': '7 दिवसांपूर्वी', 'status': 'pending'},
+    {'title': 'स्वाद हॉटेल', 'type': 'Seller', 'by': 'कोथरूड फ्रँचाइजी', 'sentBy': 'कोथरूड फ्रँचाइजी', 'phone': '+91 9876543214', 'days': '4 दिवसांपूर्वी', 'status': 'pending'},
+    {'title': 'नागपूर फ्रँचाइजी', 'type': 'Franchise', 'by': 'नागपूर CP', 'sentBy': 'नागपूर CP', 'phone': '+91 9876543215', 'days': '2 दिवसांपूर्वी', 'status': 'pending'},
+    {'title': 'पुणे उत्तर फ्रँचाइजी', 'type': 'Franchise', 'by': 'पुणे CP', 'sentBy': 'पुणे CP', 'phone': '+91 9876543216', 'days': '1 दिवसापूर्वी', 'status': 'approved'},
   ];
 
   @override
@@ -46,7 +47,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isPending ? Colors.orange.shade200 : Colors.grey.shade200),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,6 +72,10 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
               child: Text(isPending ? 'प्रतीक्षेत' : 'मंजूर', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isPending ? Colors.orange : Colors.green)),
             ),
           ]),
+          // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
+          const SizedBox(height: 8),
+          Text('फ्रँचायझी: ${req['sentBy']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+          Text('मोबाईल: ${req['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
           if (isPending) ...[
             const SizedBox(height: 12),
             Row(children: [
@@ -102,7 +107,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: isPending ? Colors.blue.shade200 : Colors.grey.shade200),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +115,7 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
           Row(children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: isFranchise ? AppColors.primaryBlue.withOpacity(0.1) : Colors.teal.shade50,
+              backgroundColor: isFranchise ? AppColors.primaryBlue.withValues(alpha: 0.1) : Colors.teal.shade50,
               child: Icon(isFranchise ? Icons.storefront_outlined : Icons.store_outlined, color: isFranchise ? AppColors.primaryBlue : Colors.teal, size: 20),
             ),
             const SizedBox(width: 12),
@@ -127,6 +132,10 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
               child: Text(isPending ? 'प्रतीक्षेत' : 'मंजूर', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isPending ? AppColors.primaryBlue : Colors.green)),
             ),
           ]),
+          // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
+          const SizedBox(height: 8),
+          Text('फ्रँचायझी: ${req['sentBy']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+          Text('मोबाईल: ${req['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
           if (isPending) ...[
             const SizedBox(height: 12),
             Row(children: [
