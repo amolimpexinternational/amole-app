@@ -197,12 +197,16 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+                           child: ElevatedButton(
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('isPromoter', true);
                   setState(() => _isPromoter = true);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('तुम्ही प्रमोटर झालात!'), backgroundColor: Colors.green));
+                  // प्रमोटर झाल्यावर थेट डॅशबोर्डवर पाठवा
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
