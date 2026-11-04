@@ -23,15 +23,10 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     if (mounted) setState(() {});
   }
 
-  // === १. पेड जाहिरात तयार करा (सेलर स्क्रीन) ===
   void _openCreateAd() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen()),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen()));
   }
 
-  // === २. जाहिराती बघून पैसे कमवा ===
   void _openWatchAds() {
     showModalBottomSheet(
       context: context,
@@ -79,7 +74,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     );
   }
 
-  // === ३. App refer (रेफरन्स लिंक) ===
   void _showReferral() {
     showModalBottomSheet(
       context: context,
@@ -92,7 +86,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
           children: [
             const Text('App Refer करा आणि कमवा', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
             const SizedBox(height: 6),
-            const Text('तुमची रेफरन्स लिंक मित्रांना शेअर करा. त्यांनी खरेदी केल्यावर तुम्हाला रिवॉर्ड पॉईंट्स मिळतील.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+            const Text('तुमची रेफरन्स लिंक मित्रांना शेअर करा.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(14),
@@ -130,15 +124,10 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     );
   }
 
-  // === ४. डिलिव्हरी बॉय व्हा ===
   void _openDeliveryBoy() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen()),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen()));
   }
 
-  // === ५. आठवडी बाजार (₹50 फी) ===
   void _showWeeklyMarket() {
     final _titleCtrl = TextEditingController();
     final _priceCtrl = TextEditingController();
@@ -190,12 +179,8 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     );
   }
 
-  // === ६. सेलर ऑन बोर्ड करा ===
   void _openSellerOnboard() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const SellerRegistrationScreen()),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRegistrationScreen()));
   }
 
   @override
@@ -210,114 +195,42 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // === प्रमोटर कार्ड (जुनं) ===
           _buildPromoterCard(),
           const SizedBox(height: 24),
-          const Text(
-            'एक्स्ट्रा इन्कम कसे कमवू शकता?',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          const Text('एक्स्ट्रा इन्कम कसे कमवू शकता?', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
-
-          // === ६ पर्याय ===
-          _buildOptionTile(
-            number: '1',
-            icon: Icons.campaign_outlined,
-            title: 'पेड जाहिराती तयार करा',
-            subtitle: 'जाहिरात तयार करून कमवा (फ्रँचायझी अप्रूव्हल)',
-            color: Colors.deepOrange,
-            onTap: _openCreateAd,
-          ),
-          _buildOptionTile(
-            number: '2',
-            icon: Icons.ondemand_video,
-            title: 'जाहिराती बघून पैसे कमवा',
-            subtitle: 'प्रत्येक पोल रिप्लायवर रिवॉर्ड पॉईंट्स',
-            color: Colors.blue,
-            onTap: _openWatchAds,
-          ),
-          _buildOptionTile(
-            number: '3',
-            icon: Icons.share,
-            title: 'App Refer पाठवा',
-            subtitle: 'रेफरन्स लिंक शेअर करा आणि कमवा',
-            color: Colors.purple,
-            onTap: _showReferral,
-          ),
-          _buildOptionTile(
-            number: '4',
-            icon: Icons.delivery_dining,
-            title: 'डिलिव्हरी बॉय व्हा',
-            subtitle: 'डिलिव्हरी बॉय सर्विस देऊन कमवा',
-            color: Colors.teal,
-            onTap: _openDeliveryBoy,
-          ),
-          _buildOptionTile(
-            number: '5',
-            icon: Icons.shopping_basket,
-            title: 'आठवडी बाजारात वस्तू विका',
-            subtitle: '₹50 फी - दर शनिवारी एक वस्तू पोस्ट करा',
-            color: Colors.brown,
-            onTap: _showWeeklyMarket,
-          ),
-          _buildOptionTile(
-            number: '6',
-            icon: Icons.storefront,
-            title: 'सेलर ऑनबोर्ड करा',
-            subtitle: 'नवीन सेलर जोडून कमवा',
-            color: AppColors.primaryBlue,
-            onTap: _openSellerOnboard,
-          ),
+          _buildOptionTile(number: '1', icon: Icons.campaign_outlined, title: 'पेड जाहिराती तयार करा', subtitle: 'जाहिरात तयार करून कमवा', color: Colors.deepOrange, onTap: _openCreateAd),
+          _buildOptionTile(number: '2', icon: Icons.ondemand_video, title: 'जाहिराती बघून पैसे कमवा', subtitle: 'प्रत्येक पोल रिप्लायवर रिवॉर्ड पॉईंट्स', color: Colors.blue, onTap: _openWatchAds),
+          _buildOptionTile(number: '3', icon: Icons.share, title: 'App Refer पाठवा', subtitle: 'रेफरन्स लिंक शेअर करा आणि कमवा', color: Colors.purple, onTap: _showReferral),
+          _buildOptionTile(number: '4', icon: Icons.delivery_dining, title: 'डिलिव्हरी बॉय व्हा', subtitle: 'डिलिव्हरी बॉय सर्विस देऊन कमवा', color: Colors.teal, onTap: _openDeliveryBoy),
+          _buildOptionTile(number: '5', icon: Icons.shopping_basket, title: 'आठवडी बाजारात वस्तू विका', subtitle: '₹50 फी - दर शनिवारी एक वस्तू पोस्ट करा', color: Colors.brown, onTap: _showWeeklyMarket),
+          _buildOptionTile(number: '6', icon: Icons.storefront, title: 'सेलर ऑनबोर्ड करा', subtitle: 'नवीन सेलर जोडून कमवा', color: AppColors.primaryBlue, onTap: _openSellerOnboard),
         ],
       ),
     );
   }
 
-  // === प्रमोटर कार्ड (जुनं) ===
   Widget _buildPromoterCard() {
     final bool registered = PromoterState.registered;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.royalBlue, AppColors.primaryBlue],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: const LinearGradient(colors: [AppColors.royalBlue, AppColors.primaryBlue], begin: Alignment.topLeft, end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            registered ? 'माझा प्रमोटर डॅशबोर्ड' : 'प्रमोटर व्हा',
-            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+          Text(registered ? 'माझा प्रमोटर डॅशबोर्ड' : 'प्रमोटर व्हा', style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Text(
-            registered ? 'तुमचा कॅटलॉग आणि मिळालेले कमिशन पाहा' : 'प्रमोटर झाल्यामुळे 5% कमिशन मिळू शकते',
-            style: const TextStyle(color: Colors.white, fontSize: 14),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'स्वतःचा कॅटलॉग बनवा, WhatsApp वर शेअर करा आणि प्रत्येक विक्रीवर कमिशन मिळवा',
-            style: TextStyle(color: Colors.white70, fontSize: 12),
-          ),
+          Text(registered ? 'तुमचा कॅटलॉग आणि मिळालेले कमिशन पाहा' : 'प्रमोटर झाल्यामुळे 5% कमिशन मिळू शकते', style: const TextStyle(color: Colors.white, fontSize: 14)),
           const SizedBox(height: 14),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.primaryBlue,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white, foregroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               onPressed: _openPromoter,
-              child: Text(
-                registered ? 'डॅशबोर्ड उघडा' : 'प्रमोटर व्हा',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
+              child: Text(registered ? 'डॅशबोर्ड उघडा' : 'प्रमोटर व्हा', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
@@ -325,7 +238,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     );
   }
 
-  // === ६ पर्यायांसाठी टाइल ===
   Widget _buildOptionTile({
     required String number,
     required IconData icon,
@@ -347,11 +259,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
         ),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: color.withValues(alpha: 0.15),
-              child: Icon(icon, color: color, size: 22),
-            ),
+            CircleAvatar(radius: 20, backgroundColor: color.withValues(alpha: 0.15), child: Icon(icon, color: color, size: 22)),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
