@@ -3,7 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
 import '../seller/expenses_wallet_screen.dart';
 import 'promoter_catalog_screen.dart';
-import '../seller/registration/seller_registration_screen.dart'; // सेलर रजिस्ट्रेशन साठी
+import '../seller/registration/seller_registration_screen.dart';
+import '../delivery/delivery_boy_home_screen.dart'; // डिलिव्हरी बॉयसाठी
 
 class PromoterDashboardScreen extends StatefulWidget {
   const PromoterDashboardScreen({super.key});
@@ -18,7 +19,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
   bool _isJoinedAathwadiBazar = false;
   bool _isLoading = true;
 
-  // डेमो: प्रमोटरने रजिस्टर केलेले सेलर
   final List<Map<String, String>> _registeredSellers = [
     {'name': 'श्री गणेश किराणा', 'phone': '9876543210', 'status': 'Approved'},
     {'name': 'स्वाद हॉटेल', 'phone': '9876543211', 'status': 'Pending'},
@@ -67,6 +67,8 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('डिलिव्हरी बॉय सेवा सक्रिय झाली!'), backgroundColor: Colors.green),
                 );
+                // डिलिव्हरी बॉय स्क्रीनवर पाठवा
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen()));
               },
               child: const Text('KYC सुरू करा'),
             ),
@@ -258,7 +260,7 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: () {},
           ),
 
-          // === मुद्दा ८-D: सेलर ऑनबोर्डिंग ===
+          // Seller Onboarding
           _sectionCard(
             icon: Icons.person_add,
             color: Colors.indigo,
