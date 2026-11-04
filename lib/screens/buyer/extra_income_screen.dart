@@ -7,7 +7,7 @@ import 'promoter_catalog_screen.dart';
 import 'promoter_dashboard_screen.dart';
 import '../seller/seller_advertisement_screen.dart';
 import '../seller/registration/seller_registration_screen.dart';
-import '../delivery/delivery_boy_home_screen.dart'; // डिलिव्हरी बॉय साठी
+import '../delivery/delivery_boy_home_screen.dart';
 
 class ExtraIncomeScreen extends StatefulWidget {
   const ExtraIncomeScreen({super.key});
@@ -128,7 +128,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
         decoration: BoxDecoration(
           gradient: const LinearGradient(colors: [Colors.purple, Colors.purpleAccent]),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+          boxShadow: [BoxShadow(color: Colors.purple.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 5))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +185,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.purple.shade200),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8)],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8)],
         ),
         child: Column(
           children: [
@@ -197,7 +197,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-                           child: ElevatedButton(
+              child: ElevatedButton(
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.setBool('isPromoter', true);
@@ -229,11 +229,11 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
       ),
       child: ListTile(
         onTap: onTap,
-        leading: CircleAvatar(backgroundColor: color.withOpacity(0.15), child: Icon(icon, color: color)),
+        leading: CircleAvatar(backgroundColor: color.withValues(alpha: 0.15), child: Icon(icon, color: color)),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
         trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),
