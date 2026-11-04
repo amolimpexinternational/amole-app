@@ -143,7 +143,7 @@ class _GlobalShoppingHomeScreenState
     setState(() {});
   }
 
-  // === २० कॅटेगरी (स्क्रोल होणारी) ===
+  // === २० कॅटेगिरी (गोल आयकॉन, Amazon/Meesho स्टाईल) ===
   Widget _buildCategoryBar() {
     return SizedBox(
       height: 95,
@@ -151,49 +151,51 @@ class _GlobalShoppingHomeScreenState
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         scrollDirection: Axis.horizontal,
         itemCount: _categories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, __) => const SizedBox(width: 14),
         itemBuilder: (context, index) {
           final category = _categories[index];
           final selected = _selectedCategory == category['label'];
-          return InkWell(
-            borderRadius: BorderRadius.circular(14),
+          return GestureDetector(
             onTap: () {
               setState(() {
                 _selectedCategory = category['label'] as String;
               });
             },
-            child: Container(
-              width: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(
-                color: selected ? AppColors.primaryBlue : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: selected ? AppColors.primaryBlue : Colors.grey.shade300,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    category['icon'] as IconData,
-                    size: 24,
-                    color: selected ? Colors.white : AppColors.primaryBlue,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    category['label'] as String,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: selected ? Colors.white : AppColors.textDark,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 55,
+                  height: 55,
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? AppColors.primaryBlue.withValues(alpha: 0.15)
+                        : Colors.white,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: selected ? AppColors.primaryBlue : Colors.grey.shade300,
+                      width: selected ? 2 : 1,
                     ),
                   ),
-                ],
-              ),
+                  child: Icon(
+                    category['icon'] as IconData,
+                    size: 26,
+                    color: selected ? AppColors.primaryBlue : AppColors.textLight,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  category['label'] as String,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+                    color: selected ? AppColors.primaryBlue : AppColors.textDark,
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -642,6 +644,7 @@ class _GlobalShoppingHomeScreenState
                   _buildTopHeader(),
                   const SizedBox(height: 8),
                   _buildCategoryBar(),
+                  const SizedBox(height: 8),
                   // === 'आजचे ऑफर' बॅनर काढून 'टॉप ऑफर' स्लायडर टाकला ===
                   const OffersSliderWidget(),
                   const SizedBox(height: 8),

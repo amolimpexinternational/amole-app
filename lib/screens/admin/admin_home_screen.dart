@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import '../../widgets/offers_slider_widget.dart'; // नवीन इम्पोर्ट ॲड केला
+import '../../widgets/offers_slider_widget.dart';
 import '../../data/ads_data.dart';
-import '../../data/local_posts_data.dart';
 import 'admin_channel_partners_screen.dart';
 import 'admin_subadmin_screen.dart';
 import 'admin_revenue_screen.dart';
@@ -19,7 +18,7 @@ import 'admin_create_ad_screen.dart';
 import 'admin_send_notification_screen.dart';
 import 'admin_settlement_screen.dart';
 import 'admin_live_ads_screen.dart';
-import 'admin_viral_posts_screen.dart';
+import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजारासाठी
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -70,7 +69,6 @@ class _AdminDashboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // === HEADER ===
           Container(
             padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
             decoration: const BoxDecoration(
@@ -124,10 +122,9 @@ class _AdminDashboard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
-          // === Approvals अलर्ट ===
+
           InkWell(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminApprovalsScreen())),
             child: Container(
@@ -143,8 +140,7 @@ class _AdminDashboard extends StatelessWidget {
               ]),
             ),
           ),
-          
-          // === नवीन ॲड केलेला भाग: स्लायडर ===
+
           const SizedBox(height: 16),
           const OffersSliderWidget(),
 
@@ -154,8 +150,7 @@ class _AdminDashboard extends StatelessWidget {
             child: Text('संपूर्ण नेटवर्क — आढावा', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 12),
-          
-          // === KPI ग्रिड ===
+
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -172,19 +167,21 @@ class _AdminDashboard extends StatelessWidget {
               _kpi(context, 'आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
               _kpi(context, 'महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
               _kpi(context, 'Live जाहिराती', '${AdsData.liveAds.length}', 'एकूण Live', Icons.campaign_outlined, Colors.deepOrange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminLiveAdsScreen()))),
-              _kpi(context, 'Most Viral पोस्ट', '${LocalPostsData.posts.where((p) => p.responsePoints >= 1000).length}', '1000+ Response', Icons.local_fire_department_outlined, Colors.redAccent, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminViralPostsScreen()))),
+              
+              // === मुद्दा १०: Most Viral काढून आठवडी बाजार टाकला ===
+              _kpi(context, 'आठवडी बाजार', '३', 'वस्तू जोडा', Icons.storefront, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
+              
               _kpi(context, 'Daily Settlement', '', 'Seller-निहाय, तारीखनिहाय', Icons.account_balance_outlined, Colors.brown, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSettlementScreen()))),
             ],
           ),
-          
+
           const SizedBox(height: 24),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('द्रुत कृती', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 12),
-          
-          // === Quick Actions ===
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GridView.count(
@@ -201,6 +198,9 @@ class _AdminDashboard extends StatelessWidget {
                 _quickAction(context, 'जाहिरात तयार करा', Icons.campaign_outlined, Colors.orange, const AdminCreateAdScreen()),
                 _quickAction(context, 'नोटिफिकेशन पाठवा', Icons.notifications_active_outlined, Colors.pink, const AdminSendNotificationScreen()),
                 _quickAction(context, 'Approvals', Icons.fact_check_outlined, Colors.deepPurple, const AdminApprovalsScreen()),
+                
+                // === मुद्दा ११: आठवडी बाजार Quick Action ===
+                _quickAction(context, 'आठवडी बाजार', Icons.storefront, Colors.teal, const PromoterCatalogScreen()),
               ],
             ),
           ),

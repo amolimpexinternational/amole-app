@@ -1,3 +1,4 @@
+import '../screens/buyer/job_portal_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/buyer/coming_soon_screen.dart';
 import '../screens/buyer/global_shopping_home_screen.dart';
@@ -43,7 +44,7 @@ class HomeServicesGrid extends StatelessWidget {
             () => const ZatPatHomeScreen(
                 initialCategory: 'किराणा', title: 'Kirana Mart')),
         _GridItem('Jobs', Icons.work_outline, const Color(0xFF3949AB),
-            () => const ListingsHomeScreen(module: 'jobs')),
+    () => const JobPortalScreen()),
         _GridItem("Mom's Miracle", Icons.child_friendly_outlined,
             const Color(0xFFD81B60), () => const MomsMiracleScreen()),
         _GridItem('Manufacturer', Icons.factory_outlined,

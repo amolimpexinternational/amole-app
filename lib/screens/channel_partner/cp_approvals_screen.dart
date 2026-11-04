@@ -41,15 +41,14 @@ class _AdsApprovalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // === फ्रँचायझीनुसार ग्रुप केलेले ॲड्स ===
     final List<Map<String, dynamic>> franchiseGroups = [
       {
         'franchise': 'हडपसर फ्रँचाइजी',
         'phone': '+91 9876543210',
         'pendingCount': 2,
         'ads': [
-          {'title': 'पाटील किराणा स्टोअर — Photo Ad', 'sender': 'पाटील किराणा स्टोअर', 'senderType': 'Seller', 'days': '3 दिवसांपूर्वी', 'budget': '₹300'},
-          {'title': 'जोशी किराणा — Text Ad', 'sender': 'जोशी किराणा', 'senderType': 'Seller', 'days': '2 दिवसांपूर्वी', 'budget': '₹200'},
+          {'title': 'पाटील किराणा स्टोअर — Photo Ad', 'sender': 'पाटील किराणा स्टोअर', 'senderPhone': '+91 9988776655', 'senderType': 'Seller', 'days': '3 दिवसांपूर्वी', 'budget': '₹300'},
+          {'title': 'जोशी किराणा — Text Ad', 'sender': 'जोशी किराणा', 'senderPhone': '+91 9988776656', 'senderType': 'Seller', 'days': '2 दिवसांपूर्वी', 'budget': '₹200'},
         ],
       },
       {
@@ -57,7 +56,7 @@ class _AdsApprovalTab extends StatelessWidget {
         'phone': '+91 9876543211',
         'pendingCount': 1,
         'ads': [
-          {'title': 'श्री साई मेडिकल — Text Ad', 'sender': 'श्री साई मेडिकल', 'senderType': 'Seller', 'days': '1 दिवसापूर्वी', 'budget': '₹150'},
+          {'title': 'श्री साई मेडिकल — Text Ad', 'sender': 'श्री साई मेडिकल', 'senderPhone': '+91 9988776657', 'senderType': 'Seller', 'days': '1 दिवसापूर्वी', 'budget': '₹150'},
         ],
       },
       {
@@ -114,7 +113,7 @@ class _AdsApprovalTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // फ्रँचायझी हेडर
+                // फ्रँचायझी हेडर (नाव + नंबर)
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -130,7 +129,13 @@ class _AdsApprovalTab extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(group['franchise'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                            Text('📞 ${group['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                            Row(
+                              children: [
+                                const Icon(Icons.phone, size: 12, color: AppColors.primaryBlue),
+                                const SizedBox(width: 4),
+                                Text(group['phone'] as String, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -173,16 +178,36 @@ class _AdsApprovalTab extends StatelessWidget {
               const Icon(Icons.campaign_outlined, color: AppColors.primaryBlue, size: 18),
               const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
-                    Text('पाठवणारा: ${ad['sender']} (${ad['senderType']}) • ${ad['days']} • बजेट ${ad['budget']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-                  ],
-                ),
+                child: Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
               ),
             ],
           ),
+          const SizedBox(height: 6),
+          // पाठवणाऱ्याचे नाव + नंबर
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.person, size: 14, color: Colors.blue),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'पाठवणारा: ${ad['sender']} (${ad['senderType']})',
+                    style: const TextStyle(fontSize: 11, color: Colors.blue, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const Icon(Icons.phone, size: 12, color: Colors.blue),
+                const SizedBox(width: 2),
+                Text(ad['senderPhone']!, style: const TextStyle(fontSize: 11, color: Colors.blue, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text('${ad['days']} • बजेट: ${ad['budget']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -211,15 +236,14 @@ class _OnboardingApprovalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // === फ्रँचायझीनुसार ग्रुप ===
     final List<Map<String, dynamic>> franchiseGroups = [
       {
         'franchise': 'हडपसर फ्रँचाइजी',
         'phone': '+91 9876543210',
         'pendingCount': 2,
         'requests': [
-          {'title': 'न्यू फॅशन पॉईंट', 'type': 'Seller', 'days': '1 दिवसापूर्वी'},
-          {'title': 'जोशी किराणा', 'type': 'Seller', 'days': '2 दिवसांपूर्वी'},
+          {'title': 'न्यू फॅशन पॉईंट', 'type': 'Seller', 'phone': '+91 9988776655', 'days': '1 दिवसापूर्वी'},
+          {'title': 'जोशी किराणा', 'type': 'Seller', 'phone': '+91 9988776656', 'days': '2 दिवसांपूर्वी'},
         ],
       },
       {
@@ -227,7 +251,7 @@ class _OnboardingApprovalTab extends StatelessWidget {
         'phone': '+91 9876543211',
         'pendingCount': 1,
         'requests': [
-          {'title': 'श्री साई मेडिकल', 'type': 'Seller', 'days': '4 दिवसांपूर्वी'},
+          {'title': 'श्री साई मेडिकल', 'type': 'Seller', 'phone': '+91 9988776657', 'days': '4 दिवसांपूर्वी'},
         ],
       },
     ];
@@ -290,7 +314,13 @@ class _OnboardingApprovalTab extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(group['franchise'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                            Text('📞 ${group['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                            Row(
+                              children: [
+                                const Icon(Icons.phone, size: 12, color: AppColors.primaryBlue),
+                                const SizedBox(width: 4),
+                                Text(group['phone'] as String, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+                              ],
+                            ),
                           ],
                         ),
                       ),
@@ -336,6 +366,19 @@ class _OnboardingApprovalTab extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 6),
+          // सेलरचा फोन नंबर
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.teal.shade50, borderRadius: BorderRadius.circular(6)),
+            child: Row(
+              children: [
+                const Icon(Icons.phone, size: 14, color: Colors.teal),
+                const SizedBox(width: 6),
+                Text('संपर्क: ${req['phone']}', style: const TextStyle(fontSize: 11, color: Colors.teal, fontWeight: FontWeight.bold)),
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           Row(

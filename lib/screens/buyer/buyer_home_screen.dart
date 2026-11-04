@@ -1,4 +1,10 @@
 import 'weekly_market_screen.dart';
+<<<<<<< HEAD
+=======
+import 'buyer_messages_screen.dart';
+import 'weekly_market_screen.dart';
+import 'promoter_dashboard_screen.dart';
+>>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
@@ -282,15 +288,46 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           const HomeServicesGrid(),
           const SizedBox(height: 4),
 
+<<<<<<< HEAD
           // Banner Ad — आपल्या गावातील दुकाने
+=======
+          // === १. Banner Ad — आपल्या गावातील दुकाने ===
+GestureDetector(
+  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    height: 75,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('माझा पैसा माझ्या खिशात 🛒', style: TextStyle(color: Colors.white70, fontSize: 11)),
+        ],
+      ),
+    ),
+  ),
+),
+
+          // === नवीन: आठवडी बाजार बॅनर ===
+>>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
           GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
             child: Container(
-              margin: const EdgeInsets.all(16),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               height: 75,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF00E5FF), Color(0xFF1565C0)],
+                  colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -300,15 +337,17 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('🎉 आपल्या गावातील दुकाने', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+                    Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                     SizedBox(height: 4),
-                    Text('माझा पैसा माझ्या खिशात 🛒', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                    Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),
               ),
             ),
           ),
+          const SizedBox(height: 16),
 
+<<<<<<< HEAD
           // === नवीन: आठवडी बाजार बॅनर ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
@@ -392,6 +431,63 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ),
             ),
           ),
+=======
+// === ३. Extra Income tab ===
+GestureDetector(
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const ExtraIncomeScreen(),
+    ),
+  ),
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    height: 75,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF3949AB), Color(0xFF7E57C2)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('💰 Extra Income', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('अतिरिक्त कमाईच्या संधी', style: TextStyle(color: Colors.white70, fontSize: 11)),
+        ],
+      ),
+    ),
+  ),
+),
+
+// === ४. Ad Block 2 — Lucky Draw ===
+GestureDetector(
+  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
+  child: Container(
+    margin: const EdgeInsets.all(16),
+    height: 100,
+    decoration: BoxDecoration(
+      color: AppColors.primaryBlue.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.2)),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('🎟️ आजचा Lucky Draw', style: TextStyle(color: AppColors.primaryBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('फक्त ₹5 मध्ये तिकीट घ्या — दर दिवशी ४:०० PM Draw', style: TextStyle(color: AppColors.textLight, fontSize: 12)),
+        ],
+      ),
+    ),
+  ),
+),
+>>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
           
           const AdFeedWidget(),
           
@@ -414,11 +510,21 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else if (index == 2) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
+<<<<<<< HEAD
           } else if (index == 3) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
           } else if (index == 4) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else {
+=======
+          } } else if (index == 3) {
+  // माझे मेसेज (फक्त सेलरचे एकतर्फी मेसेज दिसतील)
+  Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerMessagesScreen()));
+} else if (index == 4) {
+  // प्रमोटर डॅशबोर्ड
+  Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
+} else {
+>>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
             setState(() => _currentIndex = index);
           }
         },

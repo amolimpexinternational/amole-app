@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
-import '../common/role_selection_screen.dart'; // लॉगआऊटनंतर रोल सिलेक्शनला पाठवण्यासाठी
+import '../common/role_selection_screen.dart';
 
 class FranchiseProfileScreen extends StatefulWidget {
   const FranchiseProfileScreen({super.key});
@@ -63,7 +63,7 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
     );
   }
 
-  // === लॉगआऊट फंक्शन ===
+  // === लॉगआऊट फंक्शन (दुरुस्त) ===
   Future<void> _logout() async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -82,11 +82,14 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
     );
     if (confirm != true) return;
 
-    // SharedPreferences मधून रोल काढून टाका
+    // SharedPreferences मधील सर्व स्टेटस क्लिअर करा
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('selected_role');
+    await prefs.remove('isPromoter');
+    await prefs.remove('isDeliveryBoy');
+    await prefs.remove('isJoinedAathwadiBazar');
 
-    // Role Selection स्क्रीनवर पाठवा (बॅक प्रेस करून पुन्हा येऊ नये म्हणून pushAndRemoveUntil)
+    // Role Selection स्क्रीनवर पाठवा (सर्व मागील स्क्रीन काढून टाका)
     if (mounted) {
       Navigator.pushAndRemoveUntil(
         context,
@@ -202,11 +205,19 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red)),
-                onPressed: _logout, // === लॉगआऊट फंक्शन जोडले ===
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade50,
+                  foregroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    side: const BorderSide(color: Colors.red),
+                  ),
+                ),
+                onPressed: _logout,
                 icon: const Icon(Icons.logout_outlined),
-                label: const Text('Logout करा'),
+                label: const Text('Logout करा', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
               ),
             ),
           ],

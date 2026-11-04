@@ -25,47 +25,42 @@ class _SellerRegistrationScreenState extends State<SellerRegistrationScreen> {
   final _stateController = TextEditingController();
   final _pinCodeController = TextEditingController();
   final _keywordsController = TextEditingController();
-  final _deliveryChargeController = TextEditingController(text: '0');
+
+  // KYC Controllers
+  final _aadhaarController = TextEditingController();
+  final _panController = TextEditingController();
+  final _vehicleController = TextEditingController();
+  final _licenseController = TextEditingController();
 
   File? _businessImage;
   bool _gpsLoading = false;
   String _gpsStatus = 'GPS Location नाही';
   bool _gpsEnabled = false;
 
-  // Categories - multiple select
+  // Categories - मुख्य १२ मॉड्यूल + इतर
   final List<Map<String, String>> _allCategories = [
-    {'name': 'किराणा', 'code': 'GR'},
-    {'name': 'फळे व भाजीपाला', 'code': 'FV'},
-    {'name': 'दुग्धजन्य', 'code': 'DA'},
-    {'name': 'बेकरी', 'code': 'BK'},
-    {'name': 'हॉटेल/रेस्तराँ', 'code': 'RS'},
-    {'name': 'मेडिकल', 'code': 'MD'},
+    {'name': 'Global Shopping', 'code': 'GS'},
+    {'name': 'ZatPat (स्थानिक किराणा)', 'code': 'ZP'},
+    {'name': 'हॉटेल फूड', 'code': 'HF'},
+    {'name': 'रिक्षा / टॅक्सी', 'code': 'TX'},
+    {'name': 'सर्व्हिसेस (Repair)', 'code': 'SV'},
+    {'name': 'पार्सल कार्गो', 'code': 'PC'},
+    {'name': 'रिसेल / Rent', 'code': 'RR'},
+    {'name': 'किराणा मार्ट', 'code': 'KM'},
+    {'name': 'नोकरी (Jobs)', 'code': 'JB'},
+    {'name': 'Mom\'s Miracle (Baby)', 'code': 'MM'},
+    {'name': 'मॅन्युफॅक्चरर', 'code': 'MF'},
+    {'name': 'शेतकरी व भाजीपाला', 'code': 'FV'},
+    // इतर पर्याय
     {'name': 'इलेक्ट्रॉनिक्स', 'code': 'EL'},
     {'name': 'कपडे व फॅशन', 'code': 'CF'},
     {'name': 'दागिने', 'code': 'JW'},
     {'name': 'ब्युटी पार्लर', 'code': 'BP'},
-    {'name': 'शिक्षण', 'code': 'ED'},
-    {'name': 'वाहन सेवा', 'code': 'AU'},
-    {'name': 'बांधकाम', 'code': 'CH'},
-    {'name': 'शेती', 'code': 'AG'},
-    {'name': 'आर्थिक सेवा', 'code': 'FS'},
-    {'name': 'गृहसेवा', 'code': 'HS'},
-    {'name': 'लोकल डिलिव्हरी सेवा / Delivery Boy', 'code': 'DB'},
-    {'name': 'रिक्षा / टॅक्सी सेवा', 'code': 'RT'},
-    {'name': 'लहान मुले (Baby Care)', 'code': 'KD'},
+    {'name': 'मेडिकल', 'code': 'MD'},
+    {'name': 'बेकरी', 'code': 'BK'},
     {'name': 'इतर', 'code': 'OT'},
   ];
   final List<String> _selectedCategories = [];
-
-  // Discount
-  final List<int> _discountOptions = [0, 5, 10, 15, 20, 25, 30, 35, 40, 50];
-  int _selectedDiscount = 0;
-
-  // Delivery
-  String _deliveryType = 'both';
-  int _deliveryRadius = 5;
-  String _deliveryCharge = 'free';
-  String _deliveryTime = 'same_day';
 
   @override
   void dispose() {
@@ -81,7 +76,10 @@ class _SellerRegistrationScreenState extends State<SellerRegistrationScreen> {
     _stateController.dispose();
     _pinCodeController.dispose();
     _keywordsController.dispose();
-    _deliveryChargeController.dispose();
+    _aadhaarController.dispose();
+    _panController.dispose();
+    _vehicleController.dispose();
+    _licenseController.dispose();
     super.dispose();
   }
 
@@ -297,153 +295,6 @@ class _SellerRegistrationScreenState extends State<SellerRegistrationScreen> {
     ],
   ));
 
-  // ── Discount Section ──────────────────────────────────────
-  Widget _buildDiscount() => _card(Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('ग्राहकांना Discount किती द्यायचा?', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark)),
-      const SizedBox(height: 4),
-      const Text('नंतर Profile मधून बदलता येते', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-      const SizedBox(height: 12),
-      Wrap(
-        spacing: 8, runSpacing: 8,
-        children: _discountOptions.map((d) {
-          final sel = _selectedDiscount == d;
-          return GestureDetector(
-            onTap: () => setState(() => _selectedDiscount = d),
-            child: Container(
-              width: 56,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: sel ? Colors.green.shade600 : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: sel ? Colors.green.shade600 : Colors.grey.shade300),
-              ),
-              child: Text('$d%', textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                  color: sel ? Colors.white : AppColors.textDark)),
-            ),
-          );
-        }).toList(),
-      ),
-      if (_selectedDiscount > 0) ...[
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(8)),
-          child: Row(children: [
-            const Icon(Icons.info_outline, color: Colors.green, size: 16),
-            const SizedBox(width: 8),
-            Expanded(child: Text(
-              'Customer ला $_selectedDiscount% Discount मिळेल. Commission उरलेल्या रकमेवर.',
-              style: const TextStyle(fontSize: 11, color: Colors.green),
-            )),
-          ]),
-        ),
-      ],
-    ],
-  ));
-
-  // ── Delivery Section ──────────────────────────────────────
-  Widget _buildDelivery() => _card(Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text('Delivery Settings', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark)),
-      const SizedBox(height: 14),
-      const Text('Delivery प्रकार', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-      const SizedBox(height: 8),
-      Row(children: [
-        _dChip('Pickup\nOnly', 'pickup', Icons.store_outlined),
-        const SizedBox(width: 8),
-        _dChip('Home\nDelivery', 'delivery', Icons.delivery_dining_outlined),
-        const SizedBox(width: 8),
-        _dChip('दोन्ही', 'both', Icons.swap_horiz),
-      ]),
-      if (_deliveryType != 'pickup') ...[
-        const SizedBox(height: 14),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text('Delivery Radius', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-          Text('$_deliveryRadius km', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
-        ]),
-        Slider(
-          value: _deliveryRadius.toDouble(),
-          min: 1, max: 50, divisions: 49,
-          activeColor: AppColors.primaryBlue,
-          onChanged: (v) => setState(() => _deliveryRadius = v.round()),
-        ),
-        const Text('Delivery Charge', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-        const SizedBox(height: 8),
-        Row(children: [
-          _cChip('मोफत', 'free'),
-          const SizedBox(width: 8),
-          _cChip('Fixed Amount', 'fixed'),
-        ]),
-        if (_deliveryCharge == 'fixed') ...[
-          const SizedBox(height: 10),
-          TextFormField(
-            controller: _deliveryChargeController,
-            keyboardType: TextInputType.number,
-            decoration: _inputDeco(label: 'Delivery Charge (₹)', icon: Icons.currency_rupee),
-          ),
-        ],
-        const SizedBox(height: 14),
-        const Text('Delivery वेळ', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          initialValue: _deliveryTime,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            filled: true, fillColor: Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          ),
-          items: const [
-            DropdownMenuItem(value: 'express', child: Text('Express – 1 ते 3 तास')),
-            DropdownMenuItem(value: 'same_day', child: Text('Same Day – 4 ते 8 तास')),
-            DropdownMenuItem(value: 'next_day', child: Text('Next Day – 24 तास')),
-            DropdownMenuItem(value: 'standard', child: Text('Standard – 2 ते 5 दिवस')),
-          ],
-          onChanged: (v) => setState(() => _deliveryTime = v!),
-        ),
-      ],
-    ],
-  ));
-
-  Widget _dChip(String label, String value, IconData icon) => Expanded(
-    child: GestureDetector(
-      onTap: () => setState(() => _deliveryType = value),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: _deliveryType == value ? AppColors.primaryBlue : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: _deliveryType == value ? AppColors.primaryBlue : Colors.grey.shade300),
-        ),
-        child: Column(children: [
-          Icon(icon, size: 18, color: _deliveryType == value ? Colors.white : AppColors.textLight),
-          const SizedBox(height: 4),
-          Text(label, textAlign: TextAlign.center, style: TextStyle(
-            fontSize: 10, fontWeight: FontWeight.w600,
-            color: _deliveryType == value ? Colors.white : AppColors.textDark)),
-        ]),
-      ),
-    ),
-  );
-
-  Widget _cChip(String label, String value) => GestureDetector(
-    onTap: () => setState(() => _deliveryCharge = value),
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: _deliveryCharge == value ? Colors.orange.shade600 : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _deliveryCharge == value ? Colors.orange.shade600 : Colors.grey.shade300),
-      ),
-      child: Text(label, style: TextStyle(
-        fontSize: 12, fontWeight: FontWeight.w600,
-        color: _deliveryCharge == value ? Colors.white : AppColors.textDark)),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -613,15 +464,48 @@ class _SellerRegistrationScreenState extends State<SellerRegistrationScreen> {
               _sectionTitle('GPS Location'),
               _buildGPS(),
 
-              // Discount
-              _sectionTitle('Discount Setting'),
-              _buildDiscount(),
+              // KYC Details (Optional)
+              _sectionTitle('Optional KYC Details'),
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 14),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Text(
+                  'या माहितीची सक्ती नाही. ही माहिती तुम्ही नंतर KYC करताना Franchise ला देखील देऊ शकता.',
+                  style: TextStyle(fontSize: 11, color: Colors.blue.shade700),
+                ),
+              ),
+              TextFormField(
+                controller: _aadhaarController,
+                keyboardType: TextInputType.number,
+                maxLength: 12,
+                decoration: _inputDeco(label: 'Aadhaar Number (आधार)', icon: Icons.credit_card).copyWith(counterText: ''),
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _panController,
+                textCapitalization: TextCapitalization.characters,
+                maxLength: 10,
+                decoration: _inputDeco(label: 'PAN Number (पॅन)', icon: Icons.badge_outlined).copyWith(counterText: ''),
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _vehicleController,
+                textCapitalization: TextCapitalization.characters,
+                decoration: _inputDeco(label: 'Vehicle Number (गाडी नंबर)', icon: Icons.directions_car_outlined, hint: 'उदा. MH-12-AB-1234'),
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _licenseController,
+                textCapitalization: TextCapitalization.characters,
+                decoration: _inputDeco(label: 'Driving License (लायसन)', icon: Icons.drive_eta_outlined, hint: 'उदा. MH1220180012345'),
+              ),
 
-              // Delivery
-              _sectionTitle('Delivery Settings'),
-              _buildDelivery(),
-
-              const SizedBox(height: 8),
+              const SizedBox(height: 28),
               SizedBox(
                 height: 52,
                 width: double.infinity,

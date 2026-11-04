@@ -1,3 +1,4 @@
+import '../buyer/promoter_catalog_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
@@ -14,6 +15,7 @@ import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
 import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
+import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजार कॅटलॉगसाठी
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -71,54 +73,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
     setState(() => _isShopOpen = value);
   }
 
-  // === टॉप ऑफर ॲड करण्यासाठी विंडो ===
-  void _showAddTopOfferSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-          left: 20, right: 20, top: 20,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('नवीन टॉप ऑफर ॲड करा', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-            const SizedBox(height: 6),
-            const Text('हा कंटेंट बायरच्या होम स्क्रीनवर दिसेल.', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
-            const SizedBox(height: 16),
-            TextField(decoration: InputDecoration(labelText: 'ऑफर शीर्षक', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14))),
-            const SizedBox(height: 12),
-            TextField(decoration: InputDecoration(labelText: 'थोडक्यात माहिती (Description)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14))),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.image_outlined, size: 18), label: const Text('फोटो'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)))),
-                const SizedBox(width: 12),
-                Expanded(child: OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.video_library_outlined, size: 18), label: const Text('व्हिडिओ'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 12)))),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ऑफर फ्रँचायझीकडे अप्रूव्हलसाठी पाठवली (डेमो)')));
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-                child: const Text('अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -150,7 +104,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     ),
                     Row(
                       children: [
-                        // माझे उत्पन्न (Income) — लहान
+                        // माझे उत्पन्न
                         GestureDetector(
                           onTap: () {
                             showModalBottomSheet(
@@ -181,15 +135,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                                         Text('120 pts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber.shade700)),
                                       ]),
                                     ),
-                                    const SizedBox(height: 12),
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(color: AppColors.primaryBlue.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(12)),
-                                      child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                                        Row(children: [Icon(Icons.account_balance_wallet_outlined, color: AppColors.primaryBlue, size: 22), SizedBox(width: 8), Text('एकूण', style: TextStyle(fontSize: 15))]),
-                                        Text('₹18,570', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
-                                      ]),
-                                    ),
                                     const SizedBox(height: 20),
                                     SizedBox(
                                       width: double.infinity,
@@ -200,7 +145,11 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                                         },
                                         icon: const Icon(Icons.bar_chart, color: Colors.white),
                                         label: const Text('पूर्ण तपशील बघा', style: TextStyle(color: Colors.white, fontSize: 15)),
-                                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.primaryBlue,
+                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -221,7 +170,9 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                         const SizedBox(width: 4),
                         // Expenses Wallet
                         GestureDetector(
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen())),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen()));
+                          },
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                             decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
@@ -233,25 +184,30 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        // लहान आयकॉन्स
-                        IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 28, minHeight: 28), iconSize: 18, icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen()))),
-                        IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 28, minHeight: 28), iconSize: 18, icon: const Icon(Icons.notifications_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))),
-                        IconButton(padding: EdgeInsets.zero, constraints: const BoxConstraints(minWidth: 28, minHeight: 28), iconSize: 18, icon: const Icon(Icons.account_circle_outlined, color: Colors.white), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          iconSize: 18,
+                          icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          iconSize: 18,
+                          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+                          iconSize: 18,
+                          icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))
+                        ),
                       ],
                     ),
                   ],
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [Icon(Icons.verified_outlined, color: Colors.white, size: 18), SizedBox(width: 8), Text('Free Plan — पहिलं वर्ष', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold))]),
-                      Text('265 दिवस शिल्लक', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                    ],
-                  ),
                 ),
               ],
             ),
@@ -259,7 +215,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           
           const SizedBox(height: 16),
           
-          // नवीन ऑर्डर्स अलर्ट
+          // === नवीन ऑर्डर्स ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen())),
             child: Container(
@@ -280,7 +236,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
           const SizedBox(height: 12),
 
-          // Shop Open / Close Status
+          // === Shop Status ===
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
@@ -293,14 +249,19 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(children: [
-                    Icon(_isShopOpen ? Icons.storefront : Icons.store_mall_directory_outlined, color: _isShopOpen ? Colors.green.shade700 : Colors.grey.shade700),
-                    const SizedBox(width: 10),
-                    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(_isShopOpen ? 'Shop Open' : 'Shop Closed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: _isShopOpen ? Colors.green.shade800 : Colors.grey.shade800)),
-                      Text(_isShopOpen ? 'ऑर्डर्स स्वीकारल्या जात आहेत' : 'नवीन ऑर्डर्स बंद आहेत', style: TextStyle(fontSize: 11, color: _isShopOpen ? Colors.green.shade600 : Colors.grey.shade600)),
-                    ]),
-                  ]),
+                  Row(
+                    children: [
+                      Icon(_isShopOpen ? Icons.storefront : Icons.store_mall_directory_outlined, color: _isShopOpen ? Colors.green.shade700 : Colors.grey.shade700),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_isShopOpen ? 'Shop Open' : 'Shop Closed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: _isShopOpen ? Colors.green.shade800 : Colors.grey.shade800)),
+                          Text(_isShopOpen ? 'ऑर्डर्स स्वीकारल्या जात आहेत' : 'नवीन ऑर्डर्स बंद आहेत', style: TextStyle(fontSize: 11, color: _isShopOpen ? Colors.green.shade600 : Colors.grey.shade600)),
+                        ],
+                      ),
+                    ],
+                  ),
                   Switch(value: _isShopOpen, onChanged: _toggleShopStatus, activeThumbColor: Colors.green.shade600),
                 ],
               ),
@@ -308,18 +269,42 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           ),
 
           const SizedBox(height: 16),
-
-          // स्लायडर
           const OffersSliderWidget(), 
+          // === आठवडी बाजार (Seller साठी) ===
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GestureDetector(
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.teal.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.teal.shade200),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.storefront, color: Colors.teal, size: 28),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('आठवडी बाजार (Weekly Market)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
+                          Text('प्रॉडक्ट्स जोडा आणि विक्री करा (₹50/प्रॉडक्ट)', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
+                        ],
+                      ),
+                    ),
+                    Icon(Icons.chevron_right, color: Colors.teal),
+                  ],
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
-
-          // === 'Top Offers (होम स्क्रीन)' टॅब काढून टाकला आहे ===
-          // आता खालच्या KPI मध्ये 'टॉप ऑफर ॲड करा' बटण आहे.
-
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
           
-          // जाहिरात विभाग
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('जाहिरात विभाग', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
@@ -348,8 +333,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
               _kpiCard('नवीन जाहिराती', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
-              // === 'सक्रिय जाहिराती' काढून 'टॉप ऑफर ॲड करा' ===
-              _kpiCard('टॉप ऑफर ॲड करा', '+', 'होम स्क्रीनवर दिसेल', Icons.local_offer_outlined, Colors.deepPurple, onTap: () => _showAddTopOfferSheet(context)),
+              _kpiCard('सक्रिय जाहिराती', '2', 'चालू आहेत', Icons.campaign_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
             ],
           ),
           const SizedBox(height: 24),
@@ -407,7 +391,10 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
   Widget _viewerTile(String name, String time, IconData icon) {
     return ListTile(
-      leading: CircleAvatar(backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1), child: Icon(icon, color: AppColors.primaryBlue, size: 20)),
+      leading: CircleAvatar(
+        backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+        child: Icon(icon, color: AppColors.primaryBlue, size: 20),
+      ),
       title: Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
       subtitle: Text(time, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
       dense: true,
@@ -431,7 +418,10 @@ class _SellerDashboardState extends State<_SellerDashboard> {
         expand: false,
         builder: (ctx, scrollController) => Column(
           children: [
-            const Padding(padding: EdgeInsets.all(16), child: Text('ग्राहक यादी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('ग्राहक यादी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
             const Divider(height: 1),
             Expanded(
               child: ListView.builder(
@@ -440,14 +430,21 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                 itemBuilder: (context, index) {
                   final c = customers[index];
                   return ListTile(
-                    leading: CircleAvatar(backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1), child: Text(c['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold))),
+                    leading: CircleAvatar(
+                      backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
+                      child: Text(c['name']![0], style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+                    ),
                     title: Text(c['name']!, style: const TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: Text('एकूण खरेदी: ${c['purchase']} | ${c['visits']}'),
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),
                     onTap: () {
                       Navigator.pop(context);
                       Navigator.push(context, MaterialPageRoute(
-                        builder: (_) => SellerCustomerProfileScreen(customerName: c['name']!, totalPurchase: c['purchase']!, visits: c['visits']!),
+                        builder: (_) => SellerCustomerProfileScreen(
+                          customerName: c['name']!,
+                          totalPurchase: c['purchase']!,
+                          visits: c['visits']!,
+                        ),
                       ));
                     },
                   );
