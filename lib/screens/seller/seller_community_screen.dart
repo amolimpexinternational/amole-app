@@ -93,8 +93,6 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
       {'type': 'sent', 'msg': 'नवीन Stock आला आहे. Order करा!', 'date': '20 Aug 2026', 'time': '3:00 PM'},
       {'type': 'received', 'msg': 'तांदूळ 5kg आणि तेल 1L पाठवा.', 'date': '20 Aug 2026', 'time': '3:30 PM'},
       {'type': 'sent', 'msg': 'Order confirm झाला!', 'date': '20 Aug 2026', 'time': '3:35 PM'},
-      {'type': 'received', 'msg': 'किंमत किती आहे?', 'date': '15 Aug 2026', 'time': '5:00 PM'},
-      {'type': 'sent', 'msg': 'तांदूळ ₹250, तेल ₹140.', 'date': '15 Aug 2026', 'time': '5:05 PM'},
     ];
 
     showModalBottomSheet(
@@ -118,7 +116,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
                 children: [
                   CircleAvatar(
                     radius: 18,
-                    backgroundColor: Color(customer['color'] as int).withOpacity(0.3),
+                    backgroundColor: Color(customer['color'] as int).withValues(alpha: 0.3),
                     child: Text(customer['avatar'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(width: 10),
@@ -172,7 +170,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
                               bottomLeft: Radius.circular(isSent ? 14 : 0),
                               bottomRight: Radius.circular(isSent ? 0 : 14),
                             ),
-                            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 4)],
+                            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 4)],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -209,7 +207,9 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
         title: const Text('Community'),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: Colors.white,
-        // Back Arrow (leading) काढून टाकला आहे जेणेकरून स्क्रीन काळी होणार नाही
+        // === Back Arrow पूर्णपणे काढून टाकला आहे ===
+        // त्यामुळे आता स्क्रीन काळी होणार नाही.
+        automaticallyImplyLeading: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(46),
           child: Container(
@@ -315,7 +315,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text('⚠️ ग्राहकांचे मोबाईल नंबर दिसणार नाहीत — फक्त in-app message पाठवला जाईल (Blueprint ५.९)', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+                const Text('⚠️ ग्राहकांचे मोबाईल नंबर दिसणार नाहीत — फक्त in-app message पाठवला जाईल', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
               ],
             ),
           ),
@@ -348,12 +348,12 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)]),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)]),
           child: Row(
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: Color(c['color'] as int).withOpacity(0.15),
+                backgroundColor: Color(c['color'] as int).withValues(alpha: 0.15),
                 child: Text(c['avatar'], style: TextStyle(color: Color(c['color'] as int), fontWeight: FontWeight.bold)),
               ),
               const SizedBox(width: 12),
@@ -406,7 +406,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)]),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)]),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -425,7 +425,7 @@ class _SellerCommunityScreenState extends State<SellerCommunityScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(color: AppColors.primaryBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
+                    decoration: BoxDecoration(color: AppColors.primaryBlue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
                     child: Text(m['audience'], style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
                   ),
                   const SizedBox(width: 8),
