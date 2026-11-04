@@ -1,3 +1,4 @@
+import 'weekly_market_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
@@ -281,7 +282,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           const HomeServicesGrid(),
           const SizedBox(height: 4),
 
-          // Banner Ad
+          // Banner Ad — आपल्या गावातील दुकाने
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
             child: Container(
@@ -307,6 +308,34 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ),
             ),
           ),
+
+          // === नवीन: आठवडी बाजार बॅनर ===
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              height: 75,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
 
           // Extra Income tab
           GestureDetector(
@@ -347,9 +376,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               margin: const EdgeInsets.all(16),
               height: 100,
               decoration: BoxDecoration(
-                color: AppColors.primaryBlue.withOpacity(0.08),
+                color: AppColors.primaryBlue.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.primaryBlue.withOpacity(0.2)),
+                border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.2)),
               ),
               child: const Center(
                 child: Column(
@@ -364,7 +393,6 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
           
-          // ॲड फीड (यात आता फक्त जाहिराती आणि माय ऑफर्स आहेत)
           const AdFeedWidget(),
           
           const SizedBox(height: 8),
@@ -383,16 +411,12 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 1) {
-            // My Wall ऐवजी Extra Income
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else if (index == 2) {
-            // QR Scan
             Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
           } else if (index == 3) {
-            // माझे मेसेज (सर्व नोटिफिकेशन्स)
             Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
           } else if (index == 4) {
-            // परिसर ऐवजी प्रमोटर डॅशबोर्ड
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else {
             setState(() => _currentIndex = index);
@@ -405,10 +429,10 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
         unselectedLabelStyle: const TextStyle(fontSize: 10),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'होम'),
-          BottomNavigationBarItem(icon: Icon(Icons.monetization_on_outlined), activeIcon: Icon(Icons.monetization_on), label: 'एक्स्ट्रा इनकम'), // My Wall काढले
+          BottomNavigationBarItem(icon: Icon(Icons.monetization_on_outlined), activeIcon: Icon(Icons.monetization_on), label: 'एक्स्ट्रा इनकम'),
           BottomNavigationBarItem(icon: Icon(Icons.qr_code_scanner), activeIcon: Icon(Icons.qr_code_scanner), label: 'QR Pay'),
           BottomNavigationBarItem(icon: Icon(Icons.notifications_active_outlined), activeIcon: Icon(Icons.notifications_active), label: 'माझे मेसेज'),
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard_customize_outlined), activeIcon: Icon(Icons.dashboard_customize), label: 'प्रमोटर'), // परिसर काढले
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_customize_outlined), activeIcon: Icon(Icons.dashboard_customize), label: 'प्रमोटर'),
         ],
       ),
     );
