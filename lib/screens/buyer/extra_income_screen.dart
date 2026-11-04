@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:share_plus/share_plus.dart'; // नवीन इम्पोर्ट
+import 'package:share_plus/share_plus.dart';
 import '../../constants/app_colors.dart';
-import 'buyer_home_screen.dart'; 
+import 'buyer_home_screen.dart';
 import 'promoter_catalog_screen.dart';
 import 'promoter_dashboard_screen.dart';
 import '../seller/seller_advertisement_screen.dart';
 import '../seller/registration/seller_registration_screen.dart';
+import '../delivery/delivery_boy_home_screen.dart'; // डिलिव्हरी बॉय साठी
 
 class ExtraIncomeScreen extends StatefulWidget {
   const ExtraIncomeScreen({super.key});
@@ -33,7 +34,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     });
   }
 
-  // === मुद्दा १०: खऱ्या शेअरिंगची सोय ===
   void _shareReferLink() {
     final String referLink = 'https://amole.in/ref/AMOLE-P123';
     Share.share(
@@ -70,22 +70,18 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen())),
           ),
           
-          // === मुद्दा ३: थेट बायरच्या मुख्य स्क्रीनवर पाठवणे ===
+          // २. जाहिराती बघून पैसे कमवा
           _buildOptionCard(
             title: '२. जाहिराती बघून पैसे कमवा',
             subtitle: 'मुख्य स्क्रीनवरील जाहिराती टॅबमध्ये जा',
             icon: Icons.play_circle_fill,
             color: Colors.blue,
             onTap: () {
-              // BuyerHomeScreen वर पाठवा
               Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerHomeScreen()));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('मुख्य स्क्रीनवर जाहिराती टॅब उघडा')),
-              );
             },
           ),
 
-          // === मुद्दा १०: शेअर बटन ===
+          // ३. App refer पाठवा
           _buildOptionCard(
             title: '३. App refer पाठवा',
             subtitle: 'WhatsApp, FB, Insta वर लिंक शेअर करा',
@@ -94,17 +90,16 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             onTap: _shareReferLink,
           ),
 
+          // ४. डिलिव्हरी बॉय व्हा
           _buildOptionCard(
             title: '४. डिलिव्हरी बॉय व्हा',
             subtitle: 'डिलिव्हरी बॉय म्हणून काम करा',
             icon: Icons.two_wheeler,
             color: Colors.orange,
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('डिलिव्हरी बॉय KYC पुढे जोडली जाईल')),
-              );
-            },
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen())),
           ),
+
+          // ५. आठवडी बाजार
           _buildOptionCard(
             title: '५. आठवडी बाजारात वस्तू विका',
             subtitle: '₹५० फी - प्रत्येक प्रॉडक्टसाठी (फोटोसह)',
@@ -112,6 +107,8 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             color: Colors.teal,
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
           ),
+
+          // ६. सेलर ऑन बोर्ड करा
           _buildOptionCard(
             title: '६. सेलर ऑन बोर्ड करा',
             subtitle: 'नवीन सेलर जोडा आणि कमवा',
