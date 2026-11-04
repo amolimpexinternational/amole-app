@@ -1,3 +1,4 @@
+import 'promoter_catalog_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
@@ -203,15 +204,17 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             ),
           ),
 
-          // Catalog
-          _sectionCard(
-            icon: Icons.inventory_2,
-            color: Colors.blue,
-            title: 'माझा कॅटलॉग',
-            subtitle: 'प्रॉडक्ट्स जोडा आणि प्रमोट करा',
-            trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
-            onTap: () {},
-          ),
+          // // Catalog
+_sectionCard(
+  icon: Icons.inventory_2,
+  color: Colors.blue,
+  title: 'माझा कॅटलॉग',
+  subtitle: 'प्रॉडक्ट्स जोडा आणि प्रमोट करा',
+  trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
+  onTap: () {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()));
+  },
+),
 
           // Ads
           _sectionCard(
