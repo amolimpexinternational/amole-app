@@ -12,7 +12,6 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // === CP नुसार ग्रुप केलेले ॲड्स ===
   final List<Map<String, dynamic>> _cpGroups = [
     {
       'cp': 'पुणे CP',
@@ -22,16 +21,16 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
           'franchise': 'हडपसर फ्रँचाइजी',
           'phone': '+91 9876543211',
           'ads': [
-            {'title': 'पाटील किराणा स्टोअर — Photo Ad', 'sender': 'पाटील किराणा स्टोअर', 'senderType': 'Seller', 'days': '3 दिवसांपूर्वी', 'budget': '₹300', 'status': 'pending'},
-            {'title': 'जोशी किराणा — Text Ad', 'sender': 'जोशी किराणा', 'senderType': 'Seller', 'days': '2 दिवसांपूर्वी', 'budget': '₹200', 'status': 'pending'},
+            {'title': 'पाटील किराणा स्टोअर — Photo Ad', 'sender': 'पाटील किराणा स्टोअर', 'senderPhone': '+91 9988776655', 'senderType': 'Seller', 'days': '3 दिवसांपूर्वी', 'budget': '₹300', 'status': 'pending'},
+            {'title': 'जोशी किराणा — Text Ad', 'sender': 'जोशी किराणा', 'senderPhone': '+91 9988776656', 'senderType': 'Seller', 'days': '2 दिवसांपूर्वी', 'budget': '₹200', 'status': 'pending'},
           ],
         },
         {
           'franchise': 'कोथरूड फ्रँचाइजी',
           'phone': '+91 9876543212',
           'ads': [
-            {'title': 'श्री साई मेडिकल — Text Ad', 'sender': 'श्री साई मेडिकल', 'senderType': 'Seller', 'days': '1 दिवसापूर्वी', 'budget': '₹150', 'status': 'pending'},
-            {'title': 'रेस्टॉरंट डील — Photo Ad', 'sender': 'स्वाद हॉटेल', 'senderType': 'Seller', 'days': '4 दिवसांपूर्वी', 'budget': '₹400', 'status': 'approved'},
+            {'title': 'श्री साई मेडिकल — Text Ad', 'sender': 'श्री साई मेडिकल', 'senderPhone': '+91 9988776657', 'senderType': 'Seller', 'days': '1 दिवसापूर्वी', 'budget': '₹150', 'status': 'pending'},
+            {'title': 'रेस्टॉरंट डील — Photo Ad', 'sender': 'स्वाद हॉटेल', 'senderPhone': '+91 9988776658', 'senderType': 'Seller', 'days': '4 दिवसांपूर्वी', 'budget': '₹400', 'status': 'approved'},
           ],
         },
       ],
@@ -44,14 +43,13 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
           'franchise': 'नागपूर फ्रँचाइजी',
           'phone': '+91 9876543214',
           'ads': [
-            {'title': 'नागपूर किराणा — Video Ad', 'sender': 'नागपूर किराणा', 'senderType': 'Seller', 'days': '5 दिवसांपूर्वी', 'budget': '₹500', 'status': 'pending'},
+            {'title': 'नागपूर किराणा — Video Ad', 'sender': 'नागपूर किराणा', 'senderPhone': '+91 9988776659', 'senderType': 'Seller', 'days': '5 दिवसांपूर्वी', 'budget': '₹500', 'status': 'pending'},
           ],
         },
       ],
     },
   ];
 
-  // === On-boarding (CP नुसार) ===
   final List<Map<String, dynamic>> _cpOnboardingGroups = [
     {
       'cp': 'पुणे CP',
@@ -61,16 +59,16 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
           'franchise': 'हडपसर फ्रँचाइजी',
           'phone': '+91 9876543211',
           'requests': [
-            {'title': 'न्यू फॅशन पॉईंट', 'type': 'Seller', 'days': '1 दिवसापूर्वी', 'status': 'pending'},
-            {'title': 'जोशी किराणा', 'type': 'Seller', 'days': '2 दिवसांपूर्वी', 'status': 'pending'},
+            {'title': 'न्यू फॅशन पॉईंट', 'type': 'Seller', 'phone': '+91 9988776655', 'days': '1 दिवसापूर्वी', 'status': 'pending'},
+            {'title': 'जोशी किराणा', 'type': 'Seller', 'phone': '+91 9988776656', 'days': '2 दिवसांपूर्वी', 'status': 'pending'},
           ],
         },
         {
           'franchise': 'कोथरूड फ्रँचाइजी',
           'phone': '+91 9876543212',
           'requests': [
-            {'title': 'श्री साई मेडिकल', 'type': 'Seller', 'days': '4 दिवसांपूर्वी', 'status': 'pending'},
-            {'title': 'वडगाव फ्रँचाइजी', 'type': 'Franchise', 'days': '10 दिवसांपूर्वी', 'status': 'approved'},
+            {'title': 'श्री साई मेडिकल', 'type': 'Seller', 'phone': '+91 9988776657', 'days': '4 दिवसांपूर्वी', 'status': 'pending'},
+            {'title': 'वडगाव फ्रँचाइजी', 'type': 'Franchise', 'phone': '+91 9988776660', 'days': '10 दिवसांपूर्वी', 'status': 'approved'},
           ],
         },
       ],
@@ -151,12 +149,10 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
     );
   }
 
-  // === जाहिराती टॅब ===
   Widget _buildAdsTab() {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // एकूण सारांश
         Container(
           padding: const EdgeInsets.all(14),
           margin: const EdgeInsets.only(bottom: 16),
@@ -177,7 +173,6 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
             ],
           ),
         ),
-        // प्रत्येक CP चा ग्रुप
         ..._cpGroups.map((cp) {
           final franchises = cp['franchises'] as List;
           int cpPending = 0;
@@ -197,7 +192,6 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // CP हेडर
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -213,7 +207,11 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(cp['cp'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                            Text('📞 ${cp['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                            Row(children: [
+                              const Icon(Icons.phone, size: 12, color: AppColors.primaryBlue),
+                              const SizedBox(width: 4),
+                              Text(cp['phone'] as String, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+                            ]),
                           ],
                         ),
                       ),
@@ -225,7 +223,6 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                     ],
                   ),
                 ),
-                // प्रत्येक फ्रँचायझी
                 ...franchises.map<Widget>((f) {
                   final ads = f['ads'] as List;
                   final pendingAds = ads.where((a) => a['status'] == 'pending').toList();
@@ -233,7 +230,6 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // फ्रँचायझी हेडर
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                         color: AppColors.lightGrey.withValues(alpha: 0.5),
@@ -242,11 +238,12 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                             const Icon(Icons.business, size: 16, color: AppColors.textLight),
                             const SizedBox(width: 6),
                             Expanded(child: Text(f['franchise'] as String, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark))),
-                            Text('📞 ${f['phone']}', style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
+                            const Icon(Icons.phone, size: 12, color: AppColors.primaryBlue),
+                            const SizedBox(width: 2),
+                            Text(f['phone'] as String, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
                           ],
                         ),
                       ),
-                      // ॲड्स
                       ...pendingAds.map<Widget>((ad) => _adRow(ad as Map<String, String>)),
                     ],
                   );
@@ -272,16 +269,27 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
               CircleAvatar(radius: 14, backgroundColor: typeColor.withValues(alpha: 0.1), child: Icon(Icons.campaign_outlined, color: typeColor, size: 14)),
               const SizedBox(width: 8),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
-                    Text('${ad['sender']} (${ad['senderType']}) • ${ad['days']} • बजेट ${ad['budget']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-                  ],
-                ),
+                child: Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
               ),
             ],
           ),
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(6)),
+            child: Row(
+              children: [
+                const Icon(Icons.person, size: 14, color: Colors.blue),
+                const SizedBox(width: 6),
+                Expanded(child: Text('${ad['sender']} (${ad['senderType']})', style: const TextStyle(fontSize: 11, color: Colors.blue, fontWeight: FontWeight.w600))),
+                const Icon(Icons.phone, size: 12, color: Colors.blue),
+                const SizedBox(width: 2),
+                Text(ad['senderPhone']!, style: const TextStyle(fontSize: 11, color: Colors.blue, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text('${ad['days']} • बजेट ${ad['budget']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -303,7 +311,6 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
     );
   }
 
-  // === On-boarding टॅब ===
   Widget _buildOnboardingTab() {
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -362,7 +369,11 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(cp['cp'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                            Text('📞 ${cp['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                            Row(children: [
+                              const Icon(Icons.phone, size: 12, color: AppColors.primaryBlue),
+                              const SizedBox(width: 4),
+                              Text(cp['phone'] as String, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+                            ]),
                           ],
                         ),
                       ),
@@ -389,7 +400,9 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                             const Icon(Icons.business, size: 16, color: AppColors.textLight),
                             const SizedBox(width: 6),
                             Expanded(child: Text(f['franchise'] as String, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark))),
-                            Text('📞 ${f['phone']}', style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
+                            const Icon(Icons.phone, size: 12, color: AppColors.primaryBlue),
+                            const SizedBox(width: 2),
+                            Text(f['phone'] as String, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
                           ],
                         ),
                       ),
@@ -428,6 +441,18 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: Colors.teal.shade50, borderRadius: BorderRadius.circular(6)),
+            child: Row(
+              children: [
+                const Icon(Icons.phone, size: 14, color: Colors.teal),
+                const SizedBox(width: 6),
+                Text('संपर्क: ${req['phone']}', style: const TextStyle(fontSize: 11, color: Colors.teal, fontWeight: FontWeight.bold)),
+              ],
+            ),
           ),
           const SizedBox(height: 8),
           Row(
