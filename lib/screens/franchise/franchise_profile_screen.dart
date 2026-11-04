@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
+import '../common/role_selection_screen.dart'; // लॉगआऊटनंतर रोल सिलेक्शनला पाठवण्यासाठी
 
 class FranchiseProfileScreen extends StatefulWidget {
   const FranchiseProfileScreen({super.key});
@@ -9,8 +11,6 @@ class FranchiseProfileScreen extends StatefulWidget {
 }
 
 class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
-  // TODO (Stage 3 - Backend): replace with real photo upload via
-  // Firebase Storage. For now, franchise can pick a demo avatar color/icon.
   Color _avatarColor = AppColors.primaryBlue;
   IconData _avatarIcon = Icons.business;
 
@@ -51,7 +51,7 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
                   },
                   child: CircleAvatar(
                     radius: 30,
-                    backgroundColor: (opt['color'] as Color).withOpacity(0.15),
+                    backgroundColor: (opt['color'] as Color).withValues(alpha: 0.15),
                     child: Icon(opt['icon'], color: opt['color'], size: 28),
                   ),
                 );
@@ -61,6 +61,39 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
         ),
       ),
     );
+  }
+
+  // === लॉगआऊट फंक्शन ===
+  Future<void> _logout() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('लॉगआऊट करायचं?'),
+        content: const Text('तुम्हाला पुन्हा लॉगिन करावं लागेल.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('रद्द करा')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('लॉगआऊट', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+
+    // SharedPreferences मधून रोल काढून टाका
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('selected_role');
+
+    // Role Selection स्क्रीनवर पाठवा (बॅक प्रेस करून पुन्हा येऊ नये म्हणून pushAndRemoveUntil)
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+        (route) => false,
+      );
+    }
   }
 
   Widget _infoTile(IconData icon, String label, String value) {
@@ -131,7 +164,7 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,7 +204,7 @@ class _FranchiseProfileScreenState extends State<FranchiseProfileScreen> {
               width: double.infinity,
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(foregroundColor: Colors.red, side: const BorderSide(color: Colors.red)),
-                onPressed: () {},
+                onPressed: _logout, // === लॉगआऊट फंक्शन जोडले ===
                 icon: const Icon(Icons.logout_outlined),
                 label: const Text('Logout करा'),
               ),
