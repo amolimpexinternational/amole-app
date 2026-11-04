@@ -1,3 +1,4 @@
+import 'promoter_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
@@ -391,10 +392,10 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           } else if (index == 3) {
             // माझे मेसेज (सर्व नोटिफिकेशन्स)
             Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
-          } else if (index == 4) {
-            // परिसर ऐवजी प्रमोटर डॅशबोर्ड
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
-          } else {
+          } } else if (index == 4) {
+  // प्रमोटर डॅशबोर्ड
+  Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
+} else {
             setState(() => _currentIndex = index);
           }
         },
