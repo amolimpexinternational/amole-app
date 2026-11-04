@@ -1,3 +1,4 @@
+import 'weekly_market_screen.dart';
 import 'promoter_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
@@ -309,6 +310,33 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
+// === आठवडी बाजार बॅनर ===
+GestureDetector(
+  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
+  child: Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16),
+    height: 75,
+    decoration: BoxDecoration(
+      gradient: const LinearGradient(
+        colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          SizedBox(height: 4),
+          Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
+        ],
+      ),
+    ),
+  ),
+),
+const SizedBox(height: 16),
           // Extra Income tab
           GestureDetector(
             onTap: () => Navigator.push(
