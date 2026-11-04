@@ -1,311 +1,331 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
-import 'promoter_profile_screen.dart';
-
-class _DemoProduct {
-  final String name;
-  final String seller;
-  final int price;
-  bool inCatalog = false;
-
-  _DemoProduct(this.name, this.seller, this.price);
-}
+import '../seller/expenses_wallet_screen.dart';
 
 class PromoterDashboardScreen extends StatefulWidget {
   const PromoterDashboardScreen({super.key});
 
   @override
-  State<PromoterDashboardScreen> createState() =>
-      _PromoterDashboardScreenState();
+  State<PromoterDashboardScreen> createState() => _PromoterDashboardScreenState();
 }
 
 class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
-  static const int _maxCatalog = 50;
+  bool _isPromoter = false;
+  bool _isDeliveryBoy = false;
+  bool _isJoinedAathwadiBazar = false;
+  bool _isLoading = true;
 
-  // Dummy data (Demo) — Stage 3 मध्ये Seller ने "प्रमोशन करा" ON केलेली खरी उत्पादने येतील
-  final List<_DemoProduct> _products = [
-    _DemoProduct('गावरान तूप 500 ml', 'पाटील डेअरी', 450),
-    _DemoProduct('मसाला पावडर 1 kg', 'शिंदे मसाले', 320),
-    _DemoProduct('हँडलूम साडी', 'जोशी वस्त्र भांडार', 1200),
-    _DemoProduct('शेंगदाणा तेल 1 L', 'देशमुख ऑइल मिल', 210),
-    _DemoProduct('पापड 500 g', 'सुगरण गृह उद्योग', 150),
-    _DemoProduct('मध 250 g', 'वनराई मधुशाळा', 280),
-  ];
-
-  String _query = '';
-
-  int get _catalogCount => _products.where((p) => p.inCatalog).length;
-
-  void _addToCatalog(_DemoProduct p) {
-    if (_catalogCount >= _maxCatalog) {
-      _snack('कॅटलॉग मध्ये जास्तीत जास्त 50 वस्तू जोडता येतात');
-      return;
-    }
-    setState(() => p.inCatalog = true);
-    _snack('कॅटलॉग मध्ये जोडले');
+  @override
+  void initState() {
+    super.initState();
+    _loadStatus();
   }
 
-  void _snack(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  Future<void> _loadStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isPromoter = prefs.getBool('isPromoter') ?? false;
+      _isDeliveryBoy = prefs.getBool('isDeliveryBoy') ?? false;
+      _isJoinedAathwadiBazar = prefs.getBool('isJoinedAathwadiBazar') ?? false;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _becomePromoter() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isPromoter', true);
+    setState(() => _isPromoter = true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('अभिनंदन! तुम्ही आता प्रमोटर आहात 🎉'), backgroundColor: Colors.green),
+    );
+  }
+
+  Future<void> _toggleDeliveryBoy(bool value) async {
+    if (value && !_isDeliveryBoy) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('डिलिव्हरी बॉय KYC'),
+          content: const Text('डिलिव्हरी बॉय म्हणून सुरुवात करण्यासाठी KYC प्रक्रिया पूर्ण करावी लागेल.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('रद्द')),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isDeliveryBoy', true);
+                setState(() => _isDeliveryBoy = true);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('डिलिव्हरी बॉय सेवा सक्रिय झाली!'), backgroundColor: Colors.green),
+                );
+              },
+              child: const Text('KYC सुरू करा'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isDeliveryBoy', value);
+      setState(() => _isDeliveryBoy = value);
+    }
+  }
+
+  Future<void> _joinAathwadiBazar() async {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('आठवडी बाजारात सहभागी व्हा'),
+        content: const Text('सहभागासाठी ₹50 फी लागेल. फी तुमच्या Expenses Wallet मधून कापली जाईल.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('रद्द')),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('isJoinedAathwadiBazar', true);
+              setState(() => _isJoinedAathwadiBazar = true);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('₹50 कपात. तुम्ही आठवडी बाजारात सहभागी झालात!'), backgroundColor: Colors.green),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+            child: const Text('₹50 भरा'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final inCatalog = _products.where((p) => p.inCatalog).toList();
-    final notAdded = _products.where((p) => !p.inCatalog).toList();
-    final q = _query.trim().toLowerCase();
-    final available = q.isEmpty
-        ? notAdded
-        : notAdded
-            .where((p) =>
-                p.name.toLowerCase().contains(q) ||
-                p.seller.toLowerCase().contains(q))
-            .toList();
+    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (!_isPromoter) return _buildJoinPromoter();
 
     return Scaffold(
-      backgroundColor: AppColors.lightGrey,
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryBlue,
+        backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
-        title: const Text('Promoter Dashboard'),
+        title: const Text('प्रमोटर डॅशबोर्ड'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Earnings Card
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF3E0),
-              borderRadius: BorderRadius.circular(10),
+              gradient: const LinearGradient(colors: [Colors.purple, Colors.purpleAccent]),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.hourglass_top, color: AppColors.primaryOrange),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    '${PromoterState.name.isEmpty ? 'तुमची' : '${PromoterState.name}, तुमची'} माहिती Franchise कडे verification साठी आहे',
-                    style: const TextStyle(fontSize: 13),
-                  ),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('प्रमोटर कोड', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Icon(Icons.verified, color: Colors.white, size: 20),
+                  ],
+                ),
+                const Text('AMOLE-P123', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(child: _statBox('एकूण कमाई', '₹450')),
+                    const SizedBox(width: 12),
+                    Expanded(child: _statBox('या महिन्याची', '₹150')),
+                  ],
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _statBox('माझा कॅटलॉग', '$_catalogCount / $_maxCatalog'),
+
+          // Expenses Wallet
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen())),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.purple.shade200),
               ),
-              const SizedBox(width: 12),
-              Expanded(child: _statBox('मिळालेले कमिशन', '₹0')),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  'माझा कॅटलॉग',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-              TextButton.icon(
-                onPressed: () => _snack('WhatsApp share लवकरच येईल'),
-                icon: const Icon(Icons.share, size: 18),
-                label: const Text('पूर्ण कॅटलॉग शेअर'),
-              ),
-            ],
-          ),
-          if (inCatalog.isEmpty)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                'कॅटलॉग रिकामा आहे. खालील उत्पादने "कॅटलॉग मध्ये जोडा" करून कॅटलॉग बनवा.',
-                style: TextStyle(color: AppColors.textLight, fontSize: 13),
-              ),
-            )
-          else
-            _productGrid(
-              inCatalog,
-              (p) => SizedBox(
-                width: double.infinity,
-                height: 36,
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primaryBlue,
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Row(
+                children: [
+                  Icon(Icons.account_balance_wallet, color: Colors.purple.shade400, size: 32),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Expenses Wallet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        Text('जाहिराती व आठवडी बाजार फीसाठी', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+                      ],
+                    ),
                   ),
-                  onPressed: () => _snack('WhatsApp share लवकरच येईल'),
-                  icon: const Icon(Icons.share, size: 16),
-                  label: const Text('शेअर', style: TextStyle(fontSize: 12)),
-                ),
-              ),
-            ),
-          const SizedBox(height: 20),
-          const Text(
-            'प्रमोशनसाठी उपलब्ध उत्पादने',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'किंमत बदलता येत नाही. विक्रीवर 5% कमिशन मिळेल.',
-            style: TextStyle(color: AppColors.textLight, fontSize: 12),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            onChanged: (v) => setState(() => _query = v),
-            decoration: InputDecoration(
-              hintText: 'उत्पादन किंवा दुकान शोधा...',
-              prefixIcon:
-                  const Icon(Icons.search, color: AppColors.primaryBlue),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(vertical: 10),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
+                  Text('₹250', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.purple.shade400)),
+                  const Icon(Icons.chevron_right),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          if (available.isEmpty)
-            Text(
-              notAdded.isEmpty
-                  ? 'सर्व उत्पादने कॅटलॉग मध्ये जोडली आहेत.'
-                  : 'या शोधासाठी कोणतेही उत्पादन सापडले नाही.',
-              style: const TextStyle(
-                  color: AppColors.textLight, fontSize: 13),
-            )
-          else
-            _productGrid(
-              available,
-              (p) => SizedBox(
-                width: double.infinity,
-                height: 36,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                  ),
-                  onPressed: () => _addToCatalog(p),
-                  child: const Text(
-                    'कॅटलॉग मध्ये जोडा',
-                    style: TextStyle(fontSize: 11),
-                  ),
-                ),
+          const SizedBox(height: 16),
+
+          // Delivery Boy
+          _sectionCard(
+            icon: Icons.two_wheeler,
+            color: Colors.orange,
+            title: 'डिलिव्हरी बॉय सेवा',
+            subtitle: _isDeliveryBoy ? 'सेवा ON - काम करत आहात' : 'KYC करून डिलिव्हरी बॉय व्हा',
+            trailing: Switch(
+              value: _isDeliveryBoy,
+              onChanged: _toggleDeliveryBoy,
+              activeThumbColor: Colors.orange,
+            ),
+          ),
+
+          // आठवडी बाजार
+          GestureDetector(
+            onTap: _isJoinedAathwadiBazar ? null : _joinAathwadiBazar,
+            child: _sectionCard(
+              icon: Icons.storefront,
+              color: Colors.teal,
+              title: 'आठवडी बाजार',
+              subtitle: _isJoinedAathwadiBazar ? 'सहभाग नोंदवला ✓' : '₹50 फी - सहभागी व्हा',
+              trailing: Icon(
+                _isJoinedAathwadiBazar ? Icons.check_circle : Icons.arrow_forward,
+                color: _isJoinedAathwadiBazar ? Colors.green : Colors.teal,
               ),
             ),
+          ),
+
+          // Catalog
+          _sectionCard(
+            icon: Icons.inventory_2,
+            color: Colors.blue,
+            title: 'माझा कॅटलॉग',
+            subtitle: 'प्रॉडक्ट्स जोडा आणि प्रमोट करा',
+            trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
+            onTap: () {},
+          ),
+
+          // Ads
+          _sectionCard(
+            icon: Icons.campaign,
+            color: Colors.purple,
+            title: 'जाहिराती',
+            subtitle: 'पेड जाहिराती तयार करा',
+            trailing: const Icon(Icons.arrow_forward, color: Colors.purple),
+            onTap: () {},
+          ),
+
+          // Seller Onboard
+          _sectionCard(
+            icon: Icons.person_add,
+            color: Colors.indigo,
+            title: 'सेलर ऑनबोर्ड करा',
+            subtitle: 'नवीन सेलर जोडा',
+            trailing: const Icon(Icons.arrow_forward, color: Colors.indigo),
+            onTap: () {},
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildJoinPromoter() {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        title: const Text('प्रमोटर'),
+        backgroundColor: Colors.purple,
+        foregroundColor: Colors.white,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.campaign, size: 80, color: Colors.purple),
+              const SizedBox(height: 20),
+              const Text('प्रमोटर व्हा आणि कमवा', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              const Text(
+                'इतर सेलर्सची प्रॉडक्ट्स शेअर करा, आठवडी बाजारात सहभागी व्हा आणि ५% कमिशन कमवा.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: AppColors.textLight),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _becomePromoter,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text('प्रमोटर व्हा', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _statBox(String label, String value) {
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(10)),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primaryBlue,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(label, style: const TextStyle(fontSize: 12)),
+          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          Text(value, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 
-  // Mom's Miracle प्रमाणे 2 रांगांचा grid
-  Widget _productGrid(
-    List<_DemoProduct> items,
-    Widget Function(_DemoProduct) action,
-  ) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisExtent: 262,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, i) => _productCard(items[i], action(items[i])),
-    );
-  }
-
-  Widget _productCard(_DemoProduct p, Widget action) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _sectionCard({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required Widget trailing,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+        ),
+        child: Row(
           children: [
-            Container(
-              height: 110,
-              width: double.infinity,
-              color: AppColors.lightGrey,
-              child: const Icon(
-                Icons.inventory_2,
-                size: 54,
-                color: AppColors.primaryBlue,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
+            CircleAvatar(backgroundColor: color.withValues(alpha: 0.15), child: Icon(icon, color: color)),
+            const SizedBox(width: 12),
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    p.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    p.seller,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textLight,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '₹${p.price}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryBlue,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  action,
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
                 ],
               ),
             ),
+            trailing,
           ],
         ),
       ),
