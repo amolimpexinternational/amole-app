@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart'; // नवीन इम्पोर्ट
 import '../../constants/app_colors.dart';
-import 'buyer_home_screen.dart'; // जाहिरात टॅब साठी
-import 'promoter_catalog_screen.dart'; // आठवडी बाजार साठी
-import 'promoter_dashboard_screen.dart'; // प्रमोटर डॅशबोर्ड साठी
-import '../seller/seller_advertisement_screen.dart'; // पेड जाहिरात साठी
-import '../seller/registration/seller_registration_screen.dart'; // सेलर ऑनबोर्ड साठी
+import 'buyer_home_screen.dart'; 
+import 'promoter_catalog_screen.dart';
+import 'promoter_dashboard_screen.dart';
+import '../seller/seller_advertisement_screen.dart';
+import '../seller/registration/seller_registration_screen.dart';
 
 class ExtraIncomeScreen extends StatefulWidget {
   const ExtraIncomeScreen({super.key});
@@ -32,10 +33,12 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     });
   }
 
+  // === मुद्दा १०: खऱ्या शेअरिंगची सोय ===
   void _shareReferLink() {
-    // TODO: url_launcher किंवा share_plus वापरून लिंक शेअर करणे
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('रेफर लिंक शेअर करण्याची सुविधा पुढे जोडली जाईल (WhatsApp, FB, Insta)')),
+    final String referLink = 'https://amole.in/ref/AMOLE-P123';
+    Share.share(
+      'मी AMOLE ॲप वापरतोय! तू पण जॉईन हो आणि माझ्या रेफरल लिंकने सामील हो: $referLink',
+      subject: 'AMOLE App मध्ये सामील व्हा',
     );
   }
 
@@ -53,14 +56,12 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // === १. प्रमोटर स्टेटस कार्ड ===
           _buildPromoterCard(),
-
           const SizedBox(height: 24),
           const Text('कमाईच्या संधी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           const SizedBox(height: 12),
 
-          // === २. एकूण ६ पर्याय ===
+          // १. पेड जाहिराती
           _buildOptionCard(
             title: '१. पेड जाहिराती तयार करा',
             subtitle: 'जाहिरात तयार करा (फ्रँचायझी/CP अप्रूव्हल आवश्यक)',
@@ -68,33 +69,37 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             color: Colors.purple,
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen())),
           ),
+          
+          // === मुद्दा ३: थेट बायरच्या मुख्य स्क्रीनवर पाठवणे ===
           _buildOptionCard(
             title: '२. जाहिराती बघून पैसे कमवा',
-            subtitle: 'जाहिरात टॅबमध्ये जाऊन पोलची उत्तरे द्या',
+            subtitle: 'मुख्य स्क्रीनवरील जाहिराती टॅबमध्ये जा',
             icon: Icons.play_circle_fill,
             color: Colors.blue,
             onTap: () {
-              // TODO: BuyerHomeScreen मध्ये जाऊन टॅब १ (जाहिराती) उघडण्यासाठी
+              // BuyerHomeScreen वर पाठवा
               Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerHomeScreen()));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('जाहिरात टॅब उघडत आहे...')),
+                const SnackBar(content: Text('मुख्य स्क्रीनवर जाहिराती टॅब उघडा')),
               );
             },
           ),
+
+          // === मुद्दा १०: शेअर बटन ===
           _buildOptionCard(
             title: '३. App refer पाठवा',
-            subtitle: 'रेफरन्स लिंक शेअर करा आणि कमवा',
+            subtitle: 'WhatsApp, FB, Insta वर लिंक शेअर करा',
             icon: Icons.share,
             color: Colors.green,
             onTap: _shareReferLink,
           ),
+
           _buildOptionCard(
             title: '४. डिलिव्हरी बॉय व्हा',
             subtitle: 'डिलिव्हरी बॉय म्हणून काम करा',
             icon: Icons.two_wheeler,
             color: Colors.orange,
             onTap: () {
-              // TODO: Delivery Boy KYC स्क्रीन उघडण्यासाठी
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('डिलिव्हरी बॉय KYC पुढे जोडली जाईल')),
               );
@@ -119,7 +124,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     );
   }
 
-  // === प्रमोटर कार्डची रचना ===
   Widget _buildPromoterCard() {
     if (_isPromoter) {
       return Container(
