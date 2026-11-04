@@ -1,3 +1,4 @@
+import '../buyer/promoter_catalog_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
@@ -269,9 +270,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
           const SizedBox(height: 16),
           const OffersSliderWidget(), 
-          const SizedBox(height: 16),
-
-          // === आठवडी बाजार (मुद्दा ११) ===
+          // === आठवडी बाजार (Seller साठी) ===
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GestureDetector(
@@ -302,7 +301,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
