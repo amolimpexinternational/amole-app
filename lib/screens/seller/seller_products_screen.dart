@@ -14,7 +14,7 @@ class SellerProductsScreen extends StatefulWidget {
 
 class _SellerProductsScreenState extends State<SellerProductsScreen> {
   String _search = '';
-  String _filter = 'सर्व'; // सर्व / Active / Inactive / संपले
+  String _filter = 'सर्व';
 
   List<ProductModel> get _filtered {
     return ProductDatabase.products.where((p) {
@@ -31,6 +31,18 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
 
   void _toggleActive(ProductModel p) {
     setState(() => p.isActive = !p.isActive);
+  }
+
+  void _togglePromoterAdd(ProductModel p) {
+    setState(() => p.isPromoterAdd = !p.isPromoterAdd);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(p.isPromoterAdd 
+          ? '${p.name} - प्रमोटर जोड सुरू (५% कमिशन)' 
+          : '${p.name} - प्रमोटर जोड बंद'),
+        backgroundColor: p.isPromoterAdd ? Colors.purple : Colors.grey,
+      ),
+    );
   }
 
   void _deleteProduct(ProductModel p) {
@@ -161,6 +173,13 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
                   itemBuilder: (context, index) {
                     final p = products[index];
                     final isOutOfStock = p.stock <= 0;
+                    
+                    // किंमत गणित
+                    final double sellPrice = p.sellingPrice;
+                    final double companyComm = sellPrice * 0.10;
+                    final double promoterComm = p.isPromoterAdd ? (sellPrice * 0.05) : 0.0;
+                    final double netIncome = sellPrice - companyComm - promoterComm;
+
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(12),
@@ -172,88 +191,170 @@ class _SellerProductsScreenState extends State<SellerProductsScreen> {
                           ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 2))]
                           : [],
                       ),
-                      child: Row(children: [
-                        // Product icon/image
-                        Container(
-                          width: 54, height: 54,
-                          decoration: BoxDecoration(
-                            color: p.isActive
-                              ? AppColors.primaryBlue.withValues(alpha: 0.1)
-                              : Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(Icons.inventory_2_outlined,
-                            color: p.isActive ? AppColors.primaryBlue : Colors.grey,
-                            size: 26),
-                        ),
-                        const SizedBox(width: 12),
-
-                        // Name, category, stock
-                        Expanded(
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Row(children: [
-                              Expanded(
-                                child: Text(p.name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14,
-                                    color: p.isActive ? AppColors.textDark : Colors.grey,
-                                  )),
-                              ),
-                              if (!p.isActive)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(4)),
-                                  child: const Text('Inactive', style: TextStyle(fontSize: 10, color: Colors.grey)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Top Row: Image & Details & Actions
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Product Image Icon
+                              Container(
+                                width: 50, height: 50,
+                                decoration: BoxDecoration(
+                                  color: p.isActive ? AppColors.primaryBlue.withValues(alpha: 0.1) : Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                            ]),
-                            const SizedBox(height: 3),
-                            Text('Stock: ${p.stock}  |  Category: ${p.category}',
-                              style: TextStyle(fontSize: 12,
-                                color: isOutOfStock ? Colors.red.shade400 : AppColors.textLight)),
-                            const SizedBox(height: 4),
-                            Row(children: [
-                              Text('₹${p.sellingPrice.toStringAsFixed(0)}',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.primaryBlue)),
-                              if (p.discount > 0) ...[
-                                const SizedBox(width: 6),
-                                Text('₹${p.mrp.toStringAsFixed(0)}',
-                                  style: const TextStyle(fontSize: 11, decoration: TextDecoration.lineThrough, color: AppColors.textLight)),
-                                const SizedBox(width: 4),
-                                Text('${p.discount.toInt()}% OFF',
-                                  style: const TextStyle(fontSize: 11, color: Colors.green, fontWeight: FontWeight.bold)),
-                              ],
-                            ]),
-                          ]),
-                        ),
+                                child: Icon(Icons.inventory_2_outlined, color: p.isActive ? AppColors.primaryBlue : Colors.grey, size: 24),
+                              ),
+                              const SizedBox(width: 12),
 
-                        // Actions column
-                        Column(children: [
-                          // Active/Inactive toggle
-                          Switch(
-                            value: p.isActive,
-                            onChanged: (_) => _toggleActive(p),
-                            activeThumbColor: AppColors.primaryBlue,
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              // Name & Stock
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(p.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: p.isActive ? AppColors.textDark : Colors.grey)),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Text('Stock: ${p.stock}', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: isOutOfStock ? Colors.red : AppColors.textDark)),
+                                        const SizedBox(width: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(4)),
+                                          child: Text(p.category, style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              // Actions (Switch, Edit, Delete)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  // Active/Inactive टॉगल
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Text('Active', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+                                      Switch(
+                                        value: p.isActive,
+                                        onChanged: (_) => _toggleActive(p),
+                                        activeThumbColor: AppColors.primaryBlue,
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                    ],
+                                  ),
+                                  // प्रमोटर जोड टॉगल (नवीन)
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Text('प्रमोटर', style: TextStyle(fontSize: 10, color: Colors.purple)),
+                                      Switch(
+                                        value: p.isPromoterAdd,
+                                        onChanged: (_) => _togglePromoterAdd(p),
+                                        activeThumbColor: Colors.purple,
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          Row(children: [
-                            // Edit
-                            GestureDetector(
-                              onTap: () async {
-                                await Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) => EditProductScreen(product: p)));
-                                setState(() {});
-                              },
-                              child: const Icon(Icons.edit_outlined, color: AppColors.textLight, size: 20),
+                          
+                          const Divider(height: 20),
+
+                          // Bottom Section: Pricing & Math
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Customer Price
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('ग्राहक किंमत', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+                                  Text('₹${sellPrice.toStringAsFixed(0)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+                                ],
+                              ),
+                              
+                              // Promoter Commission
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text('प्रमोटर कमिशन', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+                                  Text(
+                                    p.isPromoterAdd ? '₹${promoterComm.toStringAsFixed(0)} (५%)' : 'बंद आहे',
+                                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: p.isPromoterAdd ? Colors.purple : AppColors.textLight),
+                                  ),
+                                ],
+                              ),
+
+                              // Net Income
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  const Text('तुम्हाला मिळणारे', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
+                                  Text('₹${netIncome.toStringAsFixed(0)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.successGreen)),
+                                ],
+                              ),
+                            ],
+                          ),
+                          
+                          // Edit & Delete Buttons
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              OutlinedButton.icon(
+                                onPressed: () async {
+                                  await Navigator.push(context, MaterialPageRoute(builder: (_) => EditProductScreen(product: p)));
+                                  setState(() {});
+                                },
+                                icon: const Icon(Icons.edit_outlined, size: 16),
+                                label: const Text('Edit', style: TextStyle(fontSize: 12)),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.blue,
+                                  side: const BorderSide(color: Colors.blue),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  minimumSize: Size.zero,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              OutlinedButton.icon(
+                                onPressed: () => _deleteProduct(p),
+                                icon: const Icon(Icons.delete_outline, size: 16),
+                                label: const Text('Delete', style: TextStyle(fontSize: 12)),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                  side: const BorderSide(color: Colors.red),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  minimumSize: Size.zero,
+                                ),
+                              ),
+                            ],
+                          ),
+                          
+                          // Promoter ON tag
+                          if (p.isPromoterAdd)
+                            Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(color: Colors.purple.shade50, borderRadius: BorderRadius.circular(6), border: Border.all(color: Colors.purple.shade200)),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.campaign, color: Colors.purple, size: 14),
+                                  SizedBox(width: 4),
+                                  Text('प्रमोटर जोड सुरू आहे (Promoter ON)', style: TextStyle(fontSize: 10, color: Colors.purple, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
                             ),
-                            const SizedBox(width: 10),
-                            // Delete
-                            GestureDetector(
-                              onTap: () => _deleteProduct(p),
-                              child: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                            ),
-                          ]),
-                        ]),
-                      ]),
+                        ],
+                      ),
                     );
                   },
                 ),
