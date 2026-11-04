@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import '../../widgets/offers_slider_widget.dart'; // नवीन इम्पोर्ट ॲड केला
+import '../../widgets/offers_slider_widget.dart';
 import 'cp_franchise_screen.dart';
 import 'cp_seller_screen.dart';
 import 'cp_buyer_screen.dart';
@@ -12,9 +12,8 @@ import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
 import '../../data/ads_data.dart';
-import '../../data/local_posts_data.dart';
 import '../admin/admin_live_ads_screen.dart';
-import '../admin/admin_viral_posts_screen.dart';
+import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजारासाठी
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
   const ChannelPartnerHomeScreen({super.key});
@@ -207,7 +206,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       ),
                     ),
 
-                    // === नवीन ॲड केलेला भाग: स्लायडर ===
+                    // === टॉप ऑफर स्लायडर ===
                     const OffersSliderWidget(),
                     const SizedBox(height: 16),
 
@@ -225,11 +224,13 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildKpiCard(context, 'एकूण Buyers', '3,250', Icons.people_outline, AppColors.primaryOrange, const CpBuyerScreen()),
                         _buildKpiCard(context, 'महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen, const CpSellerRevenueScreen()),
                         _buildKpiCard(context, 'Live जाहिराती', '${AdsData.liveAds.where((a) => a.location.contains('पुणे')).length}', Icons.campaign_outlined, Colors.deepOrange, AdminLiveAdsScreen(locationKeyword: 'पुणे', title: 'पुणे जिल्हा — Live जाहिराती')),
-                        _buildKpiCard(context, 'Most Viral पोस्ट', '${LocalPostsData.posts.where((p) => p.responsePoints >= 1000).length}', Icons.local_fire_department_outlined, Colors.redAccent, const AdminViralPostsScreen()),
+                        
+                        // === मुद्दा ११: मोस्ट व्हायरल काढून आठवडी बाजार टाकला ===
+                        _buildKpiCard(context, 'आठवडी बाजार', '३', 'वस्तू जोडा', Icons.storefront, Colors.teal, const PromoterCatalogScreen()),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // === Quick Actions ===
                     const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                     const SizedBox(height: 12),
@@ -254,8 +255,12 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()))),
                       ],
                     ),
+                    const SizedBox(height: 10),
+                    // === आठवडी बाजार Quick Action (पर्यायी) ===
+                    _buildQuickAction(context, 'आठवडी बाजार', Icons.storefront,
+                        () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
                     const SizedBox(height: 24),
-                    
+
                     // === Franchise List ===
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
