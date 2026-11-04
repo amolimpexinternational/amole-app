@@ -41,135 +41,166 @@ class _AdsApprovalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> pendingAds = [
+    // === फ्रँचायझीनुसार ग्रुप केलेले ॲड्स ===
+    final List<Map<String, dynamic>> franchiseGroups = [
       {
-        'title': 'पाटील किराणा स्टोअर — Photo Ad',
-        'subtitle': 'हडपसर फ्रँचाइजी • बजेट ₹300 • 3 दिवसांपूर्वी सबमिट',
-        'sentBy': 'फ्रँचाइजी: हडपसर फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543210',
-        'age': 'सर्वात जुनी'
+        'franchise': 'हडपसर फ्रँचाइजी',
+        'phone': '+91 9876543210',
+        'pendingCount': 2,
+        'ads': [
+          {'title': 'पाटील किराणा स्टोअर — Photo Ad', 'sender': 'पाटील किराणा स्टोअर', 'senderType': 'Seller', 'days': '3 दिवसांपूर्वी', 'budget': '₹300'},
+          {'title': 'जोशी किराणा — Text Ad', 'sender': 'जोशी किराणा', 'senderType': 'Seller', 'days': '2 दिवसांपूर्वी', 'budget': '₹200'},
+        ],
       },
       {
-        'title': 'श्री साई मेडिकल — Text Ad',
-        'subtitle': 'कोथरूड फ्रँचाइजी • बजेट ₹150 • 1 दिवसापूर्वी सबमिट',
-        'sentBy': 'फ्रँचाइजी: कोथरूड फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543211',
-        'age': ''
-      },
-    ];
-    final List<Map<String, String>> liveAds = [
-      {
-        'title': 'न्यू फॅशन पॉईंट — Video Ad',
-        'subtitle': 'वडगाव फ्रँचाइजी • बजेट ₹500 • 5 दिवसांपूर्वी मंजूर',
-        'sentBy': 'फ्रँचाइजी: वडगाव फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543212',
-        'age': ''
+        'franchise': 'कोथरूड फ्रँचाइजी',
+        'phone': '+91 9876543211',
+        'pendingCount': 1,
+        'ads': [
+          {'title': 'श्री साई मेडिकल — Text Ad', 'sender': 'श्री साई मेडिकल', 'senderType': 'Seller', 'days': '1 दिवसापूर्वी', 'budget': '₹150'},
+        ],
       },
       {
-        'title': 'भोसरी जनरल स्टोअर्स — Photo Ad',
-        'subtitle': 'भोसरी फ्रँचाइजी • बजेट ₹200 • 6 दिवसांपूर्वी मंजूर',
-        'sentBy': 'फ्रँचाइजी: भोसरी फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543213',
-        'age': ''
+        'franchise': 'वडगाव फ्रँचाइजी',
+        'phone': '+91 9876543212',
+        'pendingCount': 0,
+        'ads': [],
       },
     ];
 
-    if (pendingAds.isEmpty && liveAds.isEmpty) {
-      return const _EmptyState(text: 'सध्या कोणतीही जाहिरात नाही');
-    }
+    final totalPending = franchiseGroups.fold<int>(0, (sum, g) => sum + (g['pendingCount'] as int));
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        if (pendingAds.isNotEmpty) ...[
-          const _SectionLabel(text: '⏳ Approval प्रतीक्षेत (जुन्या आधी)'),
-          ...pendingAds.map((ad) => _pendingAdCard(context, ad)),
-          const SizedBox(height: 20),
-        ],
-        if (liveAds.isNotEmpty) ...[
-          const _SectionLabel(text: '✅ मंजूर व Live'),
-          ...liveAds.map((ad) => _liveAdCard(ad)),
-        ],
+        // === एकूण सारांश ===
+        Container(
+          padding: const EdgeInsets.all(14),
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.orange.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.pending_actions, color: Colors.orange.shade700, size: 28),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('एकूण $totalPending जाहिराती अप्रूव्हलसाठी प्रतीक्षेत', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.orange.shade900)),
+                    Text('${franchiseGroups.where((g) => (g['pendingCount'] as int) > 0).length} फ्रँचायझींकडून', style: TextStyle(fontSize: 12, color: Colors.orange.shade700)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // === प्रत्येक फ्रँचायझीचा ग्रुप ===
+        ...franchiseGroups.map((group) {
+          final count = group['pendingCount'] as int;
+          final ads = group['ads'] as List;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: count > 0 ? Colors.orange.shade200 : Colors.grey.shade200),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // फ्रँचायझी हेडर
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: count > 0 ? Colors.orange.shade50 : Colors.grey.shade50,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.business, color: count > 0 ? Colors.orange.shade700 : Colors.grey, size: 22),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(group['franchise'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                            Text('📞 ${group['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: count > 0 ? Colors.orange : Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text('$count पेंडिंग', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                ),
+                // ॲड्स यादी
+                if (ads.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: Text('कोणतेही पेंडिंग नाही', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
+                  )
+                else
+                  ...ads.map<Widget>((ad) => _adRow(context, ad as Map<String, String>)),
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
 
-  Widget _pendingAdCard(BuildContext context, Map<String, String> ad) {
+  Widget _adRow(BuildContext context, Map<String, String> ad) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.orange.shade200),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
-      ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade200))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Icon(Icons.campaign_outlined, color: Colors.orange.shade700),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-                Text(ad['subtitle']!, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
-              ]),
-            ),
-          ]),
-          // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
+          Row(
+            children: [
+              const Icon(Icons.campaign_outlined, color: AppColors.primaryBlue, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
+                    Text('पाठवणारा: ${ad['sender']} (${ad['senderType']}) • ${ad['days']} • बजेट ${ad['budget']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
-          Text(ad['sentBy']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
-          Text(ad['phone']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 12),
-          Row(children: [
-            Expanded(
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed)),
+          Row(
+            children: [
+              Expanded(child: OutlinedButton(
+                style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed), padding: const EdgeInsets.symmetric(vertical: 6)),
                 onPressed: () {},
-                child: const Text('नाकारा'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen),
+                child: const Text('नाकारा', style: TextStyle(fontSize: 12)),
+              )),
+              const SizedBox(width: 8),
+              Expanded(child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen, padding: const EdgeInsets.symmetric(vertical: 6)),
                 onPressed: () {},
-                child: const Text('मंजूर करा', style: TextStyle(color: AppColors.white)),
-              ),
-            ),
-          ]),
+                child: const Text('मंजूर करा', style: TextStyle(color: Colors.white, fontSize: 12)),
+              )),
+            ],
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _liveAdCard(Map<String, String> ad) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.lightGrey),
-      ),
-      child: Row(children: [
-        const Icon(Icons.check_circle_outline, color: AppColors.successGreen),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(ad['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-            Text(ad['subtitle']!, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
-            Text(ad['sentBy']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
-            Text(ad['phone']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
-          ]),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: AppColors.successGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20)),
-          child: const Text('Live', style: TextStyle(color: AppColors.successGreen, fontSize: 11, fontWeight: FontWeight.w600)),
-        ),
-      ]),
     );
   }
 }
@@ -180,175 +211,148 @@ class _OnboardingApprovalTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> pendingOnboarding = [
+    // === फ्रँचायझीनुसार ग्रुप ===
+    final List<Map<String, dynamic>> franchiseGroups = [
       {
-        'title': 'कोथरूड फ्रँचाइजी — नवीन Seller',
-        'subtitle': 'श्री साई मेडिकल • 4 दिवसांपूर्वी विनंती • 72-तास मुदत जवळ',
-        'sentBy': 'फ्रँचाइजी: कोथरूड फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543214',
-        'icon': 'seller'
+        'franchise': 'हडपसर फ्रँचाइजी',
+        'phone': '+91 9876543210',
+        'pendingCount': 2,
+        'requests': [
+          {'title': 'न्यू फॅशन पॉईंट', 'type': 'Seller', 'days': '1 दिवसापूर्वी'},
+          {'title': 'जोशी किराणा', 'type': 'Seller', 'days': '2 दिवसांपूर्वी'},
+        ],
       },
       {
-        'title': 'नवीन Franchise विनंती',
-        'subtitle': 'खडकी पिनकोड • 2 दिवसांपूर्वी विनंती',
-        'sentBy': 'फ्रँचाइजी: खडकी फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543215',
-        'icon': 'franchise'
-      },
-      {
-        'title': 'हडपसर फ्रँचाइजी — नवीन Seller',
-        'subtitle': 'न्यू फॅशन पॉईंट • 1 दिवसापूर्वी विनंती',
-        'sentBy': 'फ्रँचाइजी: हडपसर फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543216',
-        'icon': 'seller'
-      },
-    ];
-    final List<Map<String, String>> approvedOnboarding = [
-      {
-        'title': 'पाटील किराणा स्टोअर',
-        'subtitle': 'हडपसर फ्रँचाइजी • 6 दिवसांपूर्वी मंजूर',
-        'sentBy': 'फ्रँचाइजी: हडपसर फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543217',
-        'icon': 'seller'
-      },
-      {
-        'title': 'वडगाव फ्रँचाइजी',
-        'subtitle': '10 दिवसांपूर्वी मंजूर',
-        'sentBy': 'फ्रँचाइजी: वडगाव फ्रँचाइजी',
-        'phone': 'मोबाईल: +91 9876543218',
-        'icon': 'franchise'
+        'franchise': 'कोथरूड फ्रँचाइजी',
+        'phone': '+91 9876543211',
+        'pendingCount': 1,
+        'requests': [
+          {'title': 'श्री साई मेडिकल', 'type': 'Seller', 'days': '4 दिवसांपूर्वी'},
+        ],
       },
     ];
 
-    if (pendingOnboarding.isEmpty && approvedOnboarding.isEmpty) {
-      return const _EmptyState(text: 'सध्या कोणतीही On-boarding विनंती नाही');
-    }
+    final totalPending = franchiseGroups.fold<int>(0, (sum, g) => sum + (g['pendingCount'] as int));
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        if (pendingOnboarding.isNotEmpty) ...[
-          const _SectionLabel(text: '⏳ Approval प्रतीक्षेत (जुन्या आधी)'),
-          ...pendingOnboarding.map((r) => _pendingOnboardingCard(context, r)),
-          const SizedBox(height: 20),
-        ],
-        if (approvedOnboarding.isNotEmpty) ...[
-          const _SectionLabel(text: '✅ मंजूर झालेले'),
-          ...approvedOnboarding.map((r) => _approvedOnboardingCard(r)),
-        ],
+        Container(
+          padding: const EdgeInsets.all(14),
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.blue.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.person_add_alt_1, color: Colors.blue.shade700, size: 28),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('एकूण $totalPending On-boarding विनंत्या प्रतीक्षेत', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.blue.shade900)),
+                    Text('${franchiseGroups.where((g) => (g['pendingCount'] as int) > 0).length} फ्रँचायझींकडून', style: TextStyle(fontSize: 12, color: Colors.blue.shade700)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        ...franchiseGroups.map((group) {
+          final count = group['pendingCount'] as int;
+          final requests = group['requests'] as List;
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: count > 0 ? Colors.blue.shade200 : Colors.grey.shade200),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: count > 0 ? Colors.blue.shade50 : Colors.grey.shade50,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.business, color: count > 0 ? Colors.blue.shade700 : Colors.grey, size: 22),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(group['franchise'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                            Text('📞 ${group['phone']}', style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue)),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(color: count > 0 ? Colors.blue : Colors.green, borderRadius: BorderRadius.circular(12)),
+                        child: Text('$count पेंडिंग', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+                      ),
+                    ],
+                  ),
+                ),
+                if (requests.isEmpty)
+                  const Padding(padding: EdgeInsets.all(14), child: Text('कोणतेही पेंडिंग नाही', style: TextStyle(fontSize: 12, color: AppColors.textLight)))
+                else
+                  ...requests.map<Widget>((req) => _requestRow(context, req as Map<String, String>)),
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
 
-  Widget _pendingOnboardingCard(BuildContext context, Map<String, String> r) {
-    final isSeller = r['icon'] == 'seller';
+  Widget _requestRow(BuildContext context, Map<String, String> req) {
+    final isSeller = req['type'] == 'Seller';
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.orange.shade200),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
-      ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey.shade200))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Icon(isSeller ? Icons.storefront_outlined : Icons.business_outlined, color: Colors.orange.shade700),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(r['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-                Text(r['subtitle']!, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
-              ]),
-            ),
-          ]),
-          // === फ्रँचायझीचं नाव आणि नंबर (नवीन) ===
+          Row(
+            children: [
+              Icon(isSeller ? Icons.storefront_outlined : Icons.business_outlined, color: isSeller ? Colors.teal : AppColors.primaryBlue, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(req['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
+                    Text('${req['type']} • ${req['days']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                  ],
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 8),
-          Text(r['sentBy']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
-          Text(r['phone']!, style: const TextStyle(fontSize: 12, color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 12),
-          Row(children: [
-            Expanded(
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed)),
+          Row(
+            children: [
+              Expanded(child: OutlinedButton(
+                style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed), padding: const EdgeInsets.symmetric(vertical: 6)),
                 onPressed: () {},
-                child: const Text('नाकारा'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen),
+                child: const Text('नाकारा', style: TextStyle(fontSize: 12)),
+              )),
+              const SizedBox(width: 8),
+              Expanded(child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen, padding: const EdgeInsets.symmetric(vertical: 6)),
                 onPressed: () {},
-                child: const Text('मंजूर करा', style: TextStyle(color: AppColors.white)),
-              ),
-            ),
-          ]),
-        ],
-      ),
-    );
-  }
-
-  Widget _approvedOnboardingCard(Map<String, String> r) {
-    final isSeller = r['icon'] == 'seller';
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.lightGrey),
-      ),
-      child: Row(children: [
-        Icon(isSeller ? Icons.storefront_outlined : Icons.business_outlined, color: AppColors.successGreen),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(r['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-            Text(r['subtitle']!, style: const TextStyle(color: AppColors.textLight, fontSize: 12)),
-            Text(r['sentBy']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
-            Text(r['phone']!, style: const TextStyle(fontSize: 11, color: AppColors.primaryBlue)),
-          ]),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: AppColors.successGreen.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20)),
-          child: const Text('Verified', style: TextStyle(color: AppColors.successGreen, fontSize: 11, fontWeight: FontWeight.w600)),
-        ),
-      ]),
-    );
-  }
-}
-
-// ---------------- सामायिक विजेट्स ----------------
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  const _SectionLabel({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Text(text, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final String text;
-  const _EmptyState({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.task_alt_outlined, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 16),
-          Text(text, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                child: const Text('मंजूर करा', style: TextStyle(color: Colors.white, fontSize: 12)),
+              )),
+            ],
+          ),
         ],
       ),
     );
