@@ -1,3 +1,4 @@
+import 'buyer_messages_screen.dart';
 import 'weekly_market_screen.dart';
 import 'promoter_dashboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -417,10 +418,10 @@ const SizedBox(height: 16),
           } else if (index == 2) {
             // QR Scan
             Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
-          } else if (index == 3) {
-            // माझे मेसेज (सर्व नोटिफिकेशन्स)
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
-          } } else if (index == 4) {
+          } } else if (index == 3) {
+  // माझे मेसेज (फक्त सेलरचे एकतर्फी मेसेज दिसतील)
+  Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerMessagesScreen()));
+} else if (index == 4) {
   // प्रमोटर डॅशबोर्ड
   Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
 } else {
