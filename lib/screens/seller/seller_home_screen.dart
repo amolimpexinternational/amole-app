@@ -1,4 +1,3 @@
-import '../buyer/promoter_catalog_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
@@ -15,7 +14,7 @@ import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
 import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
-import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजार कॅटलॉगसाठी
+import '../buyer/promoter_catalog_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -270,7 +269,8 @@ class _SellerDashboardState extends State<_SellerDashboard> {
 
           const SizedBox(height: 16),
           const OffersSliderWidget(), 
-          // === आठवडी बाजार (Seller साठी) ===
+          
+          // === आठवडी बाजार ===
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GestureDetector(
@@ -301,6 +301,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               ),
             ),
           ),
+          
           const SizedBox(height: 16),
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
