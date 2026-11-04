@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wakelock_plus/wakelock_plus.dart'; // नवीन ॲड केले
 import '../constants/app_colors.dart';
 import '../screens/buyer/seller_profile_screen.dart';
 
@@ -17,7 +16,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   int _currentPage = 0;
   int _selectedTab = 0;
 
-  // टॅब्स: सेलरसाठी ३ आणि बायरसाठी २
+  // टॅब्स: सेलरसाठी ३ आणि बायरसाठी २ (लोकल कनेक्ट/मोस्ट व्हायरल काढले)
   List<String> get _tabs => widget.isSeller
       ? ['📢 जाहिराती', '🎁 My Offers', '🎯 Create Offer']
       : ['📢 जाहिराती', '🎁 My Offers'];
@@ -80,21 +79,8 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
     });
   }
 
-  // === जेव्हा बायर जाहिरात टॅबवर (व्हिडिओ) असेल तेव्हा स्क्रीन ऑन ठेवा, अन्यथा बंद ===
-  void _updateWakelock() {
-    if (_selectedTab == 0) {
-      // जाहिरात टॅबवर - स्क्रीन ऑन ठेवा (व्हिडिओ पाहण्यासाठी)
-      WakelockPlus.enable();
-    } else {
-      // इतर टॅबवर - बॅटरी वाचवण्यासाठी बंद करा
-      WakelockPlus.disable();
-    }
-  }
-
   @override
   void dispose() {
-    // विजेट बंद होताच वेकलॉक पूर्णपणे बंद करा
-    WakelockPlus.disable();
     _pageController.dispose();
     super.dispose();
   }
@@ -405,9 +391,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   Widget build(BuildContext context) {
     final double adsFeedHeight = (MediaQuery.of(context).size.width - 32) * 5 / 4 + 200;
 
-    // टॅब बदलला की वेकलॉक अपडेट करा
-    _updateWakelock();
-
     return Column(
       children: [
         Container(
@@ -416,9 +399,7 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
           child: Row(
             children: List.generate(_tabs.length, (i) => Expanded(
               child: GestureDetector(
-                onTap: () {
-                  setState(() => _selectedTab = i);
-                },
+                onTap: () => setState(() => _selectedTab = i),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
