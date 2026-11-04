@@ -422,4 +422,31 @@ class _AdminApprovalsScreenState extends State<AdminApprovalsScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(req['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color
+                    Text(req['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textDark)),
+                    Text('${req['type']} • ${req['days']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(child: OutlinedButton(
+                style: OutlinedButton.styleFrom(foregroundColor: AppColors.errorRed, side: const BorderSide(color: AppColors.errorRed), padding: const EdgeInsets.symmetric(vertical: 6)),
+                onPressed: () {},
+                child: const Text('नाकारा', style: TextStyle(fontSize: 12)),
+              )),
+              const SizedBox(width: 8),
+              Expanded(child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen, padding: const EdgeInsets.symmetric(vertical: 6)),
+                onPressed: () {},
+                child: const Text('मंजूर करा', style: TextStyle(color: Colors.white, fontSize: 12)),
+              )),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
