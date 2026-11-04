@@ -4,7 +4,8 @@ import '../../constants/app_colors.dart';
 import '../seller/expenses_wallet_screen.dart';
 import 'promoter_catalog_screen.dart';
 import '../seller/registration/seller_registration_screen.dart';
-import '../delivery/delivery_boy_home_screen.dart'; // डिलिव्हरी बॉयसाठी
+import '../delivery/delivery_boy_home_screen.dart';
+import '../seller/seller_advertisement_screen.dart'; // जाहिरातींसाठी
 
 class PromoterDashboardScreen extends StatefulWidget {
   const PromoterDashboardScreen({super.key});
@@ -67,7 +68,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('डिलिव्हरी बॉय सेवा सक्रिय झाली!'), backgroundColor: Colors.green),
                 );
-                // डिलिव्हरी बॉय स्क्रीनवर पाठवा
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen()));
               },
               child: const Text('KYC सुरू करा'),
@@ -212,16 +212,19 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Delivery Boy
-          _sectionCard(
-            icon: Icons.two_wheeler,
-            color: Colors.orange,
-            title: 'डिलिव्हरी बॉय सेवा',
-            subtitle: _isDeliveryBoy ? 'सेवा ON - काम करत आहात' : 'KYC करून डिलिव्हरी बॉय व्हा',
-            trailing: Switch(
-              value: _isDeliveryBoy,
-              onChanged: _toggleDeliveryBoy,
-              activeThumbColor: Colors.orange,
+          // Delivery Boy — आता क्लिक करण्यायोग्य
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen())),
+            child: _sectionCard(
+              icon: Icons.two_wheeler,
+              color: Colors.orange,
+              title: 'डिलिव्हरी बॉय सेवा',
+              subtitle: _isDeliveryBoy ? 'सेवा ON - काम करत आहात' : 'KYC करून डिलिव्हरी बॉय व्हा',
+              trailing: Switch(
+                value: _isDeliveryBoy,
+                onChanged: _toggleDeliveryBoy,
+                activeThumbColor: Colors.orange,
+              ),
             ),
           ),
 
@@ -250,14 +253,14 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
           ),
 
-          // Ads
+          // Ads — आता क्लिक करण्यायोग्य
           _sectionCard(
             icon: Icons.campaign,
             color: Colors.purple,
             title: 'जाहिराती',
             subtitle: 'पेड जाहिराती तयार करा',
             trailing: const Icon(Icons.arrow_forward, color: Colors.purple),
-            onTap: () {},
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen())),
           ),
 
           // Seller Onboarding
