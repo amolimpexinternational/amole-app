@@ -16,24 +16,47 @@ class BuyerNotificationScreen extends StatefulWidget {
 }
 
 class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
+  // === डमी सेलर मेसेज (वन-वे) ===
+  final List<Map<String, dynamic>> _sellerMessages = [
+    {
+      'seller': 'श्री गणेश किराणा',
+      'message': 'नमस्कार! आमच्याकडे नवीन सुकामेवा आला आहे. 10% सूट मिळवा!',
+      'time': '10 मिनिटांपूर्वी',
+      'icon': Icons.storefront,
+      'color': Colors.teal,
+    },
+    {
+      'seller': 'राज इलेक्ट्रॉनिक्स',
+      'message': 'तुमच्या ऑर्डरची डिलिव्हरी उद्या होईल. कृपया घरी असा.',
+      'time': '2 तासांपूर्वी',
+      'icon': Icons.electrical_services,
+      'color': Colors.orange,
+    },
+    {
+      'seller': 'स्वाद हॉटेल',
+      'message': 'आजचे स्पेशल थाळी ₹99 मध्ये! ऑर्डर करा.',
+      'time': 'काल',
+      'icon': Icons.restaurant,
+      'color': Colors.deepOrange,
+    },
+  ];
+
   void _acceptRequest(String buyerId) {
     setState(() {
       BuyerSocialData.acceptFriendRequest(buyerId);
     });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Friend Request स्वीकारली.')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Friend Request स्वीकारली.')),
+    );
   }
 
   void _rejectRequest(String buyerId) {
     setState(() {
       BuyerSocialData.rejectFriendRequest(buyerId);
     });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Friend Request नाकारली.')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Friend Request नाकारली.')),
+    );
   }
 
   Widget _buildFriendRequests() {
@@ -41,9 +64,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
         .where((buyer) => buyer['friendRequestStatus'] == 'pending')
         .toList();
 
-    if (pendingRequests.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (pendingRequests.isEmpty) return const SizedBox.shrink();
 
     return Container(
       width: double.infinity,
@@ -149,10 +170,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
                           side: const BorderSide(color: Colors.red),
                           padding: const EdgeInsets.symmetric(vertical: 7),
                         ),
-                        child: const Text(
-                          'Reject',
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        child: const Text('Reject', style: TextStyle(fontSize: 12)),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -164,13 +182,108 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 7),
                         ),
-                        child: const Text(
-                          'Accept',
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        child: const Text('Accept', style: TextStyle(fontSize: 12)),
                       ),
                     ),
                   ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellerMessages() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.lightGrey),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.message_outlined, color: Colors.teal),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  'सेलर मेसेज',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.teal,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_sellerMessages.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ..._sellerMessages.map((msg) => _buildSellerMessageCard(msg)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSellerMessageCard(Map<String, dynamic> msg) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F7FA),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundColor: (msg['color'] as Color).withOpacity(0.15),
+            child: Icon(msg['icon'] as IconData, color: msg['color'] as Color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  msg['seller'] as String,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  msg['message'] as String,
+                  style: const TextStyle(fontSize: 13, color: AppColors.textDark),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  msg['time'] as String,
+                  style: const TextStyle(fontSize: 11, color: AppColors.textLight),
                 ),
               ],
             ),
@@ -206,14 +319,6 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
           context,
           MaterialPageRoute(builder: (_) => const OrderTrackingScreen()),
         ),
-      ),
-      NotificationModel(
-        id: 'b3',
-        icon: Icons.storefront_outlined,
-        color: Colors.teal,
-        title: 'राज इलेक्ट्रॉनिक्स कडून मेसेज',
-        desc: 'तुमच्या चौकशीला उत्तर मिळालं आहे',
-        time: '2 तासांपूर्वी',
       ),
       NotificationModel(
         id: 'b4',
@@ -262,6 +367,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
       ),
       body: ListView(
         children: [
+          _buildSellerMessages(),
           _buildFriendRequests(),
           NotificationListView(notifications: notifications),
         ],
