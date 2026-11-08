@@ -14,8 +14,11 @@ class BuyerNotificationScreen extends StatefulWidget {
       _BuyerNotificationScreenState();
 }
 
-class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
-  // === डमी सेलर मेसेज (वन-वे) ===
+class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  // === डमी सेलर मेसेज (वन-वे) — ५ मेसेज ===
   final List<Map<String, dynamic>> _sellerMessages = [
     {
       'seller': 'श्री गणेश किराणा',
@@ -38,59 +41,90 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
       'icon': Icons.restaurant,
       'color': Colors.deepOrange,
     },
+    {
+      'seller': 'अमोल कपडे भांडार',
+      'message': 'नवीन कलेक्शन आले आहे. 20% सूट!',
+      'time': '2 दिवसांपूर्वी',
+      'icon': Icons.checkroom,
+      'color': Colors.purple,
+    },
+    {
+      'seller': 'साई मेडिकल',
+      'message': 'तुमची औषधे तयार आहेत. कधीही येऊन घ्या.',
+      'time': '3 दिवसांपूर्वी',
+      'icon': Icons.local_pharmacy,
+      'color': Colors.green,
+    },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   Widget _buildSellerMessages() {
     // नवीन खाली, जुने वरती — म्हणजे उलट क्रम
     final reversedMessages = _sellerMessages.reversed.toList();
 
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.lightGrey),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return ListView(
+      padding: const EdgeInsets.all(12),
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.lightGrey),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.message_outlined, color: Colors.teal),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: Text(
-                  'सेलर मेसेज',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+              Row(
+                children: [
+                  const Icon(Icons.message_outlined, color: Colors.teal),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'सेलर मेसेज',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textDark,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.teal,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${_sellerMessages.length}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.teal,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${_sellerMessages.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
+              const SizedBox(height: 8),
+              ...reversedMessages.map((msg) => _buildSellerMessageCard(msg)),
             ],
           ),
-          const SizedBox(height: 8),
-          ...reversedMessages.map((msg) => _buildSellerMessageCard(msg)),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -108,7 +142,8 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
           CircleAvatar(
             radius: 20,
             backgroundColor: (msg['color'] as Color).withOpacity(0.15),
-            child: Icon(msg['icon'] as IconData, color: msg['color'] as Color, size: 20),
+            child: Icon(msg['icon'] as IconData,
+                color: msg['color'] as Color, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -126,12 +161,14 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
                 const SizedBox(height: 3),
                 Text(
                   msg['message'] as String,
-                  style: const TextStyle(fontSize: 13, color: AppColors.textDark),
+                  style: const TextStyle(
+                      fontSize: 13, color: AppColors.textDark),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   msg['time'] as String,
-                  style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textLight),
                 ),
               ],
             ),
@@ -141,8 +178,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildOtherNotifications() {
     final notifications = [
       NotificationModel(
         id: 'b1',
@@ -206,17 +242,33 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen> {
       ),
     ];
 
+    return NotificationListView(notifications: notifications);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: const Text('माझे मेसेज'),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: Colors.white,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          tabs: const [
+            Tab(text: 'सेलर मेसेज'),
+            Tab(text: 'इतर सूचना'),
+          ],
+        ),
       ),
-      body: ListView(
+      body: TabBarView(
+        controller: _tabController,
         children: [
           _buildSellerMessages(),
-          NotificationListView(notifications: notifications),
+          _buildOtherNotifications(),
         ],
       ),
     );
