@@ -294,7 +294,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        // TODO: आठवडी बाजारात वस्तू जोडण्याची स्क्रीन
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen()));
                       },
                       icon: const Icon(Icons.add, size: 16, color: Colors.white),
@@ -343,7 +342,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
               _kpiCard('नवीन जाहिराती', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
-              _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferTabScreen()))),
+              _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () {}),
             ],
           ),
           const SizedBox(height: 24),
