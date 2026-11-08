@@ -341,7 +341,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               _kpiCard('विक्री झालेल्या वस्तू', '37', '3 प्रतीक्षेत', Icons.shopping_bag_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen()))),
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
-              _kpiCard('नवीन जाहिराती', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
+              _kpiCard('जाहिरात विभाग', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
               _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () {}),
             ],
           ),
