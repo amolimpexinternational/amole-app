@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../constants/app_colors.dart';
 
 class PromoterCatalogScreen extends StatefulWidget {
@@ -11,110 +9,159 @@ class PromoterCatalogScreen extends StatefulWidget {
 }
 
 class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
-  // डेमो प्रॉडक्ट्स
-  final List<Map<String, dynamic>> _catalogItems = [
+  // === प्रमोटर कॅटलॉग — max 50 ===
+  final List<Map<String, dynamic>> _catalogItems = [];
+
+  // === उपलब्ध प्रॉडक्ट्स (डमी — फक्त "प्रमोशन ON") ===
+  final List<Map<String, dynamic>> _availableProducts = [
     {
-      'id': '1',
+      'id': 'p1',
       'name': 'हातमाग साडी',
       'price': 1200,
+      'seller': 'श्री गणेश किराणा',
       'image': null,
-      'isActive': true,
-      'expiry': '30 दिवस शिल्लक',
-    }
+      'isPromoterAdd': true,
+    },
+    {
+      'id': 'p2',
+      'name': 'बासमती तांदूळ (5 kg)',
+      'price': 450,
+      'seller': 'श्री गणेश किराणा',
+      'image': null,
+      'isPromoterAdd': true,
+    },
+    {
+      'id': 'p3',
+      'name': 'इलेक्ट्रिक केतली',
+      'price': 899,
+      'seller': 'राज इलेक्ट्रॉनिक्स',
+      'image': null,
+      'isPromoterAdd': true,
+    },
+    {
+      'id': 'p4',
+      'name': 'कॉटन कुर्ता',
+      'price': 599,
+      'seller': 'अमोल कपडे भांडार',
+      'image': null,
+      'isPromoterAdd': true,
+    },
+    {
+      'id': 'p5',
+      'name': 'स्टील थाळी सेट',
+      'price': 349,
+      'seller': 'स्वाद हॉटेल',
+      'image': null,
+      'isPromoterAdd': true,
+    },
   ];
 
-  Future<void> _addProduct() async {
-    if (_catalogItems.length >= 5) {
+  // === आधीच जोडलेले प्रॉडक्ट्स वगळून उपलब्ध ===
+  List<Map<String, dynamic>> get _filteredAvailable {
+    final existingIds = _catalogItems.map((e) => e['id']).toSet();
+    return _availableProducts.where((p) => !existingIds.contains(p['id'])).toList();
+  }
+
+  void _addProduct() {
+    if (_catalogItems.length >= 50) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('कमाल ५ प्रॉडक्ट्सच जोडू शकता!'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('कमाल ५० प्रॉडक्ट्सच जोडू शकता!'), backgroundColor: Colors.red),
       );
       return;
     }
 
-    final nameCtrl = TextEditingController();
-    final priceCtrl = TextEditingController();
-    File? pickedImage;
+    final available = _filteredAvailable;
+    if (available.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('जोडण्यासाठी नवीन प्रॉडक्ट्स उपलब्ध नाहीत.'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            top: 24, left: 24, right: 24,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('नवीन प्रॉडक्ट जोडा (₹50 फी)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              
-              // फोटो अपलोड
-              Center(
-                child: GestureDetector(
-                  onTap: () async {
-                    final img = await ImagePicker().pickImage(source: ImageSource.gallery);
-                    if (img != null) {
-                      setSheetState(() => pickedImage = File(img.path));
-                    }
-                  },
-                  child: Container(
-                    height: 100, width: 100,
-                    decoration: BoxDecoration(
-                      color: AppColors.lightGrey,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade400),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (ctx, scrollController) => Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('उपलब्ध प्रॉडक्ट्स (प्रमोशन ON)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: available.length,
+                itemBuilder: (context, index) {
+                  final p = available[index];
+                  return ListTile(
+                    leading: Container(
+                      width: 50, height: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.lightGrey,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.shopping_bag_outlined, color: AppColors.textLight),
                     ),
-                    child: pickedImage != null
-                        ? ClipRRect(borderRadius: BorderRadius.circular(9), child: Image.file(pickedImage!, fit: BoxFit.cover))
-                        : const Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add_a_photo, color: AppColors.textLight),
-                              Text('फोटो', style: TextStyle(fontSize: 10, color: AppColors.textLight)),
-                            ],
-                          ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'प्रॉडक्टचे नाव', border: OutlineInputBorder())),
-              const SizedBox(height: 12),
-              TextField(controller: priceCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'किंमत (₹)', border: OutlineInputBorder())),
-              const SizedBox(height: 20),
-              
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (nameCtrl.text.isEmpty || priceCtrl.text.isEmpty) return;
-                    Navigator.pop(ctx);
-                    setState(() {
-                      _catalogItems.add({
-                        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-                        'name': nameCtrl.text,
-                        'price': double.tryParse(priceCtrl.text) ?? 0,
-                        'image': pickedImage,
-                        'isActive': true,
-                        'expiry': '30 दिवस शिल्लक',
+                    title: Text(p['name'], style: const TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: Text('${p['seller']} · ₹${p['price']}'),
+                    trailing: const Icon(Icons.add_circle, color: Colors.purple),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      setState(() {
+                        _catalogItems.add(Map<String, dynamic>.from(p));
                       });
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('प्रॉडक्ट जोडले! ₹50 फी कापली गेली.'), backgroundColor: Colors.green),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14)),
-                  child: const Text('जोडा आणि ₹50 भरा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                ),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${p['name']} कॅटलॉगमध्ये जोडलं!'), backgroundColor: Colors.green),
+                      );
+                    },
+                  );
+                },
               ),
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  void _shareProduct(Map<String, dynamic> item) {
+    final link = 'https://amole.in/promoter/AMOLE-P123/${item['id']}';
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('प्रॉडक्ट शेअर करा'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${item['name']} — ₹${item['price']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            const Text('ही लिंक WhatsApp, Instagram वर शेअर करा:', style: TextStyle(fontSize: 13)),
+            const SizedBox(height: 8),
+            SelectableText(link, style: const TextStyle(color: Colors.blue, fontSize: 12)),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('बंद करा')),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('लिंक कॉपी झाली! WhatsApp/Instagram वर शेअर करा.'), backgroundColor: Colors.green),
+              );
+            },
+            icon: const Icon(Icons.share, size: 16),
+            label: const Text('शेअर करा'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+          ),
+        ],
       ),
     );
   }
@@ -124,63 +171,97 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: const Text('आठवडी बाजार कॅटलॉग'),
-        backgroundColor: Colors.teal,
+        title: const Text('माझा प्रमोटर कॅटलॉग'),
+        backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addProduct,
-        backgroundColor: Colors.teal,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('प्रॉडक्ट जोडा', style: TextStyle(color: Colors.white)),
-      ),
-      body: _catalogItems.isEmpty
-          ? const Center(child: Text('कॅटलॉग रिकामा आहे. नवीन प्रॉडक्ट जोडा.', style: TextStyle(color: AppColors.textLight)))
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _catalogItems.length,
-              itemBuilder: (context, index) {
-                final item = _catalogItems[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: item['isActive'] ? Colors.white : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: item['isActive'] ? Colors.teal.shade200 : Colors.grey.shade400),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 60, height: 60,
-                        decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(8)),
-                        child: item['image'] != null
-                            ? ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.file(item['image'], fit: BoxFit.cover))
-                            : const Icon(Icons.image_not_supported, color: AppColors.textLight),
+      floatingActionButton: _catalogItems.length >= 50
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _addProduct,
+              backgroundColor: Colors.purple,
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text('प्रॉडक्ट जोडा', style: TextStyle(color: Colors.white)),
+            ),
+      body: Column(
+        children: [
+          // Header — count
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            color: Colors.purple.shade50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('एकूण प्रॉडक्ट्स', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${_catalogItems.length} / 50', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple.shade700)),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _catalogItems.isEmpty
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32),
+                      child: Text(
+                        'कॅटलॉग रिकामा आहे.\n\n"प्रॉडक्ट जोडा" वर क्लिक करून सेलरची "प्रमोशन ON" प्रॉडक्ट्स जोडा.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.textLight),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _catalogItems.length,
+                    itemBuilder: (context, index) {
+                      final item = _catalogItems[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.purple.shade200),
+                        ),
+                        child: Row(
                           children: [
-                            Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                            Text('₹${(item['price'] as double).toStringAsFixed(0)}', style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.bold)),
-                            Text(item['expiry'], style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                            Container(
+                              width: 60, height: 60,
+                              decoration: BoxDecoration(
+                                color: AppColors.lightGrey,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.shopping_bag_outlined, color: AppColors.textLight),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                  Text('₹${item['price']}', style: const TextStyle(color: Colors.purple, fontWeight: FontWeight.bold)),
+                                  Text('सेलर: ${item['seller']}', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.share, color: Colors.purple),
+                              onPressed: () => _shareProduct(item),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete_outline, color: Colors.red),
+                              onPressed: () {
+                                setState(() => _catalogItems.removeAt(index));
+                              },
+                            ),
                           ],
                         ),
-                      ),
-                      Switch(
-                        value: item['isActive'],
-                        activeThumbColor: Colors.teal,
-                        onChanged: (val) {
-                          setState(() => item['isActive'] = val);
-                        },
-                      ),
-                    ],
+                      );
+                    },
                   ),
-                );
-              },
-            ),
+          ),
+        ],
+      ),
     );
   }
 }
