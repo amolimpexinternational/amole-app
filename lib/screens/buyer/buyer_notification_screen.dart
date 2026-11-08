@@ -4,7 +4,7 @@ import '../../models/notification_model.dart';
 import '../../widgets/notification_list_view.dart';
 import 'reward_wallet_screen.dart';
 import 'order_tracking_screen.dart';
-import 'my_wall_screen.dart';
+import 'extra_income_screen.dart';
 
 class BuyerNotificationScreen extends StatefulWidget {
   const BuyerNotificationScreen({super.key});
@@ -213,7 +213,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
         time: '3 तासांपूर्वी',
         onTap: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const MyWallScreen()),
+          MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()),
         ),
       ),
       NotificationModel(
@@ -260,7 +260,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
           unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(text: 'सेलर मेसेज'),
-            Tab(text: 'इतर सूचना'),
+            Tab(text: 'महत्त्वाचे नोटिफिकेशन'),
           ],
         ),
       ),
