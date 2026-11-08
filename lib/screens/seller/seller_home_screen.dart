@@ -273,7 +273,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
-              height: 75,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
@@ -282,15 +281,33 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                 ),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 4),
-                    Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                  ],
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  const Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  const Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  const SizedBox(height: 8),
+                  // === "वस्तू जोडा" बटण (फक्त Seller ला) ===
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // TODO: आठवडी बाजारात वस्तू जोडण्याची स्क्रीन
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen()));
+                      },
+                      icon: const Icon(Icons.add, size: 16, color: Colors.white),
+                      label: const Text('वस्तू जोडा', style: TextStyle(color: Colors.white, fontSize: 12)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white.withValues(alpha: 0.25),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        minimumSize: const Size(0, 32),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
