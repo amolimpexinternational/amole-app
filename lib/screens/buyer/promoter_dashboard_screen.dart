@@ -3,9 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
 import '../seller/expenses_wallet_screen.dart';
 import 'promoter_catalog_screen.dart';
+import 'promoter_kyc_screen.dart';
 import '../seller/registration/seller_registration_screen.dart';
 import '../delivery/delivery_boy_home_screen.dart';
-import '../seller/seller_advertisement_screen.dart'; // जाहिरातींसाठी
+import '../seller/seller_advertisement_screen.dart';
 
 class PromoterDashboardScreen extends StatefulWidget {
   const PromoterDashboardScreen({super.key});
@@ -41,13 +42,25 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
     });
   }
 
+  // === KYC स्क्रीन उघडणे ===
   Future<void> _becomePromoter() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isPromoter', true);
-    setState(() => _isPromoter = true);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('अभिनंदन! तुम्ही आता प्रमोटर आहात 🎉'), backgroundColor: Colors.green),
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const PromoterKycScreen()),
     );
+
+    if (result == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isPromoter', true);
+      setState(() => _isPromoter = true);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('अभिनंदन! तुमची KYC सबमिट झाली. फ्रॅंचाईजी व्हेरिफिकेशननंतर तुम्ही प्रमोटर व्हाल 🎉'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 
   Future<void> _toggleDeliveryBoy(bool value) async {
@@ -212,7 +225,7 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
           ),
           const SizedBox(height: 16),
 
-          // Delivery Boy — आता क्लिक करण्यायोग्य
+          // Delivery Boy
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen())),
             child: _sectionCard(
@@ -253,7 +266,7 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
           ),
 
-          // Ads — आता क्लिक करण्यायोग्य
+          // Ads
           _sectionCard(
             icon: Icons.campaign,
             color: Colors.purple,
