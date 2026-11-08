@@ -14,7 +14,7 @@ import 'seller_customer_profile_screen.dart';
 import 'seller_subscription_screen.dart';
 import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
-import '../buyer/promoter_catalog_screen.dart';
+import '../buyer/weekly_market_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -103,7 +103,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     ),
                     Row(
                       children: [
-                        // माझे उत्पन्न
                         GestureDetector(
                           onTap: () {
                             showModalBottomSheet(
@@ -167,7 +166,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        // Expenses Wallet
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen()));
@@ -270,38 +268,32 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           const SizedBox(height: 16),
           const OffersSliderWidget(), 
           
-          // === आठवडी बाजार ===
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.teal.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.teal.shade200),
+          // === आठवडी बाजार (बायरसारखंच) ===
+          GestureDetector(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              height: 75,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                child: const Row(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.storefront, color: Colors.teal, size: 28),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('आठवडी बाजार (Weekly Market)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-                          Text('प्रॉडक्ट्स जोडा आणि विक्री करा (₹50/प्रॉडक्ट)', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
-                        ],
-                      ),
-                    ),
-                    Icon(Icons.chevron_right, color: Colors.teal),
+                    Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
                   ],
                 ),
               ),
             ),
           ),
-          
           const SizedBox(height: 16),
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
