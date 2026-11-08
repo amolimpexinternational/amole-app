@@ -42,9 +42,8 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
     });
   }
 
-  // === KYC स्क्रीन उघडणे ===
   Future<void> _becomePromoter() async {
-    final result = await Navigator.push<bool>(
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const PromoterKycScreen()),
     );
@@ -53,13 +52,14 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isPromoter', true);
       setState(() => _isPromoter = true);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('अभिनंदन! तुमची KYC सबमिट झाली. फ्रॅंचाईजी व्हेरिफिकेशननंतर तुम्ही प्रमोटर व्हाल 🎉'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('अभिनंदन! तुमची KYC सबमिट झाली. फ्रॅंचाईजी व्हेरिफिकेशननंतर तुम्ही प्रमोटर व्हाल 🎉'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     }
   }
 
@@ -241,13 +241,13 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             ),
           ),
 
-          // आठवडी बाजार
+          // आठवडी बाजार ₹50
           GestureDetector(
             onTap: _isJoinedAathwadiBazar ? null : _joinAathwadiBazar,
             child: _sectionCard(
               icon: Icons.storefront,
               color: Colors.teal,
-              title: 'आठवडी बाजार',
+              title: 'आठवडी बाजार ₹50',
               subtitle: _isJoinedAathwadiBazar ? 'सहभाग नोंदवला ✓' : '₹50 फी - सहभागी व्हा',
               trailing: Icon(
                 _isJoinedAathwadiBazar ? Icons.check_circle : Icons.arrow_forward,
