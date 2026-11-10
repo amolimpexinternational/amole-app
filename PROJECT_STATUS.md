@@ -766,3 +766,37 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 - Update (Oct 2026): Buyer Home मध्ये Extra Income टॅब जोडला. नवीन screens: extra_income_screen.dart, promoter_profile_screen.dart, promoter_dashboard_screen.dart. Promoter Dashboard मध्ये उत्पादन search जोडला. File: buyer_home_screen.dart (बदल). Demo/dummy data. बाकी: ZatPat/Hotel Food/Mom's Miracle चा कापणारा मजकूर, Buyer Home चे offer tabs.
 - Global Shopping व Mom's Miracle: Cart Bar + +/- UI पूर्ण (commit ID)
 - Expenses Wallet, Seller Type, GPS Tracking (250m), Promoter Logic, ZatPat Fixes पूर्ण
+
+# 21. UPDATE — NOVEMBER 2026 (नवीन बदल पूर्ण)
+
+## 21.1 काय पूर्ण झालं (७ बदल)
+- Seller Dashboard — आठवडी बाजार कार्ड + "वस्तू जोडा" बटण
+- Buyer "माझे मेसेज" — ५ सेलर मेसेज + "महत्त्वाचे नोटिफिकेशन" टॅब
+- प्रमोटर KYC स्क्रीन (आधार, पॅन, पत्ता) — `lib/screens/buyer/promoter_kyc_screen.dart`
+- प्रमोटर डॅशबोर्ड — KYC लिंक + "आठवडी बाजार ₹50"
+- प्रमोटर कॅटलॉग — "माझा प्रमोटर कॅटलॉग" + उपलब्ध प्रॉडक्ट्स (max 50)
+- आठवडी बाजार कॅटलॉग — `lib/screens/shared/weekly_market_catalog_screen.dart`
+- आठवडी बाजार क्रिएट — `lib/screens/admin/weekly_market_create_screen.dart`
+- Top Offer Create Screen — `lib/screens/shared/top_offer_create_screen.dart` (टार्गेटिंगसह)
+- Seller/Franchise/CP/Admin — "क्रिएट टॉप ऑफर" KPI
+
+## 21.2 नवीन फाईल्स
+- `lib/screens/buyer/promoter_kyc_screen.dart`
+- `lib/screens/shared/weekly_market_catalog_screen.dart`
+- `lib/screens/shared/top_offer_create_screen.dart`
+- `lib/screens/admin/weekly_market_create_screen.dart`
+
+## 21.3 अजून बाकी
+- `flutter analyze` — अजून चालवलेलं नाही (नवीन बदलांनंतर)
+- `flutter run` — अजून तपासलेलं नाही
+- "ऑफर डिटेल स्क्रीन" — प्रॉडक्ट लिंक जोडायची बाकी
+- फ्री ऑफर vs पेड ऑफर — दोन्ही डिटेल स्क्रीन एकच करायचं
+
+
+
+
+
+
+
+
+
