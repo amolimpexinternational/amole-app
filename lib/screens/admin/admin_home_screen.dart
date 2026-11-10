@@ -1,3 +1,5 @@
+import '../shared/top_offer_create_screen.dart';
+import '../shared/weekly_market_catalog_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/offers_slider_widget.dart';
