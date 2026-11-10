@@ -168,6 +168,7 @@ class _AdminDashboard extends StatelessWidget {
               _kpi(context, 'एकूण Buyers', '0', 'नोंदणीकृत', Icons.people_outlined, Colors.purple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminBuyerListScreen()))),
               _kpi(context, 'आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
               _kpi(context, 'महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
+              _kpi(context, 'जाहिरात विभाग', '५', 'जाहिराती बघा', Icons.campaign_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminLiveAdsScreen()))),
               
 _kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'ऑफर तयार करा', Icons.local_offer_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: false)))),
               

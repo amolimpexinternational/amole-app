@@ -16,6 +16,7 @@ import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
 import '../buyer/weekly_market_screen.dart';
 import '../shared/weekly_market_catalog_screen.dart';
+import '../shared/top_offer_create_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -269,11 +270,12 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           const SizedBox(height: 16),
           const OffersSliderWidget(), 
           
-          // === आठवडी बाजार (बायरसारखंच) ===
+          // === आठवडी बाजार (बायरसारखंच - आडवं) ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
+              height: 75,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
@@ -282,32 +284,34 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                 ),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 12),
-                  const Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 4),
-                  const Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                  const SizedBox(height: 8),
-                  // === "वस्तू जोडा" बटण (फक्त Seller ला) ===
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()));
-                      },
-                      icon: const Icon(Icons.add, size: 16, color: Colors.white),
-                      label: const Text('वस्तू जोडा', style: TextStyle(color: Colors.white, fontSize: 12)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.25),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                        minimumSize: const Size(0, 32),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                    ),
-                  ),
-                ],
+              child: const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('🎪 आठवडी बाजार', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    SizedBox(height: 4),
+                    Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // === "वस्तू जोडा" बटण (कार्डच्या खाली) ===
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()));
+                },
+                icon: const Icon(Icons.add, size: 18, color: Colors.teal),
+                label: const Text('वस्तू जोडा', style: TextStyle(color: Colors.teal, fontSize: 14)),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: Colors.teal.shade300),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
               ),
             ),
           ),
@@ -343,7 +347,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
               _kpiCard('जाहिरात विभाग', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
-              _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () {}),
+              _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: true)))),
             ],
           ),
           const SizedBox(height: 24),

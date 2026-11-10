@@ -37,6 +37,54 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
     super.dispose();
   }
 
+  void _showMessageDetail(Map<String, dynamic> msg) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: (msg['color'] as Color).withOpacity(0.15),
+                  child: Icon(msg['icon'] as IconData, color: msg['color'] as Color, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(msg['seller'] as String, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(msg['time'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 8),
+            Text(msg['message'] as String, style: const TextStyle(fontSize: 15)),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, padding: const EdgeInsets.symmetric(vertical: 14)),
+                child: const Text('बंद करा', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSellerMessages() {
     final reversedMessages = _sellerMessages.reversed.toList();
     return ListView(
@@ -77,32 +125,36 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
   }
 
   Widget _buildSellerMessageCard(Map<String, dynamic> msg) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: const Color(0xFFF5F7FA), borderRadius: BorderRadius.circular(12)),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: (msg['color'] as Color).withOpacity(0.15),
-            child: Icon(msg['icon'] as IconData, color: msg['color'] as Color, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(msg['seller'] as String, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                const SizedBox(height: 3),
-                Text(msg['message'] as String, style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-                const SizedBox(height: 4),
-                Text(msg['time'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-              ],
+    return GestureDetector(
+      onTap: () => _showMessageDetail(msg),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(color: const Color(0xFFF5F7FA), borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: (msg['color'] as Color).withOpacity(0.15),
+              child: Icon(msg['icon'] as IconData, color: msg['color'] as Color, size: 20),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(msg['seller'] as String, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                  const SizedBox(height: 3),
+                  Text(msg['message'] as String, style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
+                  const SizedBox(height: 4),
+                  Text(msg['time'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: AppColors.textLight),
+          ],
+        ),
       ),
     );
   }

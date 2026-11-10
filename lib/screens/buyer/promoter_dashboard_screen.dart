@@ -163,7 +163,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Earnings Card
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -193,8 +192,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Expenses Wallet
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen())),
             child: Container(
@@ -224,8 +221,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             ),
           ),
           const SizedBox(height: 16),
-
-          // Delivery Boy
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen())),
             child: _sectionCard(
@@ -240,8 +235,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
               ),
             ),
           ),
-
-          // आठवडी बाजार ₹50
           GestureDetector(
             onTap: _isJoinedAathwadiBazar ? null : _joinAathwadiBazar,
             child: _sectionCard(
@@ -255,8 +248,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
               ),
             ),
           ),
-
-          // Catalog
           _sectionCard(
             icon: Icons.inventory_2,
             color: Colors.blue,
@@ -265,8 +256,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             trailing: const Icon(Icons.arrow_forward, color: Colors.blue),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
           ),
-
-          // Ads
           _sectionCard(
             icon: Icons.campaign,
             color: Colors.purple,
@@ -275,8 +264,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             trailing: const Icon(Icons.arrow_forward, color: Colors.purple),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen())),
           ),
-
-          // Seller Onboarding
           _sectionCard(
             icon: Icons.person_add,
             color: Colors.indigo,

@@ -1,3 +1,4 @@
+import 'promoter_dashboard_screen.dart';
 import 'weekly_market_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
@@ -417,8 +418,8 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           } else if (index == 3) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
           } else if (index == 4) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
-          } else {
+  Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
+} else {
             setState(() => _currentIndex = index);
           }
         },
