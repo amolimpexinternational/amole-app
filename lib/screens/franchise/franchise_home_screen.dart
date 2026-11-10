@@ -116,9 +116,7 @@ class FranchiseHomeScreen extends StatelessWidget {
                       _kpi(context, 'Pending Verifications', '$pendingVerifications', 'GPS प्रलंबित', Icons.pending_actions, AppColors.primaryOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
                       
                       // === "Live जाहिराती" च्या जागी "क्रिएट टॉप ऑफर" ===
-                      _kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'जाहिरात तयार करा', Icons.campaign_outlined, Colors.deepOrange, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()))),
-                      
-                      _kpi(context, 'टॉप ऑफर कंटेंट', '३', 'मॅनेज करा', Icons.local_offer_outlined, Colors.pink, () => _showManageOffersSheet(context)),
+                      _kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'ऑफर तयार करा', Icons.local_offer_outlined, Colors.pink, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: false)))),
                     ],
                   ),
                   
