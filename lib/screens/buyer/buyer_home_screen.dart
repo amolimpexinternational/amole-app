@@ -1,6 +1,4 @@
-import 'buyer_messages_screen.dart';
 import 'weekly_market_screen.dart';
-import 'promoter_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'buyer_search_screen.dart';
@@ -284,7 +282,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           const HomeServicesGrid(),
           const SizedBox(height: 4),
 
-          // === १. Banner Ad — आपल्या गावातील दुकाने ===
+          // Banner Ad — आपल्या गावातील दुकाने
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen())),
             child: Container(
@@ -311,7 +309,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // === २. आठवडी बाजार बॅनर ===
+          // === नवीन: आठवडी बाजार बॅनर ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
             child: Container(
@@ -339,7 +337,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           ),
           const SizedBox(height: 16),
 
-          // === ३. Extra Income tab ===
+          // Extra Income tab
           GestureDetector(
             onTap: () => Navigator.push(
               context,
@@ -371,7 +369,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // === ४. Ad Block 2 — Lucky Draw ===
+          // Ad Block 2 — Lucky Draw
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LuckyDrawScreen())),
             child: Container(
@@ -417,9 +415,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           } else if (index == 2) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const QrPaymentScreen(sellerName: 'QR Payment')));
           } else if (index == 3) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerMessagesScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
           } else if (index == 4) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()));
           } else {
             setState(() => _currentIndex = index);
           }

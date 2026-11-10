@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../constants/app_colors.dart';
-import 'buyer_home_screen.dart';
-import 'promoter_catalog_screen.dart';
-import 'promoter_dashboard_screen.dart';
-import '../seller/seller_advertisement_screen.dart';
-import '../seller/registration/seller_registration_screen.dart';
-import '../delivery/delivery_boy_home_screen.dart';
 
 class ExtraIncomeScreen extends StatefulWidget {
   const ExtraIncomeScreen({super.key});
@@ -26,6 +19,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     _loadPromoterStatus();
   }
 
+  // ॲप उघडल्यावर आधीच प्रमोटर आहे का ते तपासणे
   Future<void> _loadPromoterStatus() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -34,17 +28,26 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     });
   }
 
-  void _shareReferLink() {
-    final String referLink = 'https://amole.in/ref/AMOLE-P123';
-    Share.share(
-      'मी AMOLE ॲप वापरतोय! तू पण जॉईन हो आणि माझ्या रेफरल लिंकने सामील हो: $referLink',
-      subject: 'AMOLE App मध्ये सामील व्हा',
+  // प्रमोटर होण्याचे बटण दाबल्यावर
+  Future<void> _becomePromoter() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isPromoter', true); // प्रमोटर स्टेटस सेव्ह करा
+    setState(() {
+      _isPromoter = true;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('अभिनंदन! तुम्ही आता प्रमोटर आहात. 🎉'),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
@@ -56,79 +59,71 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // === १. प्रमोटर स्टेटस कार्ड (डायनॅमिक) ===
           _buildPromoterCard(),
+
           const SizedBox(height: 24),
           const Text('कमाईच्या संधी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           const SizedBox(height: 12),
 
-          // १. पेड जाहिराती
+          // === २. एकूण ६ पर्याय ===
           _buildOptionCard(
             title: '१. पेड जाहिराती तयार करा',
             subtitle: 'जाहिरात तयार करा (फ्रँचायझी/CP अप्रूव्हल आवश्यक)',
             icon: Icons.campaign,
             color: Colors.purple,
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen())),
+            onTap: () {},
           ),
-          
-          // २. जाहिराती बघून पैसे कमवा
           _buildOptionCard(
             title: '२. जाहिराती बघून पैसे कमवा',
-            subtitle: 'मुख्य स्क्रीनवरील जाहिराती टॅबमध्ये जा',
+            subtitle: 'जाहिरात टॅबमध्ये जाऊन पोलची उत्तरे द्या',
             icon: Icons.play_circle_fill,
             color: Colors.blue,
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerHomeScreen()));
-            },
+            onTap: () {},
           ),
-
-          // ३. App refer पाठवा
           _buildOptionCard(
-            title: '३. App refer पाठवा',
-            subtitle: 'WhatsApp, FB, Insta वर लिंक शेअर करा',
+            title: '३. App refer करा',
+            subtitle: 'रेफरन्स लिंक शेअर करा आणि कमवा',
             icon: Icons.share,
             color: Colors.green,
-            onTap: _shareReferLink,
+            onTap: () {},
           ),
-
-          // ४. डिलिव्हरी बॉय व्हा
           _buildOptionCard(
             title: '४. डिलिव्हरी बॉय व्हा',
             subtitle: 'डिलिव्हरी बॉय म्हणून काम करा',
             icon: Icons.two_wheeler,
             color: Colors.orange,
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DeliveryBoyHomeScreen())),
+            onTap: () {},
           ),
-
-          // ५. आठवडी बाजार
           _buildOptionCard(
             title: '५. आठवडी बाजारात वस्तू विका',
-            subtitle: '₹५० फी - प्रत्येक प्रॉडक्टसाठी (फोटोसह)',
+            subtitle: '₹५० फी - प्रत्येक प्रॉडक्टसाठी',
             icon: Icons.storefront,
             color: Colors.teal,
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
+            onTap: () {},
           ),
-
-          // ६. सेलर ऑन बोर्ड करा
           _buildOptionCard(
             title: '६. सेलर ऑन बोर्ड करा',
             subtitle: 'नवीन सेलर जोडा आणि कमवा',
             icon: Icons.person_add,
             color: Colors.indigo,
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRegistrationScreen())),
+            onTap: () {},
           ),
         ],
       ),
     );
   }
 
+  // === प्रमोटर कार्डची रचना ===
   Widget _buildPromoterCard() {
     if (_isPromoter) {
+      // जर आधीच प्रमोटर असेल तर प्रोफाइल दाखवा
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           gradient: const LinearGradient(colors: [Colors.purple, Colors.purpleAccent]),
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.purple.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 5))],
+          boxShadow: [BoxShadow(color: Colors.purple.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +160,8 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
+                  // TODO: प्रमोटर प्रोफाइल स्क्रीन उघडण्यासाठी
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('प्रमोटर प्रोफाइल स्क्रीन पुढे जोडली जाईल')));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -179,13 +175,14 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
         ),
       );
     } else {
+      // जर प्रमोटर नसेल तर 'प्रमोटर व्हा' बटन दाखवा
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.purple.shade200),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8)],
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8)],
         ),
         child: Column(
           children: [
@@ -198,15 +195,7 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setBool('isPromoter', true);
-                  setState(() => _isPromoter = true);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()),
-                  );
-                },
+                onPressed: _becomePromoter,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   foregroundColor: Colors.white,
@@ -222,17 +211,21 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     }
   }
 
+  // === ६ पर्यायांसाठी कार्ड ===
   Widget _buildOptionCard({required String title, required String subtitle, required IconData icon, required Color color, required VoidCallback onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
       ),
       child: ListTile(
         onTap: onTap,
-        leading: CircleAvatar(backgroundColor: color.withValues(alpha: 0.15), child: Icon(icon, color: color)),
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(0.15),
+          child: Icon(icon, color: color),
+        ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
         trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),

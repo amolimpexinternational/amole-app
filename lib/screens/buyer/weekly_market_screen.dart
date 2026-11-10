@@ -6,10 +6,6 @@ class WeeklyMarketScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-=======
-    // डेमो डेटा - आठवडी बाजारातील वस्तू
->>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
     final List<Map<String, dynamic>> products = [
       {'name': 'हातमाग साडी', 'price': 1200, 'seller': 'सुनीता जाधव', 'color': Colors.pink.shade100},
       {'name': 'मातीची भांडी', 'price': 350, 'seller': 'रमेश कुंभार', 'color': Colors.brown.shade100},
@@ -28,10 +24,6 @@ class WeeklyMarketScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-<<<<<<< HEAD
-=======
-          // माहिती बॅनर
->>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
           Container(
             width: double.infinity,
             margin: const EdgeInsets.all(16),
@@ -49,11 +41,6 @@ class WeeklyMarketScreen extends StatelessWidget {
               ],
             ),
           ),
-<<<<<<< HEAD
-=======
-          
-          // वस्तूंची यादी
->>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -70,11 +57,7 @@ class WeeklyMarketScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-<<<<<<< HEAD
                     boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6)],
-=======
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)],
->>>>>>> 92e1e33d29a69597c866b1e6a78c41c48a9980fd
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -227,7 +227,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildKpiCard(context, 'महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen, const CpSellerRevenueScreen()),
                         _buildKpiCard(context, 'क्रिएट टॉप ऑफर', 'नवीन', Icons.local_offer_outlined, Colors.pink, const TopOfferCreateScreen(isSeller: false)),
                         // === मुद्दा ११: मोस्ट व्हायरल काढून आठवडी बाजार टाकला ===
-                        _buildKpiCard(context, 'आठवडी बाजार', '३', 'वस्तू जोडा', Icons.storefront, Colors.teal, const PromoterCatalogScreen()),
+                        _buildKpiCard(context, 'आठवडी बाजार', '३', Icons.storefront, Colors.teal, const PromoterCatalogScreen()),
                       ],
                     ),
                     const SizedBox(height: 20),

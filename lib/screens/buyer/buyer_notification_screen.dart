@@ -10,51 +10,19 @@ class BuyerNotificationScreen extends StatefulWidget {
   const BuyerNotificationScreen({super.key});
 
   @override
-  State<BuyerNotificationScreen> createState() =>
-      _BuyerNotificationScreenState();
+  State<BuyerNotificationScreen> createState() => _BuyerNotificationScreenState();
 }
 
 class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // === डमी सेलर मेसेज (वन-वे) — ५ मेसेज ===
   final List<Map<String, dynamic>> _sellerMessages = [
-    {
-      'seller': 'श्री गणेश किराणा',
-      'message': 'नमस्कार! आमच्याकडे नवीन सुकामेवा आला आहे. 10% सूट मिळवा!',
-      'time': '10 मिनिटांपूर्वी',
-      'icon': Icons.storefront,
-      'color': Colors.teal,
-    },
-    {
-      'seller': 'राज इलेक्ट्रॉनिक्स',
-      'message': 'तुमच्या ऑर्डरची डिलिव्हरी उद्या होईल. कृपया घरी असा.',
-      'time': '2 तासांपूर्वी',
-      'icon': Icons.electrical_services,
-      'color': Colors.orange,
-    },
-    {
-      'seller': 'स्वाद हॉटेल',
-      'message': 'आजचे स्पेशल थाळी ₹99 मध्ये! ऑर्डर करा.',
-      'time': 'काल',
-      'icon': Icons.restaurant,
-      'color': Colors.deepOrange,
-    },
-    {
-      'seller': 'अमोल कपडे भांडार',
-      'message': 'नवीन कलेक्शन आले आहे. 20% सूट!',
-      'time': '2 दिवसांपूर्वी',
-      'icon': Icons.checkroom,
-      'color': Colors.purple,
-    },
-    {
-      'seller': 'साई मेडिकल',
-      'message': 'तुमची औषधे तयार आहेत. कधीही येऊन घ्या.',
-      'time': '3 दिवसांपूर्वी',
-      'icon': Icons.local_pharmacy,
-      'color': Colors.green,
-    },
+    {'seller': 'श्री गणेश किराणा', 'message': 'नमस्कार! आमच्याकडे नवीन सुकामेवा आला आहे. 10% सूट मिळवा!', 'time': '10 मिनिटांपूर्वी', 'icon': Icons.storefront, 'color': Colors.teal},
+    {'seller': 'राज इलेक्ट्रॉनिक्स', 'message': 'तुमच्या ऑर्डरची डिलिव्हरी उद्या होईल. कृपया घरी असा.', 'time': '2 तासांपूर्वी', 'icon': Icons.electrical_services, 'color': Colors.orange},
+    {'seller': 'स्वाद हॉटेल', 'message': 'आजचे स्पेशल थाळी ₹99 मध्ये! ऑर्डर करा.', 'time': 'काल', 'icon': Icons.restaurant, 'color': Colors.deepOrange},
+    {'seller': 'अमोल कपडे भांडार', 'message': 'नवीन कलेक्शन आले आहे. 20% सूट!', 'time': '2 दिवसांपूर्वी', 'icon': Icons.checkroom, 'color': Colors.purple},
+    {'seller': 'साई मेडिकल', 'message': 'तुमची औषधे तयार आहेत. कधीही येऊन घ्या.', 'time': '3 दिवसांपूर्वी', 'icon': Icons.local_pharmacy, 'color': Colors.green},
   ];
 
   @override
@@ -70,9 +38,7 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
   }
 
   Widget _buildSellerMessages() {
-    // नवीन खाली, जुने वरती — म्हणजे उलट क्रम
     final reversedMessages = _sellerMessages.reversed.toList();
-
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
@@ -92,30 +58,12 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
                   const Icon(Icons.message_outlined, color: Colors.teal),
                   const SizedBox(width: 8),
                   const Expanded(
-                    child: Text(
-                      'सेलर मेसेज',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textDark,
-                      ),
-                    ),
+                    child: Text('सेलर मेसेज', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${_sellerMessages.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(color: Colors.teal, borderRadius: BorderRadius.circular(12)),
+                    child: Text('${_sellerMessages.length}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -132,44 +80,25 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F7FA),
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: const Color(0xFFF5F7FA), borderRadius: BorderRadius.circular(12)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
             radius: 20,
             backgroundColor: (msg['color'] as Color).withOpacity(0.15),
-            child: Icon(msg['icon'] as IconData,
-                color: msg['color'] as Color, size: 20),
+            child: Icon(msg['icon'] as IconData, color: msg['color'] as Color, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  msg['seller'] as String,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                  ),
-                ),
+                Text(msg['seller'] as String, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                 const SizedBox(height: 3),
-                Text(
-                  msg['message'] as String,
-                  style: const TextStyle(
-                      fontSize: 13, color: AppColors.textDark),
-                ),
+                Text(msg['message'] as String, style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
                 const SizedBox(height: 4),
-                Text(
-                  msg['time'] as String,
-                  style: const TextStyle(
-                      fontSize: 11, color: AppColors.textLight),
-                ),
+                Text(msg['time'] as String, style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
               ],
             ),
           ),
@@ -180,68 +109,13 @@ class _BuyerNotificationScreenState extends State<BuyerNotificationScreen>
 
   Widget _buildOtherNotifications() {
     final notifications = [
-      NotificationModel(
-        id: 'b1',
-        icon: Icons.stars_outlined,
-        color: AppColors.primaryOrange,
-        title: 'Reward Points मिळाले!',
-        desc: 'श्री गणेश किराणा खरेदीवर तुम्हाला Points मिळाले',
-        time: '10 मिनिटांपूर्वी',
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const RewardWalletScreen()),
-        ),
-      ),
-      NotificationModel(
-        id: 'b2',
-        icon: Icons.local_shipping_outlined,
-        color: AppColors.primaryBlue,
-        title: 'ऑर्डर अपडेट',
-        desc: 'तुमची ऑर्डर #AM-ORD-009 डिलिव्हरीसाठी निघाली आहे',
-        time: '1 तासांपूर्वी',
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const OrderTrackingScreen()),
-        ),
-      ),
-      NotificationModel(
-        id: 'b4',
-        icon: Icons.thumb_up_outlined,
-        color: Colors.indigo,
-        title: 'तुमच्या पोस्टला Like मिळाले',
-        desc: 'सुनिता पाटील आणि 3 इतरांनी तुमची पोस्ट Like केली',
-        time: '3 तासांपूर्वी',
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()),
-        ),
-      ),
-      NotificationModel(
-        id: 'b5',
-        icon: Icons.people_outline,
-        color: Colors.purple,
-        title: 'मित्राचा मेसेज',
-        desc: 'अनिल जोशी: "कोणाला चांगला इलेक्ट्रिशियन माहिती आहे का?"',
-        time: 'काल',
-      ),
-      NotificationModel(
-        id: 'b6',
-        icon: Icons.campaign_outlined,
-        color: Colors.deepOrange,
-        title: 'AMOLE कडून सूचना',
-        desc: 'नवीन Lucky Draw आजपासून सुरू — दररोज संध्याकाळी ४ वाजता निकाल',
-        time: 'काल',
-      ),
-      NotificationModel(
-        id: 'b7',
-        icon: Icons.business_outlined,
-        color: Colors.brown,
-        title: 'Franchise कडून मेसेज',
-        desc: 'तुमच्या परिसरात नवीन दुकाने जोडली गेली आहेत',
-        time: '2 दिवसांपूर्वी',
-      ),
+      NotificationModel(id: 'b1', icon: Icons.stars_outlined, color: AppColors.primaryOrange, title: 'Reward Points मिळाले!', desc: 'श्री गणेश किराणा खरेदीवर तुम्हाला Points मिळाले', time: '10 मिनिटांपूर्वी', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RewardWalletScreen()))),
+      NotificationModel(id: 'b2', icon: Icons.local_shipping_outlined, color: AppColors.primaryBlue, title: 'ऑर्डर अपडेट', desc: 'तुमची ऑर्डर #AM-ORD-009 डिलिव्हरीसाठी निघाली आहे', time: '1 तासांपूर्वी', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderTrackingScreen()))),
+      NotificationModel(id: 'b4', icon: Icons.thumb_up_outlined, color: Colors.indigo, title: 'तुमच्या पोस्टला Like मिळाले', desc: 'सुनिता पाटील आणि 3 इतरांनी तुमची पोस्ट Like केली', time: '3 तासांपूर्वी', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExtraIncomeScreen()))),
+      NotificationModel(id: 'b5', icon: Icons.people_outline, color: Colors.purple, title: 'मित्राचा मेसेज', desc: 'अनिल जोशी: "कोणाला चांगला इलेक्ट्रिशियन माहिती आहे का?"', time: 'काल'),
+      NotificationModel(id: 'b6', icon: Icons.campaign_outlined, color: Colors.deepOrange, title: 'AMOLE कडून सूचना', desc: 'नवीन Lucky Draw आजपासून सुरू — दररोज संध्याकाळी ४ वाजता निकाल', time: 'काल'),
+      NotificationModel(id: 'b7', icon: Icons.business_outlined, color: Colors.brown, title: 'Franchise कडून मेसेज', desc: 'तुमच्या परिसरात नवीन दुकाने जोडली गेली आहेत', time: '2 दिवसांपूर्वी'),
     ];
-
     return NotificationListView(notifications: notifications);
   }
 

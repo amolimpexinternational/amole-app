@@ -1,4 +1,3 @@
-import '../shared/top_offer_create_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../widgets/ad_feed_widget.dart';
@@ -16,6 +15,7 @@ import 'seller_subscription_screen.dart';
 import 'expenses_wallet_screen.dart';
 import '../../widgets/seller_delivery_tiles.dart';
 import '../buyer/weekly_market_screen.dart';
+import '../shared/weekly_market_catalog_screen.dart';
 
 class SellerHomeScreen extends StatefulWidget {
   const SellerHomeScreen({super.key});
@@ -295,7 +295,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()));
                       },
                       icon: const Icon(Icons.add, size: 16, color: Colors.white),
                       label: const Text('वस्तू जोडा', style: TextStyle(color: Colors.white, fontSize: 12)),
@@ -343,7 +343,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
               _kpiCard('जाहिरात विभाग', '8', 'आज', Icons.campaign_outlined, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementsScreen()))),
-              _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: true)))),
+              _kpiCard('टॉप ऑफर टॅब', '3', 'चालू आहेत', Icons.local_offer_outlined, Colors.pink, onTap: () {}),
             ],
           ),
           const SizedBox(height: 24),
