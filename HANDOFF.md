@@ -212,3 +212,36 @@ class HomeServicesGrid extends StatelessWidget {
   }
 }
 ```
+
+
+## 9. नवीन AI साठी — Amole App Handoff (नोव्हेंबर 2026)
+
+### १. मी कोण आहे
+- नाव: Amol (Amol Impex International)
+- Coding: नाही — complete beginner
+- Device: Android mobile + GitHub Codespaces (browser)
+- भाषा: मराठी
+
+### २. माझी कामाची पद्धत
+- मी file चा कोड देतो → तू बदल करून पूर्ण कोड देतोस → मी copy-paste करतो
+- प्रत्येक बदलापूर्वी तू थोडक्यात सांग → मी OK म्हणाल तेव्हाच कोड
+- एका वेळी एक बदल
+- Codespace ची फ्री लिमिट जपण्यासाठी ही पद्धत
+
+### ३. महत्त्वाचे नियम
+- PROJECT_STATUS.md आणि PROJECT_MAP.md आधी वाच
+- जुना code नवीन code ला overwrite होऊ नये
+- `git add .` वापरू नका — फक्त बदललेल्या files
+- `flutter analyze` — error नसल्यावरच commit
+- User ने test करून OK केल्यावरच commit
+
+### ४. सध्याची स्थिती (नोव्हेंबर 2026)
+- Stage 2 (Demo) — ७ बदल पूर्ण (PROJECT_STATUS.md §21 मध्ये)
+- नवीन फाईल्स: promoter_kyc_screen, weekly_market_catalog_screen, top_offer_create_screen, weekly_market_create_screen
+- `flutter analyze` — अजून चालवलेलं नाही
+- `flutter run` — अजून तपासलेलं नाही
+
+### ५. पुढचं काम
+- `flutter analyze` + `flutter run` — तपासणी
+- ऑफर डिटेल स्क्रीन — प्रॉडक्ट लिंक जोडणे
+- फ्री vs पेड ऑफर — एकच डिटेल स्क्रीन
