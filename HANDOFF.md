@@ -245,3 +245,13 @@ class HomeServicesGrid extends StatelessWidget {
 - `flutter analyze` + `flutter run` — तपासणी
 - ऑफर डिटेल स्क्रीन — प्रॉडक्ट लिंक जोडणे
 - फ्री vs पेड ऑफर — एकच डिटेल स्क्रीन
+
+### ६. Git — मोबाईलवरून code update केल्यावर Codespace मध्ये आणायची पद्धत
+
+**समस्या:** मोबाईल GitHub app मधून code update केला, पण Codespace मध्ये जुनाच code चालत होता.
+
+**कारण:** Codespace मध्ये local बदल होते — `git pull` ला conflict आला.
+
+**योग्य पद्धत (क्रमाने):**
+
+१. **आधी स्थिती बघ:**
