@@ -88,7 +88,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
         children: [
           // Header
           Container(
-            padding: const EdgeInsets.fromLTRB(12, 14, 12, 18),
+            padding: const EdgeInsets.fromLTRB(12, 14, 12, 16),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [AppColors.primaryBlue, AppColors.royalBlue],
@@ -99,6 +99,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // === वरची रांग: AMOLE + cart, favourite, notification, profile ===
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -106,171 +107,158 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                       'AMOLE',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
                       ),
                     ),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        GestureDetector(
-                          onTap: () => Navigator.push(
+                        IconButton(
+                          tooltip: 'Cart',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                          iconSize: 20,
+                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                          onPressed: () => Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const RewardWalletScreen(),
-                            ),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber.shade600,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.stars, color: Colors.white, size: 14),
-                                SizedBox(width: 3),
-                                Text(
-                                  '245 pts',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const OrderTrackingScreen(),
-                            ),
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.cyan,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.shopping_bag_outlined,
-                                  color: AppColors.royalBlue,
-                                  size: 14,
-                                ),
-                                SizedBox(width: 3),
-                                Text(
-                                  'ऑर्डर',
-                                  style: TextStyle(
-                                    color: AppColors.royalBlue,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
+                            MaterialPageRoute(builder: (_) => const CartScreen()),
                           ),
                         ),
                         const SizedBox(width: 2),
                         IconButton(
-                          tooltip: 'Search',
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 28, minHeight: 32),
-                          iconSize: 20,
-                          icon: const Icon(Icons.search, color: Colors.white),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: 'Cart',
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 28,
-                            minHeight: 32,
-                          ),
-                          iconSize: 20,
-                          icon: const Icon(
-                            Icons.shopping_cart_outlined,
-                            color: Colors.white,
-                          ),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const CartScreen(),
-                            ),
-                          ),
-                        ),
-                        IconButton(
                           tooltip: 'My Favourite',
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 28,
-                            minHeight: 32,
-                          ),
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                           iconSize: 20,
-                          icon: const Icon(
-                            Icons.favorite_border,
-                            color: Colors.white,
-                          ),
+                          icon: const Icon(Icons.favorite_border, color: Colors.white),
                           onPressed: () => Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const BuyerFavouriteScreen(),
-                            ),
+                            MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
                           ),
                         ),
+                        const SizedBox(width: 2),
                         IconButton(
+                          tooltip: 'Notification',
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 28,
-                            minHeight: 32,
-                          ),
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                           iconSize: 20,
-                          icon: const Icon(
-                            Icons.notifications_outlined,
-                            color: Colors.white,
-                          ),
+                          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
                           onPressed: () => Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const BuyerNotificationScreen(),
-                            ),
+                            MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()),
                           ),
                         ),
+                        const SizedBox(width: 2),
                         IconButton(
+                          tooltip: 'Profile',
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 28,
-                            minHeight: 32,
-                          ),
+                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                           iconSize: 20,
-                          icon: const Icon(
-                            Icons.account_circle_outlined,
-                            color: Colors.white,
-                          ),
+                          icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
                           onPressed: () => Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const BuyerProfileScreen(),
-                            ),
+                            MaterialPageRoute(builder: (_) => const BuyerProfileScreen()),
                           ),
                         ),
                       ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // === खालची रांग: 245 pts, ऑर्डर, search ===
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // 245 pts
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RewardWalletScreen()),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade600,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.stars, color: Colors.white, size: 14),
+                            SizedBox(width: 3),
+                            Text(
+                              '245 pts',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    // ऑर्डर
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const OrderTrackingScreen()),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.cyan,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.shopping_bag_outlined, color: AppColors.royalBlue, size: 14),
+                            SizedBox(width: 3),
+                            Text(
+                              'ऑर्डर',
+                              style: TextStyle(
+                                color: AppColors.royalBlue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    // Search
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.search, color: Colors.white, size: 14),
+                            SizedBox(width: 3),
+                            Text(
+                              'शोधा',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
