@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../models/product_model.dart';
+import '../screens/buyer/product_detail_screen.dart';
+import '../data/product_database.dart';
 
 class OffersSliderWidget extends StatefulWidget {
   const OffersSliderWidget({super.key});
@@ -14,35 +17,38 @@ class _OffersSliderWidgetState extends State<OffersSliderWidget> {
   Timer? _timer;
   int _page = 0;
 
-  // सर्व ऑफर्स एकाच लिस्टमध्ये (आता टॅब नाहीत)
   final List<Map<String, dynamic>> _offers = [
     {
-      'tag': '🔥 Most Sold',
-      'title': 'सर्वाधिक विकले जाणारे प्रॉडक्ट',
+      'title': 'दिवाळी धमाका 20% सूट',
       'sub': 'आपल्या परिसरात सर्वाधिक मागणी',
+      'image': '',
       'c1': const Color(0xFFFF6F00),
       'c2': const Color(0xFFFFB300),
+      'productLink': 'https://amole.in/product/p1',
     },
     {
-      'tag': '🏪 Franchise Offer',
-      'title': 'आपल्या फ्रॅंचाईजीची खास ऑफर',
+      'title': 'फ्रॅंचाईजी खास ऑफर',
       'sub': 'तुमच्या एरियातील दुकानांवर सूट',
+      'image': '',
       'c1': const Color(0xFF00897B),
       'c2': const Color(0xFF26C6DA),
+      'productLink': 'https://amole.in/product/p2',
     },
     {
-      'tag': '🤝 Channel Partner Offer',
       'title': 'चॅनल पार्टनर ऑफर',
       'sub': 'तुमच्या जिल्ह्यातील विशेष ऑफर',
+      'image': '',
       'c1': const Color(0xFF5E35B1),
       'c2': const Color(0xFF7E57C2),
+      'productLink': 'https://amole.in/product/p3',
     },
     {
-      'tag': '⭐ Admin Offer',
       'title': 'Amole ची खास ऑफर',
       'sub': 'सर्व खरेदीदारांसाठी',
+      'image': '',
       'c1': const Color(0xFF1565C0),
       'c2': const Color(0xFF00E5FF),
+      'productLink': 'https://amole.in/product/p4',
     },
   ];
 
@@ -77,8 +83,6 @@ class _OffersSliderWidgetState extends State<OffersSliderWidget> {
     return Column(
       children: [
         const SizedBox(height: 10),
-        
-        // === स्लायडर (टॅब्स काढून टाकले आहेत) ===
         SizedBox(
           height: 110,
           child: PageView.builder(
@@ -89,7 +93,6 @@ class _OffersSliderWidgetState extends State<OffersSliderWidget> {
               final o = _offers[index];
               return GestureDetector(
                 onTap: () {
-                  // ऑफरवर क्लिक केल्यावर डिटेल्स ओपन होणे
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -108,33 +111,46 @@ class _OffersSliderWidgetState extends State<OffersSliderWidget> {
                     ),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        o['tag'] as String,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                      // === फोटो (डमी) ===
+                      Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        child: const Icon(Icons.local_offer, color: Colors.white, size: 36),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        o['title'] as String,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        o['sub'] as String,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
+                      const SizedBox(width: 12),
+                      // === शीर्षक + उपशीर्षक ===
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              o['title'] as String,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              o['sub'] as String,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 11,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -145,8 +161,6 @@ class _OffersSliderWidgetState extends State<OffersSliderWidget> {
           ),
         ),
         const SizedBox(height: 8),
-        
-        // === इंडिकेटर डॉट्स ===
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(_offers.length, (i) {
@@ -169,15 +183,35 @@ class _OffersSliderWidgetState extends State<OffersSliderWidget> {
 }
 
 // =========================================================================
-// === ऑफरवर क्लिक केल्यावर उघडणारी नवीन स्क्रीन (सगळ्यांसाठी एकच) ===
+// === ऑफर डिटेल स्क्रीन ===
 // =========================================================================
 class OfferDetailScreen extends StatelessWidget {
   final Map<String, dynamic> offer;
 
   const OfferDetailScreen({super.key, required this.offer});
 
+  // === लिंक वरून प्रॉडक्ट शोधणे (डमी) ===
+  ProductModel? _findProductFromLink() {
+    final link = offer['productLink'] as String? ?? '';
+    if (link.isEmpty) return null;
+
+    // लिंक मधून ID काढणे (उदा. .../p1 → p1)
+    final id = link.split('/').last;
+    try {
+      return ProductDatabase.products.firstWhere((p) => p.id == id);
+    } catch (_) {
+      // जर सापडलं नाही तर पहिलं प्रॉडक्ट (डमी)
+      if (ProductDatabase.products.isNotEmpty) {
+        return ProductDatabase.products.first;
+      }
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final product = _findProductFromLink();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Offer Details'),
@@ -188,7 +222,7 @@ class OfferDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // === १. ऑफरचा फोटो / व्हिडिओ (डमी) ===
+            // === फोटो ===
             Container(
               height: 220,
               width: double.infinity,
@@ -199,37 +233,16 @@ class OfferDetailScreen extends StatelessWidget {
                   end: Alignment.bottomRight,
                 ),
               ),
-              child: Stack(
-                children: [
-                  // डमी फोटो (नंतर Firebase Storage मधून येईल)
-                  Center(
-                    child: Icon(
-                      Icons.image,
-                      size: 80,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
-                  ),
-                  // टॅग
-                  Positioned(
-                    top: 16,
-                    left: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        offer['tag'],
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ),
-                ],
+              child: Center(
+                child: Icon(
+                  Icons.image,
+                  size: 80,
+                  color: Colors.white.withValues(alpha: 0.5),
+                ),
               ),
             ),
 
-            // === २. ऑफरचं टायटल + संपूर्ण वर्णन ===
+            // === माहिती ===
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -253,7 +266,7 @@ class OfferDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // === ३. "खरेदी करा" → प्रॉडक्ट/दुकानावर ===
+                  // === "खरेदी करा" → प्रॉडक्टवर ===
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -263,12 +276,19 @@ class OfferDetailScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       onPressed: () {
-                        // डमी: सध्या फक्त बंद करतो. नंतर संबंधित प्रॉडक्ट/दुकानावर नेईल.
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('ऑफरचं संबंधित उत्पादन/दुकान लवकरच जोडलं जाईल'),
-                            backgroundColor: Colors.green,
+                        if (product == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('प्रॉडक्ट सापडलं नाही'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProductDetailScreen(product: product),
                           ),
                         );
                       },
@@ -279,7 +299,6 @@ class OfferDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // डमी माहिती
                   const Center(
                     child: Text(
                       'डमी डेटा — Firebase Stage 3 मध्ये डायनॅमिक होईल',
