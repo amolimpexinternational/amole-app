@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../data/ride_rates.dart';
 import 'ride_status_screen.dart';
@@ -111,33 +112,14 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
     }
   }
 
-  void _openGoogleMaps() {
-    // Google Maps उघडण्यासाठी — युजर drop location निवडू शकेल
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Drop Location निवडा'),
-        content: const Text(
-          'Google Maps उघडून तुमचं drop location निवडा आणि तिथलं परिसराचं नाव खाली टाका.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('रद्द'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _toast('Google Maps उघडत आहे... (Stage 3 मध्ये url_launcher)');
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue),
-            child: const Text('Google Maps उघडा'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _openGoogleMaps() async {
+  final Uri uri = Uri.parse('https://www.google.com/maps');
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  } else {
+    _toast('Google Maps उघडता आलं नाही');
   }
-
+}
   void _book() {
     if (_pickupCtrl.text.trim().isEmpty) {
       _toast('प्रवास कुठून सुरू करायचा ते लिहा / GPS वापरा');
