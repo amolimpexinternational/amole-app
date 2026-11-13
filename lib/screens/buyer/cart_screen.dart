@@ -51,12 +51,12 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCartItem(Map<String, dynamic> item) {
-    final String id = item['id'] as String;
-    final String name = item['name'] as String;
-    final double price = item['price'] as double;
-    final double mrp = item['mrp'] as double;
-    final int discount = item['discount'] as int;
-    final int qty = item['qty'] as int;
+    final String id = '${item['id']}';
+final String name = '${item['name']}';
+final double price = (item['price'] as num).toDouble();
+final double mrp = (item['mrp'] as num).toDouble();
+final int discount = (item['discount'] as num).toInt();
+final int qty = (item['qty'] as num).toInt();
     final String seller = item['seller'] as String;
     final String description = item['description'] as String;
     final bool deliveryAvailable = item['deliveryAvailable'] as bool;
