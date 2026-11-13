@@ -1,9 +1,9 @@
-import 'checkout_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
 import '../../models/product_model.dart';
 import 'cart_screen.dart';
+import 'checkout_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String productName;
