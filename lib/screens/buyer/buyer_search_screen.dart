@@ -772,11 +772,7 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
                           'सेवा',
                           Icons.handyman_outlined,
                         ),
-                        _buildFilterChip(
-                          'friends',
-                          'मित्र शोध',
-                          Icons.people_outline,
-                        ),
+                        
                       ],
                     ),
                   ),
