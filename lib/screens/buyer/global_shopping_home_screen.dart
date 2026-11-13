@@ -29,7 +29,6 @@ class _GlobalShoppingHomeScreenState
   String _searchQuery = '';
   String _selectedCategory = 'सर्व';
 
-  // === २० कॅटेगरी (Amazon/Meesho स्टाईल) ===
   final List<Map<String, dynamic>> _categories = [
     {'label': 'सर्व', 'icon': Icons.grid_view_rounded, 'key': 'ALL'},
     {'label': 'फळे व भाजीपाला', 'icon': Icons.eco_outlined, 'key': 'FV'},
@@ -65,7 +64,6 @@ class _GlobalShoppingHomeScreenState
         .where((product) => product.isActive && product.stock > 0)
         .toList();
 
-    // कॅटेगरी फिल्टर
     if (_selectedCategory != 'सर्व') {
       final catKey = _categories.firstWhere(
         (c) => c['label'] == _selectedCategory,
@@ -76,7 +74,6 @@ class _GlobalShoppingHomeScreenState
       }
     }
 
-    // शोध फिल्टर
     final query = _searchQuery.trim().toLowerCase();
     if (query.isNotEmpty) {
       list = list.where((product) {
@@ -143,7 +140,6 @@ class _GlobalShoppingHomeScreenState
     setState(() {});
   }
 
-  // === २० कॅटेगिरी (गोल आयकॉन, Amazon/Meesho स्टाईल) ===
   Widget _buildCategoryBar() {
     return SizedBox(
       height: 95,
@@ -199,52 +195,6 @@ class _GlobalShoppingHomeScreenState
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _bottomBar() {
-    final count = BuyerShoppingData.cartCount;
-    if (count == 0) return const SizedBox.shrink();
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                '$count वस्तू · ₹${BuyerShoppingData.cartSubtotal.toStringAsFixed(0)}',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
-              ).then((_) {
-                if (mounted) setState(() {});
-              }),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 44),
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-              ),
-              child: const Text(
-                'Cart बघा',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -427,6 +377,8 @@ class _GlobalShoppingHomeScreenState
   }
 
   Widget _buildTopHeader() {
+    final cartCount = BuyerShoppingData.cartCount;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(8, 10, 4, 10),
@@ -554,21 +506,30 @@ class _GlobalShoppingHomeScreenState
                         );
                       },
                     ),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
-                      visualDensity: VisualDensity.compact,
-                      iconSize: 20,
-                      tooltip: 'Cart',
-                      icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const CartScreen()),
-                        ).then((_) {
-                          if (mounted) setState(() {});
-                        });
-                      },
+                    // === Cart icon + Badge (हिरवा) ===
+                    Badge(
+                      isLabelVisible: cartCount > 0,
+                      label: Text(
+                        cartCount > 99 ? '99+' : '$cartCount',
+                        style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                      ),
+                      backgroundColor: AppColors.successGreen,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                        visualDensity: VisualDensity.compact,
+                        iconSize: 20,
+                        tooltip: 'Cart',
+                        icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const CartScreen()),
+                          ).then((_) {
+                            if (mounted) setState(() {});
+                          });
+                        },
+                      ),
                     ),
                     IconButton(
                       padding: EdgeInsets.zero,
@@ -634,7 +595,7 @@ class _GlobalShoppingHomeScreenState
     final ratio = (cardW / cardH).clamp(0.5, 1.0).toDouble();
 
     return Scaffold(
-      bottomNavigationBar: _bottomBar(),
+      // === bottomNavigationBar काढून टाकलं ===
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -645,7 +606,6 @@ class _GlobalShoppingHomeScreenState
                   const SizedBox(height: 8),
                   _buildCategoryBar(),
                   const SizedBox(height: 8),
-                  // === 'आजचे ऑफर' बॅनर काढून 'टॉप ऑफर' स्लायडर टाकला ===
                   const OffersSliderWidget(),
                   const SizedBox(height: 8),
                 ],
