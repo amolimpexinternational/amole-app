@@ -842,6 +842,32 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 - **Stage 3 (Firebase)** — अजून सुरू नाही
 
 
+# 23. UPDATE — NOVEMBER 2026 (नवीन बदल + Handoff)
 
+## 23.1 काय पूर्ण झालं (commit नंतर)
+
+### Buyer Notification Bar — २ रांगेत redesign
+- **`buyer_home_screen.dart`** — वरची रांग: `AMOLE` + cart/favourite/notification/profile
+- खालची रांग: `245 pts`, `ऑर्डर`, `शोधा`
+
+### Buyer Search — "मित्र शोध" काढलं
+- **`buyer_search_screen.dart`** — "मित्र शोध" टॅब काढला
+- **`buyer_home_screen.dart`** — `social` case + "मित्र बनवा" बटण काढलं
+
+### Ride Booking — GPS + area + Google Maps
+- **`ride_booking_screen.dart`** — GPS बटन (`Geolocator`) + area नाव (`geocoding`) + Google Maps बटन (`url_launcher`)
+
+## 23.2 नवीन फाईल्स
+- **`HANDOFF_NEW_AI.md`** — नवीन AI साठी संपूर्ण इतिहास
+
+## 23.3 अजून बाकी
+- **Parcel Cargo** — GPS + area + Google Maps (Ride सारखं)
+- **Resale/Rent** — उत्पादनावर क्लिक → माहिती स्क्रीन
+- **Cart** — रिकामी स्क्रीन दुरुस्त
+- **Cart बार काढून badge** (Global Shopping, ZatPat, Hotel Food, Kirana Mart, Mom's Miracle)
+- **Top Offer Tab** — ऑफर शीर्षक + फोटो
+- **Offer Detail** — प्रॉडक्ट खरेदी लिंक
+- **Product Detail** — "Cart मध्ये टाका" हिरवा + Checkout screen
+- 
 
 
