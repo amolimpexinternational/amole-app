@@ -27,8 +27,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     'खाद्यपदार्थ',
   ];
 
-  // Demo डेटा. 'zatpat': true म्हणजे दुकानदाराने लोकल डिलिव्हरी ON केली आहे.
-  // km म्हणजे buyer पासूनचे अंतर. खरा डेटा Stage 3 मध्ये येईल.
   final List<Map<String, dynamic>> _products = const [
     {'seller': 'श्री गणेश किराणा', 'km': 0.3, 'zatpat': true, 'category': 'किराणा', 'name': 'तांदूळ 5kg', 'price': 250.0, 'mrp': 280.0},
     {'seller': 'श्री गणेश किराणा', 'km': 0.3, 'zatpat': true, 'category': 'किराणा', 'name': 'साखर 1kg', 'price': 45.0, 'mrp': 50.0},
@@ -63,7 +61,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     }
   }
 
-  // फक्त ZatPat ON असलेले आणि 10 km मधले, जवळचे आधी
   List<Map<String, dynamic>> get _visible {
     final q = _query.trim();
     final list = _products.where((p) {
@@ -116,7 +113,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     });
   }
 
-  // डिलिव्हरी चार्ज: 3 km ₹30, 5 km ₹45, 7 km ₹60, 10 km ₹100
   int _chargeForKm(double km) {
     if (km <= 3) return 30;
     if (km <= 5) return 45;
@@ -124,7 +120,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     return 100;
   }
 
-  // Cart मधल्या ZatPat दुकानांपैकी सर्वात दूरच्या दुकानावरून (Demo नियम)
   int _deliveryCharge() {
     double? maxKm;
     for (final item in BuyerShoppingData.cartItems) {
@@ -189,236 +184,202 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
   }
 
   Widget _productCard(Map<String, dynamic> p) {
-  final id = _idOf(p);
-  
-  // Mom's Miracle सारखे quantity चेक करणे
-  final index = BuyerShoppingData.cartItems.indexWhere((item) => item['id'] == id);
-  final quantity = index == -1 ? 0 : (BuyerShoppingData.cartItems[index]['qty'] as int? ?? 0);
-  
-  final favourite = BuyerShoppingData.isFavourite(id); // तुझ्या डेटा मॉडेलनुसार
+    final id = _idOf(p);
+    final index = BuyerShoppingData.cartItems.indexWhere((item) => item['id'] == id);
+    final quantity = index == -1 ? 0 : (BuyerShoppingData.cartItems[index]['qty'] as int? ?? 0);
+    final favourite = BuyerShoppingData.isFavourite(id);
 
-  final mrp = (p['mrp'] as num).toDouble();
-  final price = (p['price'] as num).toDouble();
-  final discount = mrp > price ? ((mrp - price) / mrp * 100).round() : 0;
+    final mrp = (p['mrp'] as num).toDouble();
+    final price = (p['price'] as num).toDouble();
+    final discount = mrp > price ? ((mrp - price) / mrp * 100).round() : 0;
 
-  return Card(
-    margin: EdgeInsets.zero,
-    clipBehavior: Clip.antiAlias,
-    child: InkWell(
-      onTap: () {
-        // TODO: Product Detail Screen (पुढील टप्प्यात)
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Container(
-                height: 110, // Mom's Miracle सारखी उंची
-                width: double.infinity,
-                color: AppColors.lightGrey,
-                child: const Icon(Icons.storefront, size: 54, color: AppColors.primaryBlue),
-              ),
-              Positioned(
-                top: 4,
-                right: 4,
-                child: Material(
-                  color: Colors.white,
-                  shape: const CircleBorder(),
-                  child: IconButton(
-                    visualDensity: VisualDensity.compact,
-                    icon: Icon(
-                      favourite ? Icons.favorite : Icons.favorite_border,
-                      color: favourite ? Colors.red : AppColors.textLight,
-                    ),
-                    onPressed: () {
-                      BuyerShoppingData.toggleFavourite({
-                        'id': id,
-                        'name': p['name'].toString(),
-                        'price': price,
-                        'seller': p['seller'].toString(),
-                        'description': '',
-                        'image': '',
-                        'mrp': mrp,
-                        'discount': discount.toDouble(),
-                        'stock': 100,
-                        'deliveryAvailable': true,
-                        'isReturnable': true,
-                      });
-                      setState(() {});
-                    },
-                  ),
-                ),
-              ),
-              if (discount > 0)
-                Positioned(
-                  left: 6,
-                  top: 6,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.successGreen,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '$discount% OFF',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
               children: [
-                Text(
-                  p['name'].toString(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                Container(
+                  height: 110,
+                  width: double.infinity,
+                  color: AppColors.lightGrey,
+                  child: const Icon(Icons.storefront, size: 54, color: AppColors.primaryBlue),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  p['seller'].toString(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 11, color: AppColors.textLight),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      '₹${price.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.successGreen,
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Material(
+                    color: Colors.white,
+                    shape: const CircleBorder(),
+                    child: IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: Icon(
+                        favourite ? Icons.favorite : Icons.favorite_border,
+                        color: favourite ? Colors.red : AppColors.textLight,
                       ),
-                    ),
-                    if (discount > 0) ...[
-                      const SizedBox(width: 6),
-                      Text(
-                        '₹${mrp.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          decoration: TextDecoration.lineThrough,
-                          color: AppColors.textLight,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 8),
-                
-                // बटणांचा भाग (Mom's Miracle सारखाच)
-                if (quantity == 0)
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
                       onPressed: () {
-                        BuyerShoppingData.addToCart(
-                          id: id, 
-                          name: p['name'].toString(), 
-                          price: price, 
-                          seller: p['seller'].toString(), 
-                          qty: 1,
-                          description: '', image: '', mrp: mrp, discount: discount.toDouble(), stock: 100, deliveryAvailable: true, isReturnable: true,
-                        );
+                        BuyerShoppingData.toggleFavourite({
+                          'id': id,
+                          'name': p['name'].toString(),
+                          'price': price,
+                          'seller': p['seller'].toString(),
+                          'description': '',
+                          'image': '',
+                          'mrp': mrp,
+                          'discount': discount.toDouble(),
+                          'stock': 100,
+                          'deliveryAvailable': true,
+                          'isReturnable': true,
+                        });
                         setState(() {});
                       },
-                      child: const Text('Cart मध्ये टाका'),
                     ),
-                  )
-                else
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        visualDensity: VisualDensity.compact,
-                        onPressed: () {
-                          BuyerShoppingData.removeFromCart(id);
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                ),
+                if (discount > 0)
+                  Positioned(
+                    left: 6,
+                    top: 6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.successGreen,
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      Text('$quantity',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      IconButton(
-                        visualDensity: VisualDensity.compact,
-                        onPressed: () {
-                          BuyerShoppingData.addToCart(
-                            id: id, 
-                            name: p['name'].toString(), 
-                            price: price, 
-                            seller: p['seller'].toString(), 
-                            qty: 1,
-                            description: '', image: '', mrp: mrp, discount: discount.toDouble(), stock: 100, deliveryAvailable: true, isReturnable: true,
-                          );
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.add_circle_outline),
+                      child: Text(
+                        '$discount% OFF',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ],
+                    ),
                   ),
               ],
             ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-  Widget _bottomBar() {
-  final count = BuyerShoppingData.cartCount;
-  if (count == 0) return const SizedBox.shrink();
-  return SafeArea(
-    child: Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '$count वस्तू · ₹${BuyerShoppingData.cartSubtotal.toStringAsFixed(0)}',
-              style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    p['name'].toString(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    p['seller'].toString(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        '₹${price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.successGreen,
+                        ),
+                      ),
+                      if (discount > 0) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          '₹${mrp.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            decoration: TextDecoration.lineThrough,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (quantity == 0)
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          BuyerShoppingData.addToCart(
+                            id: id,
+                            name: p['name'].toString(),
+                            price: price,
+                            seller: p['seller'].toString(),
+                            qty: 1,
+                            description: '',
+                            image: '',
+                            mrp: mrp,
+                            discount: discount.toDouble(),
+                            stock: 100,
+                            deliveryAvailable: true,
+                            isReturnable: true,
+                          );
+                          setState(() {});
+                        },
+                        child: const Text('Cart मध्ये टाका'),
+                      ),
+                    )
+                  else
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () {
+                            BuyerShoppingData.removeFromCart(id);
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.remove_circle_outline),
+                        ),
+                        Text('$quantity',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () {
+                            BuyerShoppingData.addToCart(
+                              id: id,
+                              name: p['name'].toString(),
+                              price: price,
+                              seller: p['seller'].toString(),
+                              qty: 1,
+                              description: '',
+                              image: '',
+                              mrp: mrp,
+                              discount: discount.toDouble(),
+                              stock: 100,
+                              deliveryAvailable: true,
+                              isReturnable: true,
+                            );
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.add_circle_outline),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const CartScreen()),
-            ).then((_) => setState(() {})),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryBlue,
-              foregroundColor: Colors.white,
-              minimumSize: const Size(0, 44),
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-            ),
-            child: const Text('Cart बघा',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final items = _visible;
+    final cartCount = BuyerShoppingData.cartCount;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -427,12 +388,31 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.title ?? '⚡ ZatPat', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('तुमच्या 10 km मधली दुकाने', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            Text(widget.title ?? '⚡ ZatPat', style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('तुमच्या 10 km मधली दुकाने', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actions: [
+          // === Cart icon + Badge (हिरवा) ===
+          Badge(
+            isLabelVisible: cartCount > 0,
+            label: Text(
+              cartCount > 99 ? '99+' : '$cartCount',
+              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: AppColors.successGreen,
+            child: IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                ).then((_) => setState(() {}));
+              },
+            ),
+          ),
+        ],
       ),
-      bottomNavigationBar: _bottomBar(),
       body: Column(
         children: [
           Container(
