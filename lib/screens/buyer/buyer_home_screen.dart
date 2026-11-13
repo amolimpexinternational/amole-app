@@ -50,7 +50,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     {'label': 'फूड ऑर्डर\nकरा', 'icon': Icons.restaurant_outlined, 'action': 'food'},
     {'label': 'इन्स्टंट लोकल\nडिलिव्हरी', 'icon': Icons.bolt_outlined, 'action': 'instant'},
     {'label': 'राईड बुक\nकरा', 'icon': Icons.two_wheeler_outlined, 'action': 'ride'},
-    {'label': 'मित्र बनवा /\nसोशल कनेक्ट', 'icon': Icons.people_alt_outlined, 'action': 'social'},
+    
     {'label': 'डिलिव्हरी /\nलॉजिस्टिक्स सेवा', 'icon': Icons.local_shipping_outlined, 'action': 'logistics'},
     {'label': 'शेतकरी', 'icon': Icons.agriculture_outlined, 'action': 'farmers'},
   ];
@@ -66,9 +66,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
       case 'instant':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen()));
         break;
-      case 'social':
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerSearchScreen(initialFilter: 'friends')));
-        break;
+      
       case 'ride':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ComingSoonScreen(title: 'राईड बुक करा')));
         break;
