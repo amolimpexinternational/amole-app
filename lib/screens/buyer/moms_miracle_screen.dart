@@ -20,7 +20,6 @@ class _MomsMiracleScreenState extends State<MomsMiracleScreen> {
 
   final List<String> _chips = const ['सर्व', 'कपडे', 'खेळणी', 'आहार', 'काळजी'];
 
-  // लहान मुलांशी संबंधित शब्द (keywords मध्ये यापैकी काही असेल तर प्रॉडक्ट दिसतो)
   static const List<String> _kidTerms = [
     'baby', 'kids', 'kid', 'child', 'children', 'infant', 'toy', 'diaper',
     'लहान मुल', 'मुले', 'मुलां', 'बाळ', 'खेळणी',
@@ -318,51 +317,11 @@ class _MomsMiracleScreenState extends State<MomsMiracleScreen> {
     );
   }
 
-  Widget _bottomBar() {
-    final count = BuyerShoppingData.cartCount;
-    if (count == 0) return const SizedBox.shrink();
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                '$count वस्तू · ₹${BuyerShoppingData.cartSubtotal.toStringAsFixed(0)}',
-                style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
-              ).then((_) => setState(() {})),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 44),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-              ),
-              child: const Text('Cart बघा',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final items = _products;
+    final cartCount = BuyerShoppingData.cartCount;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -380,8 +339,26 @@ class _MomsMiracleScreenState extends State<MomsMiracleScreen> {
                 style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actions: [
+          Badge(
+            isLabelVisible: cartCount > 0,
+            label: Text(
+              cartCount > 99 ? '99+' : '$cartCount',
+              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: AppColors.successGreen,
+            child: IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                ).then((_) => setState(() {}));
+              },
+            ),
+          ),
+        ],
       ),
-      bottomNavigationBar: _bottomBar(),
       body: Column(
         children: [
           Container(
