@@ -4,7 +4,6 @@ import '../../data/buyer_shopping_data.dart';
 import '../../data/delivery_rates.dart';
 import 'cart_screen.dart';
 
-// Demo डेटा. km = buyer पासूनचे अंतर. खरा डेटा Stage 3 मध्ये येईल.
 class HotelFoodData {
   static const List<Map<String, dynamic>> hotels = [
     {
@@ -97,7 +96,6 @@ void _changeItem(String id, int delta) {
   }
 }
 
-// Cart मधल्या हॉटेलांपैकी सर्वात दूरच्या हॉटेलवरून डिलिव्हरी चार्ज (Demo नियम)
 int _hotelDeliveryCharge() {
   double? maxKm;
   for (final c in BuyerShoppingData.cartItems) {
@@ -173,69 +171,6 @@ class _QtyControl extends StatelessWidget {
   }
 }
 
-class _CartBar extends StatelessWidget {
-  final VoidCallback onBack;
-  const _CartBar({required this.onBack});
-
-  @override
-  Widget build(BuildContext context) {
-    final count = BuyerShoppingData.cartCount;
-    if (count == 0) return const SizedBox.shrink();
-    final subtotal = BuyerShoppingData.cartSubtotal;
-    final delivery = _hotelDeliveryCharge();
-    return SafeArea(
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('$count वस्तू · ₹${subtotal.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark)),
-                  if (delivery > 0)
-                    Text('+ डिलिव्हरी ₹$delivery · Online पेमेंट',
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColors.textLight)),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => CartScreen(
-                        deliveryCharge: _hotelDeliveryCharge(),
-                        orderTitle: 'Hotel Food')),
-              ).then((_) => onBack()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 44),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-              ),
-              child: const Text('Cart बघा',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class HotelFoodHomeScreen extends StatefulWidget {
   const HotelFoodHomeScreen({super.key});
 
@@ -247,7 +182,6 @@ class _HotelFoodHomeScreenState extends State<HotelFoodHomeScreen> {
   static const double _maxKm = 10;
   String _query = '';
 
-  // पदार्थाचे किंवा हॉटेलचे नाव जुळणारी हॉटेले, 10 km मधली, जवळची आधी
   List<Map<String, dynamic>> get _visible {
     final q = _query.trim();
     final list = HotelFoodData.hotels.where((h) {
@@ -351,6 +285,8 @@ class _HotelFoodHomeScreenState extends State<HotelFoodHomeScreen> {
   @override
   Widget build(BuildContext context) {
     final items = _visible;
+    final cartCount = BuyerShoppingData.cartCount;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -368,8 +304,31 @@ class _HotelFoodHomeScreenState extends State<HotelFoodHomeScreen> {
                 style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actions: [
+          Badge(
+            isLabelVisible: cartCount > 0,
+            label: Text(
+              cartCount > 99 ? '99+' : '$cartCount',
+              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: AppColors.successGreen,
+            child: IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CartScreen(
+                      deliveryCharge: _hotelDeliveryCharge(),
+                      orderTitle: 'Hotel Food',
+                    ),
+                  ),
+                ).then((_) => setState(() {}));
+              },
+            ),
+          ),
+        ],
       ),
-      bottomNavigationBar: _CartBar(onBack: () => setState(() {})),
       body: Column(
         children: [
           Container(
@@ -421,6 +380,8 @@ class _HotelMenuScreenState extends State<HotelMenuScreen> {
   Widget build(BuildContext context) {
     final name = widget.hotel['name'] as String;
     final items = widget.hotel['items'] as List;
+    final cartCount = BuyerShoppingData.cartCount;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -438,8 +399,31 @@ class _HotelMenuScreenState extends State<HotelMenuScreen> {
                 style: const TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actions: [
+          Badge(
+            isLabelVisible: cartCount > 0,
+            label: Text(
+              cartCount > 99 ? '99+' : '$cartCount',
+              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: AppColors.successGreen,
+            child: IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CartScreen(
+                      deliveryCharge: _hotelDeliveryCharge(),
+                      orderTitle: 'Hotel Food',
+                    ),
+                  ),
+                ).then((_) => setState(() {}));
+              },
+            ),
+          ),
+        ],
       ),
-      bottomNavigationBar: _CartBar(onBack: () => setState(() {})),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
