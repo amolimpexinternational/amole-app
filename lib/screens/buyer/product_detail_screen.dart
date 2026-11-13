@@ -364,23 +364,34 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: _toggleFavourite,
-                          icon: Icon(
-                            _isFavourite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                          ),
-                          label: Text(
-                            _isFavourite ? 'Favourite मध्ये आहे' : 'Favourite',
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.white,
-                            foregroundColor: Colors.redAccent,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                        ),
-                      ),
+  child: Builder(
+    builder: (context) {
+      final inCart = BuyerShoppingData.cartItems.any(
+        (item) => item['id'] == _productId,
+      );
+      return ElevatedButton(
+        onPressed: _stock > 0
+            ? () => inCart
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CartScreen()),
+                  )
+                : _addToCart()
+            : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: inCart
+              ? AppColors.successGreen
+              : AppColors.primaryOrange,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+        child: Text(
+          inCart ? 'Cart मध्ये आहे ✓' : 'Cart मध्ये टाका',
+          style: const TextStyle(color: AppColors.white),
+        ),
+      );
+    },
+  ),
+),
                       const SizedBox(width: 10),
                       Expanded(
   child: Builder(
@@ -489,6 +500,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     ),
   ),
 ),
+   ],
                   _sectionCard(
                     title: 'विक्रेता',
                     icon: Icons.store_outlined,
