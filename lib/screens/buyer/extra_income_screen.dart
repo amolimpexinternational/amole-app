@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
+import 'promoter_dashboard_screen.dart';
 
 class ExtraIncomeScreen extends StatefulWidget {
   const ExtraIncomeScreen({super.key});
@@ -19,7 +20,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     _loadPromoterStatus();
   }
 
-  // ॲप उघडल्यावर आधीच प्रमोटर आहे का ते तपासणे
   Future<void> _loadPromoterStatus() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -28,17 +28,106 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
     });
   }
 
-  // प्रमोटर होण्याचे बटण दाबल्यावर
-  Future<void> _becomePromoter() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isPromoter', true); // प्रमोटर स्टेटस सेव्ह करा
-    setState(() {
-      _isPromoter = true;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('अभिनंदन! तुम्ही आता प्रमोटर आहात. 🎉'),
-        backgroundColor: Colors.green,
+  // === ७ पर्याय + माहिती ===
+  final List<Map<String, dynamic>> _options = [
+    {
+      'title': 'पेड जाहिराती तयार करा',
+      'short': 'जाहिरात तयार करा',
+      'icon': Icons.campaign,
+      'color': Colors.purple,
+      'info': 'जाहिरात प्रसिद्ध करण्यासाठी आपण प्रती जाहिरात ₹50 ते ₹500 फी जाहिरात देणाऱ्या ग्राहकांकडून स्वीकारू शकतात.',
+    },
+    {
+      'title': 'जाहिराती बघून पैसे कमवा',
+      'short': 'जाहिरात बघा',
+      'icon': Icons.play_circle_fill,
+      'color': Colors.blue,
+      'info': 'तुमच्या प्रोफाइल वर दिसणाऱ्या जाहिराती बघून फीडबॅक दिल्यावर आपल्याला 100% रिवॉर्ड पॉइंट च्या स्वरूपात कमाई करता येते.',
+    },
+    {
+      'title': 'App refer करा',
+      'short': 'App refer',
+      'icon': Icons.share,
+      'color': Colors.green,
+      'info': 'तुम्हाला प्रत्येकाला app refer करण्यासाठी unique link व reference id मिळाले आहे. त्या माध्यमातून तुम्ही app सोबत कोणाला जोडले तर आपल्याला कायम त्या व्यक्तीच्या खरेदी मागे रिवॉर्ड पॉइंट मिळत राहणार आहे.',
+    },
+    {
+      'title': 'डिलिव्हरी बॉय व्हा',
+      'short': 'डिलिव्हरी बॉय',
+      'icon': Icons.two_wheeler,
+      'color': Colors.orange,
+      'info': 'कंपनी ला स्थानिक ठिकाणी सेवा देणाऱ्या प्रोफेशनल व्यक्तींची आवश्यकता असते. आपल्याकडे बाईक वर आवश्यक KYC documents असतील तर पार्ट टाइम किंवा फुल टाइम आपण डिलिव्हरी सेवा देऊन आर्थिक लाभ कमवू शकतात.',
+    },
+    {
+      'title': 'आठवडी बाजारात वस्तू विका',
+      'short': 'आठवडी बाजार',
+      'icon': Icons.storefront,
+      'color': Colors.teal,
+      'info': 'ह्या माध्यमातून आपण दर आठवड्याला आपल्या कडची किंवा ज्याला तांत्रिक ज्ञान नाही पण दर्जेदार उत्पादन त्यांच्याकडे आहे अशा स्थानिक व्यावसायिकांची उत्पादने तुम्ही राज्यभर विकून पैसे कमवू शकतात.',
+    },
+    {
+      'title': 'Seller onboard करा',
+      'short': 'Seller जोडा',
+      'icon': Icons.person_add,
+      'color': Colors.indigo,
+      'info': 'आपण आपल्या परिसरातील seller, service provider, rikshaw taxi, parcel service, hotel, kirana shop यांना app ची माहिती देऊन प्लॅटफॉर्म शी जोडून त्यांच्या कडून ₹100 ते ₹500 पर्यंत फी घेऊ शकतात.',
+    },
+    {
+      'title': 'प्रमोटर होऊन',
+      'short': 'प्रमोटर',
+      'icon': Icons.workspace_premium,
+      'color': Colors.amber.shade700,
+      'info': 'App वर असलेले चांगले उत्पादन तुमच्या सोशल मिडिया किंवा तुमच्या स्वतःच्या मार्केटिंग स्ट्रॅटर्जी नुसार विकून स्वतःचे दुकान नसतांना सुद्धा आपण 5% नफा प्रत्येक उत्पादन विक्री मागे कमवू शकतात.',
+    },
+  ];
+
+  void _showOptionInfo(Map<String, dynamic> option) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: (option['color'] as Color).withOpacity(0.15),
+                  child: Icon(option['icon'] as IconData, color: option['color'] as Color),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    option['title'] as String,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              option['info'] as String,
+              style: const TextStyle(fontSize: 14, height: 1.5),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: option['color'] as Color,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: const Text('ठीक आहे', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -59,65 +148,73 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // === १. प्रमोटर स्टेटस कार्ड (डायनॅमिक) ===
           _buildPromoterCard(),
 
           const SizedBox(height: 24),
-          const Text('कमाईच्या संधी', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+          const Text(
+            'कमाईच्या संधी',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'टॅबवर क्लिक करून माहिती बघा',
+            style: TextStyle(fontSize: 12, color: AppColors.textLight, fontStyle: FontStyle.italic),
+          ),
           const SizedBox(height: 12),
 
-          // === २. एकूण ६ पर्याय ===
-          _buildOptionCard(
-            title: '१. पेड जाहिराती तयार करा',
-            subtitle: 'जाहिरात तयार करा (फ्रँचायझी/CP अप्रूव्हल आवश्यक)',
-            icon: Icons.campaign,
-            color: Colors.purple,
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            title: '२. जाहिराती बघून पैसे कमवा',
-            subtitle: 'जाहिरात टॅबमध्ये जाऊन पोलची उत्तरे द्या',
-            icon: Icons.play_circle_fill,
-            color: Colors.blue,
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            title: '३. App refer करा',
-            subtitle: 'रेफरन्स लिंक शेअर करा आणि कमवा',
-            icon: Icons.share,
-            color: Colors.green,
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            title: '४. डिलिव्हरी बॉय व्हा',
-            subtitle: 'डिलिव्हरी बॉय म्हणून काम करा',
-            icon: Icons.two_wheeler,
-            color: Colors.orange,
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            title: '५. आठवडी बाजारात वस्तू विका',
-            subtitle: '₹५० फी - प्रत्येक प्रॉडक्टसाठी',
-            icon: Icons.storefront,
-            color: Colors.teal,
-            onTap: () {},
-          ),
-          _buildOptionCard(
-            title: '६. सेलर ऑन बोर्ड करा',
-            subtitle: 'नवीन सेलर जोडा आणि कमवा',
-            icon: Icons.person_add,
-            color: Colors.indigo,
-            onTap: () {},
+          // === ७ आडवे टॅब ===
+          SizedBox(
+            height: 130,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _options.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, index) {
+                return _buildHorizontalOptionCard(_options[index]);
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  // === प्रमोटर कार्डची रचना ===
+  Widget _buildHorizontalOptionCard(Map<String, dynamic> option) {
+    return GestureDetector(
+      onTap: () => _showOptionInfo(option),
+      child: Container(
+        width: 115,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: (option['color'] as Color).withOpacity(0.3)),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: (option['color'] as Color).withOpacity(0.15),
+              child: Icon(option['icon'] as IconData, color: option['color'] as Color, size: 24),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              option['short'] as String,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textDark),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPromoterCard() {
     if (_isPromoter) {
-      // जर आधीच प्रमोटर असेल तर प्रोफाइल दाखवा
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -136,9 +233,9 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
+              children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -159,9 +256,13 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: प्रमोटर प्रोफाइल स्क्रीन उघडण्यासाठी
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('प्रमोटर प्रोफाइल स्क्रीन पुढे जोडली जाईल')));
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()),
+                  );
+                  // परत आल्यावर status पुन्हा लोड कर (KYC पूर्ण झाली असेल तर)
+                  _loadPromoterStatus();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -175,7 +276,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
         ),
       );
     } else {
-      // जर प्रमोटर नसेल तर 'प्रमोटर व्हा' बटन दाखवा
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -195,7 +295,14 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _becomePromoter,
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()),
+                  );
+                  // KYC पूर्ण करून परत आल्यावर status refresh → "प्रोफाइल बघा" दिसेल
+                  _loadPromoterStatus();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   foregroundColor: Colors.white,
@@ -209,27 +316,5 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
         ),
       );
     }
-  }
-
-  // === ६ पर्यायांसाठी कार्ड ===
-  Widget _buildOptionCard({required String title, required String subtitle, required IconData icon, required Color color, required VoidCallback onTap}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.15),
-          child: Icon(icon, color: color),
-        ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.textLight),
-      ),
-    );
   }
 }
