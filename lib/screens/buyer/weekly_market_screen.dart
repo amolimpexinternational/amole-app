@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-
+import '../../widgets/offers_slider_widget.dart';
 class WeeklyMarketScreen extends StatelessWidget {
   const WeeklyMarketScreen({super.key});
 
@@ -24,23 +24,8 @@ class WeeklyMarketScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Colors.teal, Colors.tealAccent]),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('दर शनिवारी दुपारी ३ ते रात्री १२', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                SizedBox(height: 4),
-                Text('स्थानिक विक्रेत्यांकडून खास वस्तू खरेदी करा', style: TextStyle(color: Colors.white70, fontSize: 12)),
-              ],
-            ),
-          ),
+          const OffersSliderWidget(),
+const SizedBox(height: 8),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16),
