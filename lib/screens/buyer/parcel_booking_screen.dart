@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../data/parcel_data.dart';
 import 'parcel_status_screen.dart';
@@ -11,8 +14,6 @@ class ParcelBookingScreen extends StatefulWidget {
 }
 
 class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
-  static const String _hereText = 'हडपसर, पुणे (सध्याचे ठिकाण)';
-
   final TextEditingController _descCtrl = TextEditingController();
   final TextEditingController _weightCtrl = TextEditingController();
   final TextEditingController _lCtrl = TextEditingController();
@@ -22,8 +23,11 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
   final TextEditingController _dropCtrl = TextEditingController();
 
   String _vehicle = 'ton1';
-  bool _pickHere = true;
   double _km = 12;
+
+  bool _pickLoading = false;
+  double? _pickLat;
+  double? _pickLng;
 
   @override
   void dispose() {
@@ -43,6 +47,67 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
     );
   }
 
+  // === GPS लोकेशन घेणे + area नाव ===
+  Future<void> _getPickupLocation() async {
+    setState(() => _pickLoading = true);
+
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _toast('GPS परवानगी नाकारली');
+          setState(() => _pickLoading = false);
+          return;
+        }
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+      );
+
+      _pickLat = position.latitude;
+      _pickLng = position.longitude;
+
+      String areaName = 'सध्याचे लोकेशन';
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final p = placemarks.first;
+          final parts = [p.subLocality, p.locality, p.administrativeArea]
+              .where((e) => e != null && e!.isNotEmpty)
+              .toList();
+          if (parts.isNotEmpty) {
+            areaName = parts.join(', ');
+          }
+        }
+      } catch (_) {}
+
+      setState(() {
+        _pickCtrl.text = areaName;
+        _pickLoading = false;
+      });
+
+      _toast('लोकेशन मिळालं ✅');
+    } catch (e) {
+      setState(() => _pickLoading = false);
+      _toast('लोकेशन मिळालं नाही: $e');
+    }
+  }
+
+  // === Google Maps उघडा ===
+  Future<void> _openGoogleMaps() async {
+    final Uri uri = Uri.parse('https://www.google.com/maps');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      _toast('Google Maps उघडता आलं नाही');
+    }
+  }
+
   void _post() {
     if (_descCtrl.text.trim().isEmpty) {
       _toast('कोणते पार्सल पाठवायचे ते लिहा');
@@ -52,8 +117,8 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
       _toast('पार्सलचे वजन टाका');
       return;
     }
-    if (!_pickHere && _pickCtrl.text.trim().isEmpty) {
-      _toast('माल कुठून उचलायचा ते लिहा');
+    if (_pickCtrl.text.trim().isEmpty) {
+      _toast('माल कुठून उचलायचा ते लिहा / GPS वापरा');
       return;
     }
     if (_dropCtrl.text.trim().isEmpty) {
@@ -65,12 +130,11 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
       'id': 'PC${701 + ParcelRequests.posted.length}',
       'desc': _descCtrl.text.trim(),
       'weight': _weightCtrl.text.trim(),
-      'dims':
-          '${_lCtrl.text.trim().isEmpty ? '-' : _lCtrl.text.trim()} x '
+      'dims': '${_lCtrl.text.trim().isEmpty ? '-' : _lCtrl.text.trim()} x '
           '${_wCtrl.text.trim().isEmpty ? '-' : _wCtrl.text.trim()} x '
           '${_hCtrl.text.trim().isEmpty ? '-' : _hCtrl.text.trim()} cm',
       'vehicle': _vehicle,
-      'pickup': _pickHere ? _hereText : _pickCtrl.text.trim(),
+      'pickup': _pickCtrl.text.trim(),
       'drop': _dropCtrl.text.trim(),
       'km': _km,
       'fare': fare,
@@ -117,6 +181,7 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
     final fare = ParcelData.fare(_vehicle, _km);
     final lines = ParcelData.chartLines(_vehicle);
     final v = ParcelData.vehicleOf(_vehicle);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
@@ -124,9 +189,7 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text('📦 Parcel Cargo',
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold)),
+                color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -184,8 +247,7 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
               children: [
                 Text('${v.label} भाडे',
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textDark)),
+                        fontWeight: FontWeight.bold, color: AppColors.textDark)),
                 const SizedBox(height: 6),
                 ...lines.map((l) => Padding(
                       padding: const EdgeInsets.only(top: 2),
@@ -196,58 +258,111 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
                 if (v.temp) ...[
                   const SizedBox(height: 6),
                   const Text('तात्पुरते दर. खरे दर लवकरच.',
-                      style:
-                          TextStyle(fontSize: 11, color: Colors.deepOrange)),
+                      style: TextStyle(fontSize: 11, color: Colors.deepOrange)),
                 ],
               ],
             ),
           ),
-          _label('माल कुठून उचलायचा?'),
-          Row(
-            children: [
-              ChoiceChip(
-                label: const Text('आत्ता जिथे आहे तिथून'),
-                selected: _pickHere,
-                onSelected: (_) => setState(() => _pickHere = true),
-              ),
-              const SizedBox(width: 8),
-              ChoiceChip(
-                label: const Text('दुसऱ्या ठिकाणाहून'),
-                selected: !_pickHere,
-                onSelected: (_) => setState(() => _pickHere = false),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          if (_pickHere)
-            const Text(_hereText,
-                style: TextStyle(fontSize: 13, color: AppColors.textLight))
-          else
-            TextField(
-                controller: _pickCtrl, decoration: _deco('Pickup ठिकाण')),
-          _label('माल कुठे पोहोचवायचा?'),
-          TextField(
-            controller: _dropCtrl,
-            decoration: InputDecoration(
-              hintText: 'Drop ठिकाण',
-              prefixIcon: const Icon(Icons.location_on_outlined),
-              filled: true,
-              fillColor: Colors.white,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+
+          // === माल कुठून उचलायचा — Pickup ===
+          _label('माल कुठून उचलायचा? / Pickup Point'),
+          _box(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _pickLoading ? null : _getPickupLocation,
+                    icon: _pickLoading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.my_location, color: AppColors.primaryBlue),
+                    label: Text(
+                      _pickLoading ? 'लोकेशन घेत आहे...' : 'GPS लोकेशन वापरा',
+                      style: const TextStyle(color: AppColors.primaryBlue),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: AppColors.primaryBlue),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _pickCtrl,
+                  decoration: InputDecoration(
+                    hintText: 'परिसराचे नाव (उदा. हडपसर, पुणे)',
+                    prefixIcon: const Icon(Icons.location_on_outlined),
+                    filled: true,
+                    fillColor: const Color(0xFFF5F7FA),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                if (_pickLat != null && _pickLng != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      'GPS: ${_pickLat!.toStringAsFixed(4)}, ${_pickLng!.toStringAsFixed(4)}',
+                      style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                    ),
+                  ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
+
+          // === माल कुठे पोहोचवायचा — Drop ===
+          _label('माल कुठे पोहोचवायचा? / Drop Point'),
+          _box(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: _dropCtrl,
+                  decoration: InputDecoration(
+                    hintText: 'परिसराचे नाव (उदा. कोरेगाव पार्क, पुणे)',
+                    prefixIcon: const Icon(Icons.location_on_outlined),
+                    filled: true,
+                    fillColor: const Color(0xFFF5F7FA),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: _openGoogleMaps,
+                    icon: const Icon(Icons.map_outlined, color: Colors.green),
+                    label: const Text('Google Maps वर उघडा',
+                        style: TextStyle(color: Colors.green)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: Colors.green),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // === अंतर (Demo) ===
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('अंतर (Demo)',
-                  style:
-                      TextStyle(fontSize: 13, color: AppColors.textLight)),
+                  style: TextStyle(fontSize: 13, color: AppColors.textLight)),
               Text('${_km.toStringAsFixed(0)} km',
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryBlue)),
+                      fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
             ],
           ),
           Slider(
@@ -261,14 +376,14 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
           const Text('खरे अंतर नकाशावरून काढणे पुढे येईल.',
               style: TextStyle(fontSize: 11, color: AppColors.textLight)),
           const SizedBox(height: 12),
+
           _box(
             color: AppColors.primaryBlue.withValues(alpha: 0.08),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('अंदाजे भाडे',
-                    style:
-                        TextStyle(fontSize: 13, color: AppColors.textLight)),
+                    style: TextStyle(fontSize: 13, color: AppColors.textLight)),
                 const SizedBox(height: 4),
                 Text('₹$fare',
                     style: const TextStyle(
@@ -283,6 +398,7 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
               ],
             ),
           ),
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -295,8 +411,7 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
                     borderRadius: BorderRadius.circular(12)),
               ),
               child: const Text('Post requirement',
-                  style:
-                      TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             ),
           ),
         ],
