@@ -36,11 +36,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     if (_product != null) {
       return _product!.sellingPrice;
     }
-
-    return double.tryParse(
-          widget.price.replaceAll('₹', '').replaceAll(',', ''),
-        ) ??
-        0;
+    return double.tryParse(widget.price.replaceAll('₹', '').replaceAll(',', '')) ?? 0;
   }
 
   double get _mrp => _product?.mrp ?? _unitPrice;
@@ -74,6 +70,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   bool get _isFavourite => BuyerShoppingData.isFavourite(_productId);
 
+  bool get _isInCart => BuyerShoppingData.cartItems.any((item) => item['id'] == _productId);
+
   void _addToCart({bool goToCart = false}) {
     BuyerShoppingData.addToCart(
       id: _productId,
@@ -90,19 +88,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       isReturnable: _product?.isReturnable ?? true,
     );
 
+    setState(() {});
+
     if (goToCart) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const CartScreen()),
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()));
       return;
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$_name Cart मध्ये जोडले'),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text('$_name Cart मध्ये जोडले'), duration: const Duration(seconds: 2)),
     );
   }
 
@@ -110,14 +104,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     setState(() {
       BuyerShoppingData.toggleFavourite(_shoppingItem);
     });
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          _isFavourite
-              ? '$_name Favourite मध्ये जोडले'
-              : '$_name Favourite मधून काढले',
-        ),
+        content: Text(_isFavourite ? '$_name Favourite मध्ये जोडले' : '$_name Favourite मधून काढले'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -136,38 +125,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textDark,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textDark),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.right,
-              style: const TextStyle(color: AppColors.textLight),
-            ),
+            child: Text(value, textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textLight)),
           ),
         ],
       ),
     );
   }
 
-  Widget _sectionCard({
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
+  Widget _sectionCard({required String title, required IconData icon, required List<Widget> children}) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -175,14 +150,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             children: [
               Icon(icon, color: AppColors.primaryBlue),
               const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
-                ),
-              ),
+              Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
             ],
           ),
           const SizedBox(height: 8),
@@ -195,29 +163,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String _yesNo(bool value) => value ? 'होय' : 'नाही';
 
   String get _weightText {
-    if (_product == null || _product!.productWeight <= 0) {
-      return 'माहिती उपलब्ध नाही';
-    }
-
+    if (_product == null || _product!.productWeight <= 0) return 'माहिती उपलब्ध नाही';
     return '${_product!.productWeight.toStringAsFixed(0)} ${_product!.weightUnit}';
   }
 
   String get _shippingWeightText {
-    if (_product == null || _product!.shippingWeight <= 0) {
-      return 'माहिती उपलब्ध नाही';
-    }
-
+    if (_product == null || _product!.shippingWeight <= 0) return 'माहिती उपलब्ध नाही';
     return '${_product!.shippingWeight.toStringAsFixed(0)} ${_product!.weightUnit}';
   }
 
   String get _dimensionText {
-    if (_product == null ||
-        _product!.packageLength <= 0 ||
-        _product!.packageWidth <= 0 ||
-        _product!.packageHeight <= 0) {
+    if (_product == null || _product!.packageLength <= 0 || _product!.packageWidth <= 0 || _product!.packageHeight <= 0) {
       return 'माहिती उपलब्ध नाही';
     }
-
     return '${_product!.packageLength.toStringAsFixed(0)} × '
         '${_product!.packageWidth.toStringAsFixed(0)} × '
         '${_product!.packageHeight.toStringAsFixed(0)} '
@@ -244,10 +202,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           IconButton(
             tooltip: 'Cart',
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()));
             },
             icon: const Icon(Icons.shopping_cart_outlined),
           ),
@@ -256,6 +211,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // === फोटो ===
             Container(
               height: 250,
               width: double.infinity,
@@ -264,243 +220,144 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   ? Image.network(
                       _product!.image,
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        Icons.image_outlined,
-                        size: 120,
-                        color: AppColors.textLight,
-                      ),
+                      errorBuilder: (_, __, ___) => const Icon(Icons.image_outlined, size: 120, color: AppColors.textLight),
                     )
-                  : const Icon(
-                      Icons.image_outlined,
-                      size: 120,
-                      color: AppColors.textLight,
-                    ),
+                  : const Icon(Icons.image_outlined, size: 120, color: AppColors.textLight),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    _name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textDark,
-                    ),
-                  ),
+                  // === नाव ===
+                  Text(_name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 8),
+                  // === किंमत ===
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        '₹${_unitPrice.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.successGreen,
-                        ),
-                      ),
+                      Text('₹${_unitPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.successGreen)),
                       if (_discount > 0) ...[
                         const SizedBox(width: 10),
-                        Text(
-                          '₹${_mrp.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            decoration: TextDecoration.lineThrough,
-                            color: AppColors.textLight,
-                          ),
-                        ),
+                        Text('₹${_mrp.toStringAsFixed(0)}',
+                            style: const TextStyle(fontSize: 14, decoration: TextDecoration.lineThrough, color: AppColors.textLight)),
                         const SizedBox(width: 6),
-                        Text(
-                          '${_discount.toStringAsFixed(0)}% OFF',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.successGreen,
-                          ),
-                        ),
+                        Text('${_discount.toStringAsFixed(0)}% OFF',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.successGreen)),
                       ],
                     ],
                   ),
                   const SizedBox(height: 16),
+
+                  // === वर्णन ===
                   _sectionCard(
                     title: 'वर्णन',
                     icon: Icons.description_outlined,
                     children: [
-                      Text(
-                        _description,
-                        style: const TextStyle(
-                          color: AppColors.textLight,
-                          height: 1.4,
-                        ),
-                      ),
+                      Text(_description, style: const TextStyle(color: AppColors.textLight, height: 1.4)),
                       if (_product?.keywords.isNotEmpty == true)
-                        _infoRow(
-                          'Keywords',
-                          _product!.keywords,
-                          icon: Icons.search,
-                        ),
+                        _infoRow('Keywords', _product!.keywords, icon: Icons.search),
                       if (_product?.brand.isNotEmpty == true)
-                        _infoRow(
-                          'Brand',
-                          _product!.brand,
-                          icon: Icons.branding_watermark_outlined,
-                        ),
+                        _infoRow('Brand', _product!.brand, icon: Icons.branding_watermark_outlined),
                       if (_product?.sku.isNotEmpty == true)
-                        _infoRow(
-                          'SKU / Product Code',
-                          _product!.sku,
-                          icon: Icons.qr_code_2,
-                        ),
-                      _infoRow(
-                        'Category',
-                        _product?.category ?? 'माहिती उपलब्ध नाही',
-                        icon: Icons.category_outlined,
-                      ),
+                        _infoRow('SKU / Product Code', _product!.sku, icon: Icons.qr_code_2),
+                      _infoRow('Category', _product?.category ?? 'माहिती उपलब्ध नाही', icon: Icons.category_outlined),
                     ],
                   ),
-                  const SizedBox(height: 18),
+
+                  // === Favourite + Cart ===
                   Row(
                     children: [
                       Expanded(
-  child: Builder(
-    builder: (context) {
-      final inCart = BuyerShoppingData.cartItems.any(
-        (item) => item['id'] == _productId,
-      );
-      return ElevatedButton(
-        onPressed: _stock > 0
-            ? () => inCart
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CartScreen()),
-                  )
-                : _addToCart()
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: inCart
-              ? AppColors.successGreen
-              : AppColors.primaryOrange,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-        ),
-        child: Text(
-          inCart ? 'Cart मध्ये आहे ✓' : 'Cart मध्ये टाका',
-          style: const TextStyle(color: AppColors.white),
-        ),
-      );
-    },
-  ),
-),
+                        child: ElevatedButton.icon(
+                          onPressed: _toggleFavourite,
+                          icon: Icon(_isFavourite ? Icons.favorite : Icons.favorite_border),
+                          label: Text(_isFavourite ? 'Favourite मध्ये आहे' : 'Favourite'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.white,
+                            foregroundColor: Colors.redAccent,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
-  child: Builder(
-    builder: (context) {
-      final inCart = BuyerShoppingData.cartItems.any(
-        (item) => item['id'] == _productId,
-      );
-      return ElevatedButton(
-        onPressed: _stock > 0
-            ? () => inCart
-                ? Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CartScreen()),
-                  )
-                : _addToCart()
-            : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: inCart
-              ? AppColors.successGreen
-              : AppColors.primaryOrange,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-        ),
-        child: Text(
-          inCart ? 'Cart मध्ये आहे ✓' : 'Cart मध्ये टाका',
-          style: const TextStyle(color: AppColors.white),
-        ),
-      );
-    },
-  ),
-),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      const Text(
-                        'संख्या:',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                        child: ElevatedButton(
+                          onPressed: _stock > 0
+                              ? () => _isInCart
+                                  ? Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()))
+                                  : _addToCart()
+                              : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _isInCart ? AppColors.successGreen : AppColors.primaryOrange,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                          child: Text(
+                            _isInCart ? 'Cart मध्ये आहे ✓' : 'Cart मध्ये टाका',
+                            style: const TextStyle(color: AppColors.white),
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // === संख्या ===
+                  Row(
+                    children: [
+                      const Text('संख्या:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(width: 16),
                       IconButton(
                         onPressed: () {
                           final minimum = _product?.minimumOrderQty ?? 1;
-                          if (quantity > minimum) {
-                            setState(() {
-                              quantity--;
-                            });
-                          }
+                          if (quantity > minimum) setState(() => quantity--);
                         },
                         icon: const Icon(Icons.remove_circle),
                       ),
-                      Text(
-                        quantity.toString(),
-                        style: const TextStyle(fontSize: 18),
-                      ),
+                      Text(quantity.toString(), style: const TextStyle(fontSize: 18)),
                       IconButton(
                         onPressed: () {
-                          if (quantity < _stock) {
-                            setState(() {
-                              quantity++;
-                            });
-                          }
+                          if (quantity < _stock) setState(() => quantity++);
                         },
                         icon: const Icon(Icons.add_circle),
                       ),
                       const Spacer(),
-                      Text(
-                        'एकूण: ₹${_totalPrice.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryBlue,
-                        ),
-                      ),
+                      Text('एकूण: ₹${_totalPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
                     ],
                   ),
-                 SizedBox(
-  width: double.infinity,
-  child: ElevatedButton(
-    onPressed: _stock > 0
-        ? () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => CheckoutScreen(
-                  productName: _name,
-                  unitPrice: _unitPrice,
-                  quantity: quantity,
-                  sellerName: _seller,
-                  productId: _productId,
-                ),
-              ),
-            );
-          }
-        : null,
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.primaryBlue,
-      padding: const EdgeInsets.symmetric(vertical: 14),
-    ),
-    child: const Text(
-      'आत्ता खरेदी करा',
-      style: TextStyle(color: AppColors.white),
-    ),
-  ),
-),
-   ],
+
+                  // === आत्ता खरेदी करा ===
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _stock > 0
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => CheckoutScreen(
+                                    productName: _name,
+                                    unitPrice: _unitPrice,
+                                    quantity: quantity,
+                                    sellerName: _seller,
+                                    productId: _productId,
+                                  ),
+                                ),
+                              );
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text('आत्ता खरेदी करा', style: TextStyle(color: AppColors.white)),
+                    ),
+                  ),
+
+                  // === विक्रेता ===
                   _sectionCard(
                     title: 'विक्रेता',
                     icon: Icons.store_outlined,
@@ -517,124 +374,67 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ],
                   ),
+
+                  // === स्टॉक आणि ऑर्डर ===
                   _sectionCard(
                     title: 'स्टॉक आणि ऑर्डर',
                     icon: Icons.inventory_2_outlined,
                     children: [
-                      _infoRow(
-                        'उपलब्ध स्टॉक',
-                        '$_stock',
-                        icon: Icons.inventory_outlined,
-                      ),
-                      _infoRow(
-                        'किमान ऑर्डर',
-                        '${_product?.minimumOrderQty ?? 1}',
-                        icon: Icons.shopping_basket_outlined,
-                      ),
+                      _infoRow('उपलब्ध स्टॉक', '$_stock', icon: Icons.inventory_outlined),
+                      _infoRow('किमान ऑर्डर', '${_product?.minimumOrderQty ?? 1}', icon: Icons.shopping_basket_outlined),
                     ],
                   ),
+
+                  // === वजन आणि पॅकेज ===
                   _sectionCard(
                     title: 'वजन आणि पॅकेज',
                     icon: Icons.scale_outlined,
                     children: [
-                      _infoRow(
-                        'उत्पादनाचे वजन',
-                        _weightText,
-                        icon: Icons.scale_outlined,
-                      ),
-                      _infoRow(
-                        'Shipping / Packed Weight',
-                        _shippingWeightText,
-                        icon: Icons.local_shipping_outlined,
-                      ),
-                      _infoRow(
-                        'पॅकेज संख्या',
-                        '${_product?.packageCount ?? 1}',
-                        icon: Icons.inventory_2_outlined,
-                      ),
-                      _infoRow(
-                        'Package Dimensions',
-                        _dimensionText,
-                        icon: Icons.straighten_outlined,
-                      ),
+                      _infoRow('उत्पादनाचे वजन', _weightText, icon: Icons.scale_outlined),
+                      _infoRow('Shipping / Packed Weight', _shippingWeightText, icon: Icons.local_shipping_outlined),
+                      _infoRow('पॅकेज संख्या', '${_product?.packageCount ?? 1}', icon: Icons.inventory_2_outlined),
+                      _infoRow('Package Dimensions', _dimensionText, icon: Icons.straighten_outlined),
                       if (_product != null && _product!.volumetricWeight > 0)
-                        _infoRow(
-                          'Volumetric Weight',
-                          '${_product!.volumetricWeight.toStringAsFixed(2)} kg',
-                          icon: Icons.view_in_ar_outlined,
-                        ),
+                        _infoRow('Volumetric Weight', '${_product!.volumetricWeight.toStringAsFixed(2)} kg', icon: Icons.view_in_ar_outlined),
                     ],
                   ),
+
+                  // === डिलिव्हरी / ट्रान्सपोर्ट ===
                   _sectionCard(
                     title: 'डिलिव्हरी / ट्रान्सपोर्ट',
                     icon: Icons.local_shipping_outlined,
                     children: [
-                      _infoRow(
-                        'Home Delivery',
-                        _yesNo(_product?.deliveryAvailable ?? true),
-                      ),
-                      _infoRow(
-                        'AMOLE Delivery',
-                        _yesNo(_product?.amoleDelivery ?? true),
-                      ),
-                      _infoRow(
-                        'Seller Self Delivery',
-                        _yesNo(_product?.sellerSelfDelivery ?? false),
-                      ),
-                      _infoRow(
-                        'Courier / Transport',
-                        _yesNo(_product?.courierDelivery ?? true),
-                      ),
-                      _infoRow(
-                        'Local Delivery',
-                        _yesNo(_product?.localDelivery ?? true),
-                      ),
-                      _infoRow(
-                        'Inter-city Delivery',
-                        _yesNo(_product?.interCityDelivery ?? true),
-                      ),
-                      _infoRow(
-                        'Processing / Dispatch',
-                        _product?.processingTime ?? '1-2 दिवस',
-                      ),
+                      _infoRow('Home Delivery', _yesNo(_product?.deliveryAvailable ?? true)),
+                      _infoRow('AMOLE Delivery', _yesNo(_product?.amoleDelivery ?? true)),
+                      _infoRow('Seller Self Delivery', _yesNo(_product?.sellerSelfDelivery ?? false)),
+                      _infoRow('Courier / Transport', _yesNo(_product?.courierDelivery ?? true)),
+                      _infoRow('Local Delivery', _yesNo(_product?.localDelivery ?? true)),
+                      _infoRow('Inter-city Delivery', _yesNo(_product?.interCityDelivery ?? true)),
+                      _infoRow('Processing / Dispatch', _product?.processingTime ?? '1-2 दिवस'),
                     ],
                   ),
+
+                  // === डिलिव्हरी गणनेसाठी विशेष माहिती ===
                   _sectionCard(
                     title: 'डिलिव्हरी गणनेसाठी विशेष माहिती',
                     icon: Icons.route_outlined,
                     children: [
                       _infoRow('Fragile', _yesNo(_product?.fragile ?? false)),
                       _infoRow('Liquid', _yesNo(_product?.liquid ?? false)),
-                      _infoRow(
-                        'Perishable',
-                        _yesNo(_product?.perishable ?? false),
-                      ),
-                      _infoRow(
-                        'Oversized',
-                        _yesNo(_product?.oversized ?? false),
-                      ),
-                      _infoRow(
-                        'COD Eligible',
-                        _yesNo(_product?.codEligible ?? true),
-                      ),
-                      _infoRow(
-                        'Reverse Pickup',
-                        _yesNo(_product?.reversePickup ?? true),
-                      ),
+                      _infoRow('Perishable', _yesNo(_product?.perishable ?? false)),
+                      _infoRow('Oversized', _yesNo(_product?.oversized ?? false)),
+                      _infoRow('COD Eligible', _yesNo(_product?.codEligible ?? true)),
+                      _infoRow('Reverse Pickup', _yesNo(_product?.reversePickup ?? true)),
                     ],
                   ),
+
+                  // === Return आणि Delivery ===
                   _sectionCard(
                     title: 'Return आणि Delivery',
                     icon: Icons.assignment_return_outlined,
                     children: [
-                      _infoRow(
-                        'Returnable',
-                        _yesNo(_product?.isReturnable ?? true),
-                      ),
-                      _infoRow(
-                        'Delivery Available',
-                        _yesNo(_product?.deliveryAvailable ?? true),
-                      ),
+                      _infoRow('Returnable', _yesNo(_product?.isReturnable ?? true)),
+                      _infoRow('Delivery Available', _yesNo(_product?.deliveryAvailable ?? true)),
                     ],
                   ),
                 ],

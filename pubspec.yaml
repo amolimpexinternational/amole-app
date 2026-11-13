@@ -52,6 +52,7 @@ dependencies:
 
   # नवीन ॲड केलेले पॅकेज (रेफर लिंक WhatsApp/FB/Insta वर शेअर करण्यासाठी)
   share_plus: ^13.3.1
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:
