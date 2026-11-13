@@ -164,13 +164,12 @@ class BuyerShoppingData {
   static int get favouriteCount => favouriteItems.length;
 
   static double get cartSubtotal {
-    return cartItems.fold<double>(
-      0,
-      (sum, item) =>
-          sum + ((item['price'] as double) * (item['qty'] as int)),
-    );
-  }
-
+  return cartItems.fold<double>(
+    0,
+    (sum, item) =>
+        sum + ((item['price'] as num).toDouble() * (item['qty'] as num).toInt()),
+  );
+}
   static void clearCart() {
     cartItems.clear();
   }
