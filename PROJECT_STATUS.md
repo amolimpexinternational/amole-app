@@ -794,7 +794,52 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 
 
 
+# 22. UPDATE — NOVEMBER 2026 (७ बदल पूर्ण + APK)
 
+## 22.1 काय पूर्ण झालं (७ बदल)
+
+### बदल १ — Seller Dashboard: आठवडी बाजार कार्ड
+- **`seller_home_screen.dart`** — आठवडी बाजार कार्ड **आडवं** (75 उंची, बायरसारखं)
+- **"वस्तू जोडा"** बटण कार्डच्या खाली → `WeeklyMarketCatalogScreen`
+
+### बदल २ — Buyer "माझे मेसेज"
+- **`buyer_notification_screen.dart`** — **५ डमी सेलर मेसेज**
+- **"महत्त्वाचे नोटिफिकेशन"** टॅब
+- **प्रत्येक मेसेजवर `onTap`** → डिटेल बॉटम शीट
+
+### बदल ३ — प्रमोटर KYC लिंक
+- **`promoter_dashboard_screen.dart`** — "प्रमोटर व्हा" → `PromoterKycScreen`
+- KYC यशस्वी → `isPromoter = true` → डॅशबोर्ड
+
+### बदल ४ — प्रमोटर KYC स्क्रीन
+- **`promoter_kyc_screen.dart`** (नवीन) — आधार, पॅन, पत्ता (कंपल्सरी)
+
+### बदल ५ — प्रमोटर कॅटलॉग
+- **`promoter_catalog_screen.dart`** — "माझा प्रमोटर कॅटलॉग" + उपलब्ध प्रॉडक्ट्स (max 50, फक्त "प्रमोशन ON")
+
+### बदल ६ — आठवडी बाजार कॅटलॉग
+- **`weekly_market_catalog_screen.dart`** (shared) — ON/OFF + प्रॉडक्ट जोडा
+- **`weekly_market_create_screen.dart`** (admin) — CP/Admin साठी तारीख/वेळ/परिसर
+
+### बदल ७ — क्रिएट टॉप ऑफर + जाहिरात विभाग
+- **`top_offer_create_screen.dart`** (shared) — फोटो (16:9), शीर्षक, माहिती, किंमत, लिंक, वैधता, **टार्गेटिंग** (राज्य/जिल्हा/तालुका multi-select)
+- **Seller/Franchise/CP/Admin** — "क्रिएट टॉप ऑफर" KPI → `TopOfferCreateScreen`
+- **Franchise/CP/Admin** — "जाहिरात विभाग" KPI → `FranchiseAdScreen` / `CpAdsScreen` / `AdminLiveAdsScreen`
+
+## 22.2 नवीन फाईल्स (या update मध्ये)
+- `lib/screens/buyer/promoter_kyc_screen.dart`
+- `lib/screens/shared/weekly_market_catalog_screen.dart`
+- `lib/screens/shared/top_offer_create_screen.dart`
+- `lib/screens/admin/weekly_market_create_screen.dart`
+
+## 22.3 Git स्थिती
+- **शेवटचा commit:** `3903361` — "७ बदल पूर्ण..."
+- **Branch:** `main` — GitHub शी जुळतंय
+
+## 22.4 अजून बाकी
+- **ऑफर डिटेल स्क्रीन** — प्रॉडक्ट लिंक जोडायची बाकी
+- **फ्री ऑफर vs पेड ऑफर** — दोन्ही डिटेल स्क्रीन एकच करायचं
+- **Stage 3 (Firebase)** — अजून सुरू नाही
 
 
 
