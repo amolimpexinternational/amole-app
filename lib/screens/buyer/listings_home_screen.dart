@@ -20,7 +20,7 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
   String get _type => _isJobs ? 'job' : _section;
   List<String> get _myTypes => _isJobs ? ['job'] : ['resale', 'rent'];
 
-  // === Jobs साठी डेमो डेटा (जॉब प्रोफाइल) ===
+  // === Jobs साठी डेमो डेटा ===
   final List<Map<String, dynamic>> _jobPosts = [
     {
       'id': 'JOB001',
@@ -99,10 +99,8 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
     },
   ];
 
-  // === Resume अपलोड केले आहे का (डेमो) ===
   bool _resumeUploaded = false;
 
-  // === जॉब शोध (Skill/Degree/Company) ===
   List<Map<String, dynamic>> get _filteredJobs {
     if (_query.trim().isEmpty) return _jobPosts;
     final q = _query.toLowerCase();
@@ -132,7 +130,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
     return 'Resale करा';
   }
 
-  // === CV/Resume अपलोड विंडो ===
   void _showResumeUpload() {
     if (_resumeUploaded) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -187,7 +184,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
     );
   }
 
-  // === जॉब पोस्ट करण्यासाठी (₹30 फी) ===
   void _openPost() {
     Navigator.push(
       context,
@@ -258,6 +254,120 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
                 },
                 icon: const Icon(Icons.send, color: Colors.white),
                 label: const Text('अप्लाय करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // === Resale/Rent डिटेल विंडो ===
+  void _showListingDetail(Map<String, dynamic> p) {
+    final v = p['values'] as Map;
+    final type = p['type'] as String;
+    final title = type == 'job' ? v['company'] : v['item'];
+    final price = '${v['price'] ?? ''}';
+    final where = '${v['where'] ?? ''}';
+    final detail = '${v['detail'] ?? ''}';
+    final contact = '${v['contact'] ?? ''}';
+    final keywords = '${v['keywords'] ?? ''}';
+    final media = p['media'] as int? ?? 0;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (ctx, scroll) => ListView(
+          controller: scroll,
+          padding: const EdgeInsets.all(20),
+          children: [
+            // === फोटो (डमी) ===
+            if (media > 0)
+              Container(
+                height: 160,
+                decoration: BoxDecoration(
+                  color: AppColors.lightGrey,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Icon(Icons.image_outlined, size: 80, color: AppColors.textLight),
+                ),
+              )
+            else
+              Container(
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.lightGrey,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Center(
+                  child: Icon(Icons.image_outlined, size: 60, color: AppColors.textLight),
+                ),
+              ),
+            const SizedBox(height: 16),
+
+            // === शीर्षक + किंमत ===
+            Text('$title', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 6),
+            if (price.isNotEmpty)
+              Text(
+                price.contains(RegExp(r'[^0-9]')) ? price : '₹$price',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.successGreen),
+              ),
+            const SizedBox(height: 8),
+
+            // === ठिकाण ===
+            if (where.isNotEmpty)
+              Row(
+                children: [
+                  const Icon(Icons.location_on_outlined, size: 16, color: AppColors.textLight),
+                  const SizedBox(width: 4),
+                  Text(where, style: const TextStyle(fontSize: 13, color: AppColors.textLight)),
+                ],
+              ),
+            const Divider(height: 24),
+
+            // === संपूर्ण माहिती ===
+            const Text('माहिती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 6),
+            Text(detail.isNotEmpty ? detail : 'माहिती उपलब्ध नाही', style: const TextStyle(fontSize: 14, color: AppColors.textDark, height: 1.5)),
+            const SizedBox(height: 16),
+
+            // === Keywords ===
+            if (keywords.isNotEmpty) ...[
+              const Text('Keywords', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+              const SizedBox(height: 4),
+              Text(keywords, style: const TextStyle(fontSize: 13, color: AppColors.textLight)),
+              const SizedBox(height: 16),
+            ],
+
+            // === संपर्क ===
+            if (contact.isNotEmpty) ...[
+              const Text('संपर्क', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+              const SizedBox(height: 6),
+              Text(contact, style: const TextStyle(fontSize: 14, color: AppColors.textDark)),
+              const SizedBox(height: 16),
+            ],
+
+            // === "संपर्क करा" बटन ===
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('संपर्क: $contact'), backgroundColor: Colors.green),
+                  );
+                },
+                icon: const Icon(Icons.phone, color: Colors.white),
+                label: const Text('संपर्क करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
               ),
             ),
@@ -361,13 +471,13 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
     );
   }
 
-  // === Resale/Rent कार्ड (जुनं) ===
+  // === Resale/Rent कार्ड (आता onTap जोडला) ===
   Widget _card(Map<String, dynamic> p) {
     final icon = _type == 'job'
         ? Icons.work_outline
         : (_type == 'rent' ? Icons.key_outlined : Icons.sell_outlined);
     return GestureDetector(
-      onTap: () {},
+      onTap: () => _showListingDetail(p),   // ✅ onTap जोडला
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
@@ -410,7 +520,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // === शोध ===
           TextField(
             onChanged: (v) => setState(() => _query = v),
             decoration: InputDecoration(
@@ -423,7 +532,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
           ),
           const SizedBox(height: 12),
 
-          // === Resale/Rent टॅब ===
           if (!_isJobs)
             Row(
               children: [
@@ -434,7 +542,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
             ),
           const SizedBox(height: 10),
 
-          // === Jobs साठी Resume अपलोड बटण ===
           if (_isJobs) ...[
             Container(
               padding: const EdgeInsets.all(12),
@@ -463,7 +570,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
             const SizedBox(height: 12),
           ],
 
-          // === पोस्ट आणि माझ्या पोस्ट बटण ===
           Row(
             children: [
               Expanded(
@@ -484,7 +590,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
           ),
           const SizedBox(height: 14),
 
-          // === Jobs साठी जॉब लिस्ट ===
           if (_isJobs) ...[
             if (_filteredJobs.isEmpty)
               const Padding(
@@ -494,7 +599,6 @@ class _ListingsHomeScreenState extends State<ListingsHomeScreen> {
             else
               ..._filteredJobs.map(_jobCard),
           ]
-          // === Resale/Rent साठी जुनं ===
           else ...[
             if (results.isEmpty)
               const Padding(
