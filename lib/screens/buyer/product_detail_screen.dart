@@ -1,3 +1,4 @@
+import 'checkout_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
@@ -382,18 +383,34 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: _stock > 0 ? () => _addToCart() : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryOrange,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: const Text(
-                            'Cart मध्ये टाका',
-                            style: TextStyle(color: AppColors.white),
-                          ),
-                        ),
-                      ),
+  child: Builder(
+    builder: (context) {
+      final inCart = BuyerShoppingData.cartItems.any(
+        (item) => item['id'] == _productId,
+      );
+      return ElevatedButton(
+        onPressed: _stock > 0
+            ? () => inCart
+                ? Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CartScreen()),
+                  )
+                : _addToCart()
+            : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: inCart
+              ? AppColors.successGreen
+              : AppColors.primaryOrange,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+        ),
+        child: Text(
+          inCart ? 'Cart मध्ये आहे ✓' : 'Cart मध्ये टाका',
+          style: const TextStyle(color: AppColors.white),
+        ),
+      );
+    },
+  ),
+),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -443,22 +460,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _stock > 0
-                          ? () => _addToCart(goToCart: true)
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text(
-                        'आत्ता खरेदी करा',
-                        style: TextStyle(color: AppColors.white),
-                      ),
-                    ),
-                  ),
+                 SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: _stock > 0
+        ? () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CheckoutScreen(
+                  productName: _name,
+                  unitPrice: _unitPrice,
+                  quantity: quantity,
+                  sellerName: _seller,
+                  productId: _productId,
+                ),
+              ),
+            );
+          }
+        : null,
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.primaryBlue,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+    ),
+    child: const Text(
+      'आत्ता खरेदी करा',
+      style: TextStyle(color: AppColors.white),
+    ),
+  ),
+),
                   _sectionCard(
                     title: 'विक्रेता',
                     icon: Icons.store_outlined,
