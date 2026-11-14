@@ -130,61 +130,68 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
               ],
             ),
           ),
-          onTap: () async {
-  final result = await Navigator.push(
-    ctx,
-    MaterialPageRoute(
-      builder: (_) => CpFranchiseKycScreen(franchise: f),
-    ),
-  );
-  if (result == true) setState(() {});
-},
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: _franchises.length,
+              itemBuilder: (ctx, i) {
+                final f = _franchises[i];
+                return GestureDetector(
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      ctx,
+                      MaterialPageRoute(
+                        builder: (_) => CpFranchiseKycScreen(franchise: f),
+                      ),
+                    );
+                    if (result == true) setState(() {});
+                  },
                   child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.lightGrey),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        CircleAvatar(
-                          radius: 22, backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
-                          child: const Icon(Icons.store_outlined, color: AppColors.primaryBlue),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(f['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                          Text(f['area'], style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-                        ])),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(color: _statusColor(f['status']).withOpacity(0.12), borderRadius: BorderRadius.circular(20)),
-                          child: Text(f['status'], style: TextStyle(color: _statusColor(f['status']), fontSize: 11, fontWeight: FontWeight.w600)),
-                        ),
-                      ]),
-                      const Divider(height: 20),
-                      Row(children: [
-                        const Icon(Icons.person_outline, size: 14, color: AppColors.textLight),
-                        const SizedBox(width: 4),
-                        Text(f['owner'], style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-                        const SizedBox(width: 16),
-                        const Icon(Icons.phone_outlined, size: 14, color: AppColors.textLight),
-                        const SizedBox(width: 4),
-                        Text(f['phone'], style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-                      ]),
-                      const SizedBox(height: 8),
-                      Row(children: [
-                        _buildChip(Icons.storefront_outlined, '${f['sellers']} Sellers', AppColors.primaryBlue),
-                        const SizedBox(width: 8),
-                        _buildChip(Icons.currency_rupee, f['revenue'], AppColors.successGreen),
-                      ]),
-                    ],
-                  ),
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.lightGrey),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6, offset: const Offset(0, 2))],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(children: [
+                          CircleAvatar(
+                            radius: 22, backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                            child: const Icon(Icons.store_outlined, color: AppColors.primaryBlue),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            Text(f['name'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
+                            Text(f['area'], style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                          ])),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(color: _statusColor(f['status']).withOpacity(0.12), borderRadius: BorderRadius.circular(20)),
+                            child: Text(f['status'], style: TextStyle(color: _statusColor(f['status']), fontSize: 11, fontWeight: FontWeight.w600)),
+                          ),
+                        ]),
+                        const Divider(height: 20),
+                        Row(children: [
+                          const Icon(Icons.person_outline, size: 14, color: AppColors.textLight),
+                          const SizedBox(width: 4),
+                          Text(f['owner'], style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
+                          const SizedBox(width: 16),
+                          const Icon(Icons.phone_outlined, size: 14, color: AppColors.textLight),
+                          const SizedBox(width: 4),
+                          Text(f['phone'], style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
+                        ]),
+                        const SizedBox(height: 8),
+                        Row(children: [
+                          _buildChip(Icons.storefront_outlined, '${f['sellers']} Sellers', AppColors.primaryBlue),
+                          const SizedBox(width: 8),
+                          _buildChip(Icons.currency_rupee, f['revenue'], AppColors.successGreen),
+                        ]),
+                      ],
+                    ),
                   ),
                 );
               },
