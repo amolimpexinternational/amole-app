@@ -80,9 +80,9 @@ class _SellerDashboardState extends State<_SellerDashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // === HEADER ===
+          // === HEADER (बायरसारखा २ रांगा) ===
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 48, 16, 20),
+            padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [AppColors.primaryBlue, AppColors.royalBlue],
@@ -93,118 +93,121 @@ class _SellerDashboardState extends State<_SellerDashboard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // === वरची रांग: AMOLE + subscription/notification/profile ===
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('नमस्कार, विक्रेता! 👋', style: TextStyle(color: Colors.white70, fontSize: 13)),
-                        Text('AMOLE Seller', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],
+                    const Text(
+                      'AMOLE Seller',
+                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Row(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-                              builder: (_) => Padding(
-                                padding: const EdgeInsets.all(24),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text('माझी कमाई', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                                    const SizedBox(height: 20),
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12)),
-                                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                                        const Row(children: [Icon(Icons.currency_rupee, color: Colors.green, size: 22), SizedBox(width: 8), Text('एकूण पैसे', style: TextStyle(fontSize: 16))]),
-                                        Text('₹18,450', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green.shade700)),
-                                      ]),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(color: Colors.amber.shade50, borderRadius: BorderRadius.circular(12)),
-                                      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                                        const Row(children: [Icon(Icons.stars, color: Colors.amber, size: 22), SizedBox(width: 8), Text('Loyalty Points', style: TextStyle(fontSize: 16))]),
-                                        Text('120 pts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber.shade700)),
-                                      ]),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton.icon(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()));
-                                        },
-                                        icon: const Icon(Icons.bar_chart, color: Colors.white),
-                                        label: const Text('पूर्ण तपशील बघा', style: TextStyle(color: Colors.white, fontSize: 15)),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.primaryBlue,
-                                          padding: const EdgeInsets.symmetric(vertical: 14),
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            decoration: BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(20)),
-                            child: const Row(children: [
-                              Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 14),
-                              SizedBox(width: 4),
-                              Text('₹18,570', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                            ]),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen()));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                            decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
-                            child: const Row(children: [
-                              Icon(Icons.account_balance_wallet, color: Colors.white, size: 14),
-                              SizedBox(width: 4),
-                              Text('₹250', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-                            ]),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                          iconSize: 18,
+                          constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                          iconSize: 20,
                           icon: const Icon(Icons.workspace_premium_outlined, color: Colors.white),
                           onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerSubscriptionScreen())),
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                          iconSize: 18,
+                          constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                          iconSize: 20,
                           icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen()))
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerNotificationScreen())),
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-                          iconSize: 18,
+                          constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                          iconSize: 20,
                           icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen()))
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerProfileDetailScreen())),
                         ),
                       ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // === खालची रांग: ₹18,570 + ₹250 ===
+                Row(
+                  children: [
+                    // उत्पन्न
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+                          builder: (_) => Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('माझी कमाई', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                                const SizedBox(height: 20),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(12)),
+                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                    const Row(children: [Icon(Icons.currency_rupee, color: Colors.green, size: 22), SizedBox(width: 8), Text('एकूण पैसे', style: TextStyle(fontSize: 16))]),
+                                    Text('₹18,450', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green.shade700)),
+                                  ]),
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(color: Colors.amber.shade50, borderRadius: BorderRadius.circular(12)),
+                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                                    const Row(children: [Icon(Icons.stars, color: Colors.amber, size: 22), SizedBox(width: 8), Text('Loyalty Points', style: TextStyle(fontSize: 16))]),
+                                    Text('120 pts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber.shade700)),
+                                  ]),
+                                ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()));
+                                    },
+                                    icon: const Icon(Icons.bar_chart, color: Colors.white),
+                                    label: const Text('पूर्ण तपशील बघा', style: TextStyle(color: Colors.white, fontSize: 15)),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(color: Colors.green.shade600, borderRadius: BorderRadius.circular(20)),
+                        child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 14),
+                          SizedBox(width: 4),
+                          Text('₹18,570', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                        ]),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Expenses Wallet
+                    GestureDetector(
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen())),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(color: Colors.purple.shade400, borderRadius: BorderRadius.circular(20)),
+                        child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                          Icon(Icons.account_balance_wallet, color: Colors.white, size: 14),
+                          SizedBox(width: 4),
+                          Text('₹250', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                        ]),
+                      ),
                     ),
                   ],
                 ),
@@ -270,18 +273,14 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           const SizedBox(height: 16),
           const OffersSliderWidget(), 
           
-          // === आठवडी बाजार (बायरसारखंच - आडवं) ===
+          // === आठवडी बाजार ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               height: 75,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF00897B), Color(0xFF26C6DA)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: const LinearGradient(colors: [Color(0xFF00897B), Color(0xFF26C6DA)], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: const Center(
@@ -296,7 +295,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               ),
             ),
           ),
-          // === "वस्तू जोडा" बटण (कार्डच्या खाली) ===
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: SizedBox(
@@ -355,6 +353,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
       ),
     );
   }
+
   Widget _kpiCard(String title, String value, String subtitle, IconData icon, Color color, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
