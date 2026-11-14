@@ -1,6 +1,7 @@
-import 'seller_home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/app_colors.dart';
+import 'seller_home_screen.dart';
 
 class SellerTypeSelectionScreen extends StatefulWidget {
   const SellerTypeSelectionScreen({super.key});
@@ -10,19 +11,49 @@ class SellerTypeSelectionScreen extends StatefulWidget {
 }
 
 class _SellerTypeSelectionScreenState extends State<SellerTypeSelectionScreen> {
-  String _selectedType = 'local'; // default
+  final Set<String> _selectedTypes = {'local'};
 
-  void _continue() {
-    // TODO: पुढील टप्प्यात निवडलेल्या प्रकारानुसार (_selectedType) वेगवेगळ्या स्क्रीनवर पाठवा.
-    // उदा. Local साठी LocalSellerDashboard, Global साठी GlobalSellerDashboard इत्यादी.
-    // सध्या आपण सर्वांना SellerHomeScreen वर पाठवत आहोत.
+  Future<void> _continue() async {
+    if (_selectedTypes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('किमान एक प्रकार निवडा'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    // निवडलेला प्रकार (उदा. 'local', 'global') SharedPreferences मध्ये सेव्ह करा
-    // जेणेकरून पुढे KYC किंवा Dashboard मध्ये तो वापरता येईल.
+    // === निवडलेले प्रकार SharedPreferences मध्ये सेव्ह ===
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('sellerTypes', _selectedTypes.toList());
+
+    if (!mounted) return;
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const SellerHomeScreen()),
     );
+  }
+
+  void _toggleType(String id) {
+    setState(() {
+      if (_selectedTypes.contains(id)) {
+        // किमान १ ठेवा
+        if (_selectedTypes.length > 1) {
+          _selectedTypes.remove(id);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('किमान एक प्रकार निवडलेला असणे आवश्यक'),
+              backgroundColor: Colors.orange,
+              duration: Duration(seconds: 1),
+            ),
+          );
+        }
+      } else {
+        _selectedTypes.add(id);
+      }
+    });
   }
 
   Widget _typeCard({
@@ -32,9 +63,9 @@ class _SellerTypeSelectionScreenState extends State<SellerTypeSelectionScreen> {
     required IconData icon,
     required Color color,
   }) {
-    final isSelected = _selectedType == id;
+    final isSelected = _selectedTypes.contains(id);
     return GestureDetector(
-      onTap: () => setState(() => _selectedType = id),
+      onTap: () => _toggleType(id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
@@ -58,17 +89,27 @@ class _SellerTypeSelectionScreenState extends State<SellerTypeSelectionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: isSelected ? color : AppColors.textDark)),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: isSelected ? color : AppColors.textDark,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textLight),
+                  ),
                 ],
               ),
             ),
-            Radio<String>(
-              value: id,
-              groupValue: _selectedType,
+            // ✅ Checkbox — multiple selection
+            Checkbox(
+              value: isSelected,
               activeColor: color,
-              onChanged: (v) => setState(() => _selectedType = v!),
+              onChanged: (_) => _toggleType(id),
             ),
           ],
         ),
@@ -88,6 +129,28 @@ class _SellerTypeSelectionScreenState extends State<SellerTypeSelectionScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.blue.shade800, size: 20),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'एकापेक्षा जास्त प्रकार निवडू शकता. निवडलेले प्रकार तुमच्या डॅशबोर्डमध्ये दिसतील.',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
           const Text(
             'तुम्ही प्लॅटफॉर्मवर कोणत्या प्रकारे सेलर म्हणून काम करू इच्छिता?',
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textDark),
@@ -97,40 +160,61 @@ class _SellerTypeSelectionScreenState extends State<SellerTypeSelectionScreen> {
           _typeCard(
             id: 'local',
             title: 'लोकल दुकानदार (ZatPat Supplier)',
-            subtitle: 'फक्त स्थानिक परिसरात वस्तू विक्री करणारा विक्रेता. (आपल्या गावातील दुकाने आणि ZatPat मध्ये दिसेल)',
+            subtitle: 'फक्त स्थानिक परिसरात वस्तू विक्री. (गावातील दुकाने + ZatPat)',
             icon: Icons.storefront,
             color: Colors.orange,
           ),
           _typeCard(
             id: 'global',
             title: 'ग्लोबल शॉपिंग (Global Seller)',
-            subtitle: 'देशभर वस्तू विक्री करणारा विक्रेता. (Global Shopping मध्ये सर्व ग्राहकांना दिसेल)',
+            subtitle: 'देशभर वस्तू विक्री. (Global Shopping मध्ये सर्व ग्राहकांना)',
             icon: Icons.language,
             color: Colors.blue,
           ),
           _typeCard(
             id: 'service',
             title: 'सर्व्हिस प्रोव्हायडर',
-            subtitle: 'रायडर, डिलिव्हरी बॉय, कार्गो, प्लंबर इत्यादी सेवा देणारा. (एकापेक्षा जास्त सेवा निवडू शकता)',
+            subtitle: 'रायडर, डिलिव्हरी बॉय, कार्गो, प्लंबर इ. (एकापेक्षा जास्त सेवा)',
             icon: Icons.handyman,
             color: Colors.purple,
           ),
           _typeCard(
             id: 'hotel',
             title: 'हॉटेल व्यावसायिक',
-            subtitle: 'हॉटेलची उत्पादने ऑनलाइन विकण्यासाठी. (Hotel Food मध्ये दिसेल)',
+            subtitle: 'हॉटेलची उत्पादने ऑनलाइन विकण्यासाठी. (Hotel Food)',
             icon: Icons.restaurant,
             color: Colors.red,
           ),
           _typeCard(
             id: 'cargo',
             title: 'पार्सल कार्गो',
-            subtitle: 'पार्सल कार्गो सेवा पुरवण्यासाठी. (Parcel Cargo मध्ये दिसेल)',
+            subtitle: 'पार्सल कार्गो सेवा. (Parcel Cargo मध्ये दिसेल)',
             icon: Icons.local_shipping,
             color: Colors.brown,
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          // === निवडलेल्या प्रकारांची संख्या ===
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.primaryBlue.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.check_circle, color: AppColors.primaryBlue, size: 18),
+                const SizedBox(width: 6),
+                Text(
+                  '${_selectedTypes.length} प्रकार निवडले',
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -140,7 +224,10 @@ class _SellerTypeSelectionScreenState extends State<SellerTypeSelectionScreen> {
                 backgroundColor: AppColors.primaryBlue,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('पुढे जा (Continue)', style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'पुढे जा (Continue)',
+                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ],
