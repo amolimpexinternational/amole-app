@@ -871,3 +871,44 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 - 
 
 
+# 24. UPDATE — NOVEMBER 2026 (CP + Franchise + Seller बदल)
+
+## 24.1 काय पूर्ण झालं
+
+### CP (११ बदल):
+- "पेंडिंग जाहिराती" — preview + edit + approve/reject
+- "पेंडिंग ऑफर्स" — फ्री + पेड + फी
+- "New On-boarding" — संपूर्ण KYC
+- "एकूण Franchise" — KYC + edit (cp_franchise_kyc_screen.dart)
+- "Active Seller" — KYC + edit (cp_seller_kyc_screen.dart)
+- "एकूण Buyer" — तसंच
+- Franchise आठवडी बाजार — दुरुस्त
+- प्रमोटर कॅटलॉग — दुरुस्त
+- KPI — प्रमोटर यादी (promoter_list_screen.dart)
+- Quick action — आठवडी बाजार काढ
+- Franchise List — काढ
+
+### Franchise (८ बदल):
+- Seller list → KYC profile + edit
+- नवीन सेलर — २ स्टेप KYC (franchise_add_seller_screen.dart)
+- Pending verification → KYC edit
+- जाहिरात — preview + edit
+- Quick Actions — आठवडी बाजार + प्रमोटर कॅटलॉग
+
+### Seller बदल:
+- Role multiple selection (seller_type_selection_screen.dart)
+- Header — बायरसारखा २ रांगा
+- Delivery/Rider/Cargo — GPS + area नाव
+- जाहिरात tabs — "Create Offer free"
+
+## 24.2 नवीन फाईल्स
+- lib/screens/channel_partner/cp_franchise_kyc_screen.dart
+- lib/screens/channel_partner/cp_seller_kyc_screen.dart
+- lib/screens/channel_partner/promoter_list_screen.dart
+
+## 24.3 शेवटचा commit
+- 6fa053c
+
+## 24.4 अजून बाकी
+- PROJECT_MAP.md update
+- flutter analyze (नंतर)
