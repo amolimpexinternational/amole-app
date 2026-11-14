@@ -13,9 +13,10 @@ import 'cp_revenue_screen.dart';
 import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
+import 'promoter_list_screen.dart';
 import '../../data/ads_data.dart';
 import '../admin/admin_live_ads_screen.dart';
-import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजारासाठी
+import '../buyer/promoter_catalog_screen.dart';
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
   const ChannelPartnerHomeScreen({super.key});
@@ -30,9 +31,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
           color: AppColors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.lightGrey),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2)),
-          ],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,45 +77,6 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFranchiseRow(String name, String area, String status, Color statusColor) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.lightGrey),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
-            child: const Icon(Icons.store_outlined, color: AppColors.primaryBlue),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark)),
-                Text(area, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(status, style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w600)),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,8 +99,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('AMOLE Channel Partner',
-                          style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text('AMOLE Channel Partner', style: TextStyle(color: AppColors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                       Row(
                         children: [
                           GestureDetector(
@@ -162,10 +121,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerRevenueScreen())),
                     child: Container(
                       padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: AppColors.white.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
+                      decoration: BoxDecoration(color: AppColors.white.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -192,7 +148,6 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // === Approvals अलर्ट ===
                     InkWell(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen())),
                       child: Container(
@@ -207,12 +162,8 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         ]),
                       ),
                     ),
-
-                    // === टॉप ऑफर स्लायडर ===
                     const OffersSliderWidget(),
                     const SizedBox(height: 16),
-
-                    // === KPI ग्रिड ===
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -227,13 +178,11 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildKpiCard(context, 'महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen, const CpSellerRevenueScreen()),
                         _buildKpiCard(context, 'जाहिरात विभाग', '५', Icons.campaign_outlined, Colors.orange, const CpAdsScreen()),
                         _buildKpiCard(context, 'क्रिएट टॉप ऑफर', 'नवीन', Icons.local_offer_outlined, Colors.pink, const TopOfferCreateScreen(isSeller: false)),
-                        // === मुद्दा ११: मोस्ट व्हायरल काढून आठवडी बाजार टाकला ===
-                        _buildKpiCard(context, 'आठवडी बाजार', '३', Icons.storefront, Colors.teal, const PromoterCatalogScreen()),
+                        // ✅ बदल ९: आठवडी बाजार → प्रमोटर यादी
+                        _buildKpiCard(context, 'प्रमोटर यादी', '३', Icons.people_alt_outlined, Colors.amber, const PromoterListScreen()),
                       ],
                     ),
                     const SizedBox(height: 20),
-
-                    // === Quick Actions ===
                     const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                     const SizedBox(height: 12),
                     Row(
@@ -258,26 +207,12 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    // === आठवडी बाजार Quick Action (पर्यायी) ===
+                    // ✅ बदल ७, ८: आठवडी बाजार + प्रमोटर कॅटलॉग
                     _buildQuickAction(context, 'आठवडी बाजार', Icons.storefront,
+                        () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()))),
+                    const SizedBox(height: 6),
+                    _buildQuickAction(context, 'प्रमोटर कॅटलॉग', Icons.workspace_premium,
                         () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
-                    const SizedBox(height: 24),
-
-                    // === Franchise List ===
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Franchise List', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                        TextButton(
-                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen())),
-                          child: const Text('सर्व बघा'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    _buildFranchiseRow('हडपसर फ्रँचाइजी', 'पुणे — हडपसर', 'Active', AppColors.successGreen),
-                    _buildFranchiseRow('कोथरूड फ्रँचाइजी', 'पुणे — कोथरूड', 'Active', AppColors.successGreen),
-                    _buildFranchiseRow('वडगाव फ्रँचाइजी', 'पुणे — वडगाव', 'KYC Pending', AppColors.primaryOrange),
                     const SizedBox(height: 16),
                   ],
                 ),
