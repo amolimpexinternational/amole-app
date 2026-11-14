@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../admin/admin_edit_profile_screen.dart';
 import '../admin/admin_view_dashboard_screen.dart';
+import 'cp_seller_kyc_screen.dart';
 
 class CpSellerScreen extends StatefulWidget {
   const CpSellerScreen({super.key});
@@ -167,34 +168,15 @@ class _CpSellerScreenState extends State<CpSellerScreen> {
               itemBuilder: (ctx, i) {
                 final s = _sellers[i];
                 return GestureDetector(
-                  onTap: () => Navigator.push(ctx, MaterialPageRoute(
-                    builder: (_) => AdminEditProfileScreen(
-                      name: s['shopName'],
-                      roleLabel: 'Seller',
-                      idCode: s['franchise'],
-                      avatarIcon: Icons.storefront_outlined,
-                      avatarColor: AppColors.primaryBlue,
-                      fields: [
-                        ProfileField(label: 'दुकानाचे नाव', icon: Icons.storefront_outlined, value: s['shopName']),
-                        ProfileField(label: 'मालक', icon: Icons.person_outlined, value: s['owner']),
-                        ProfileField(label: 'मोबाईल', icon: Icons.phone_outlined, value: s['phone']),
-                        ProfileField(label: 'Franchise', icon: Icons.business_outlined, value: s['franchise']),
-                        ProfileField(label: 'स्थिती', icon: Icons.verified_outlined, value: s['status']),
-                      ],
-                      dashboardScreen: AdminViewDashboardScreen(
-                        name: s['shopName'],
-                        roleLabel: 'Seller',
-                        headerSubtitle: s['franchise'],
-                        revenueLabel: 'या महिन्यातील महसूल',
-                        revenueValue: '₹18,450',
-                        viewerLabel: 'Channel Partner',
-                        kpis: [
-                          DashboardKpi(title: 'ऑर्डर्स', value: '37', subtitle: 'या महिन्यात', icon: Icons.shopping_bag_outlined, color: Colors.orange),
-                          DashboardKpi(title: 'ग्राहक', value: '124', subtitle: 'या महिन्यात', icon: Icons.people_outlined, color: Colors.purple),
-                        ],
-                      ),
-                    ),
-                  )),
+                  onTap: () async {
+  final result = await Navigator.push(
+    ctx,
+    MaterialPageRoute(
+      builder: (_) => CpSellerKycScreen(seller: s),
+    ),
+  );
+  if (result == true) setState(() {});
+},
                   child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(14),
