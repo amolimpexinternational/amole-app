@@ -16,42 +16,26 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   int _currentPage = 0;
   int _selectedTab = 0;
 
-  // टॅब्स: सेलरसाठी ३ आणि बायरसाठी २ (लोकल कनेक्ट/मोस्ट व्हायरल काढले)
+  // ✅ "Create Offer" → "Create Offer free"
   List<String> get _tabs => widget.isSeller
-      ? ['📢 जाहिराती', '🎁 My Offers', '🎯 Create Offer']
+      ? ['📢 जाहिराती', '🎁 My Offers', '🎯 Create Offer free']
       : ['📢 जाहिराती', '🎁 My Offers'];
 
   final List<Map<String, dynamic>> _ads = [
     {
-      'seller': 'श्री गणेश किराणा',
-      'category': 'किराणा',
-      'location': 'हडपसर, पुणे',
-      'avatar': 'G',
-      'avatarColor': Colors.orange,
-      'type': 'photo',
-      'title': 'दिवाळी धमाका ऑफर!',
-      'desc': 'सर्व किराणा मालावर 20% सूट — फक्त आजपुरता!',
-      'bgColor1': const Color(0xFFFF6B35),
-      'bgColor2': const Color(0xFFFF8F00),
-      'likes': '128',
-      'comments': '24',
-      'tag': 'Sponsored',
+      'seller': 'श्री गणेश किराणा', 'category': 'किराणा', 'location': 'हडपसर, पुणे',
+      'avatar': 'G', 'avatarColor': Colors.orange, 'type': 'photo',
+      'title': 'दिवाळी धमाका ऑफर!', 'desc': 'सर्व किराणा मालावर 20% सूट — फक्त आजपुरता!',
+      'bgColor1': const Color(0xFFFF6B35), 'bgColor2': const Color(0xFFFF8F00),
+      'likes': '128', 'comments': '24', 'tag': 'Sponsored',
       'pollQuestion': 'तुम्हाला किराणा सामानावर सूट आवडते का?',
     },
     {
-      'seller': 'राज इलेक्ट्रॉनिक्स',
-      'category': 'इलेक्ट्रॉनिक्स',
-      'location': 'कोंढवा, पुणे',
-      'avatar': 'R',
-      'avatarColor': Colors.blue,
-      'type': 'video',
-      'title': 'नवीन Mobile आला!',
-      'desc': 'Samsung Galaxy A55 — Rs.32,999 मध्ये. EMI उपलब्ध.',
-      'bgColor1': const Color(0xFF1565C0),
-      'bgColor2': const Color(0xFF00E5FF),
-      'likes': '256',
-      'comments': '48',
-      'tag': 'Ad',
+      'seller': 'राज इलेक्ट्रॉनिक्स', 'category': 'इलेक्ट्रॉनिक्स', 'location': 'कोंढवा, पुणे',
+      'avatar': 'R', 'avatarColor': Colors.blue, 'type': 'video',
+      'title': 'नवीन Mobile आला!', 'desc': 'Samsung Galaxy A55 — Rs.32,999 मध्ये. EMI उपलब्ध.',
+      'bgColor1': const Color(0xFF1565C0), 'bgColor2': const Color(0xFF00E5FF),
+      'likes': '256', 'comments': '48', 'tag': 'Ad',
       'pollQuestion': 'तुम्ही नवीन मोबाईल खरेदी करण्यास इंटरेस्टेड आहात का?',
     },
   ];
@@ -327,7 +311,9 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('नवीन Offer तयार करा', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const Text('नवीन Free Offer तयार करा', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+            const SizedBox(height: 4),
+            const Text('हे ऑफर फक्त तुमच्या जिल्ह्यातील ग्राहकांना दिसेल', style: TextStyle(fontSize: 12, color: AppColors.textLight)),
             const SizedBox(height: 16),
 
             Center(
@@ -364,11 +350,11 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
 
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: AppColors.primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: AppColors.successGreen.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
               child: const Row(children: [
-                Icon(Icons.info_outline, color: AppColors.primaryOrange, size: 18),
+                Icon(Icons.info_outline, color: AppColors.successGreen, size: 18),
                 SizedBox(width: 8),
-                Expanded(child: Text('Offer Franchise कडून approve झाल्यावर Buyers ला दिसेल', style: TextStyle(fontSize: 12, color: AppColors.textDark))),
+                Expanded(child: Text('हे Free Offer आहे — तुमच्या जिल्ह्यातील सर्व ग्राहकांना दिसेल', style: TextStyle(fontSize: 12, color: AppColors.textDark))),
               ]),
             ),
             const SizedBox(height: 16),
@@ -376,9 +362,9 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Offer Approval साठी पाठवला!'), backgroundColor: Colors.green)),
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                child: const Text('Approve साठी Submit करा', style: TextStyle(color: Colors.white, fontSize: 15)),
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Free Offer तयार झाला!'), backgroundColor: Colors.green)),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen, padding: const EdgeInsets.symmetric(vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                child: const Text('Free Offer तयार करा', style: TextStyle(color: Colors.white, fontSize: 15)),
               ),
             ),
           ],
@@ -444,12 +430,10 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
           ),
           const SizedBox(height: 8),
         ]
-        else if (_selectedTab == 1)
-        ...[
+        else if (_selectedTab == 1) ...[
           SizedBox(height: 300, child: _buildMyOffersTab())
         ]
-        else if (widget.isSeller && _selectedTab == 2)
-        ...[
+        else if (widget.isSeller && _selectedTab == 2) ...[
           _buildCreateOfferTab(context)
         ],
       ],
@@ -457,9 +441,6 @@ class _AdFeedWidgetState extends State<AdFeedWidget> {
   }
 }
 
-// =========================================================================
-// === ऑफरवर क्लिक केल्यावर उघडणारी नवीन स्क्रीन ===
-// =========================================================================
 class OfferDetailScreen extends StatelessWidget {
   final Map<String, dynamic> offer;
   const OfferDetailScreen({super.key, required this.offer});
