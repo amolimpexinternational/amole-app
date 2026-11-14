@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../constants/app_colors.dart';
 import '../../data/ride_rates.dart';
 
@@ -18,8 +19,7 @@ class RiderHomeScreen extends StatefulWidget {
 
 class _RiderHomeScreenState extends State<RiderHomeScreen> {
   static const bool _testMode = false;
-  Duration get _reminderAfter =>
-      _testMode ? const Duration(seconds: 10) : const Duration(minutes: 15);
+  Duration get _reminderAfter => _testMode ? const Duration(seconds: 10) : const Duration(minutes: 15);
 
   bool _ready = false;
   bool _reminderShown = false;
@@ -29,6 +29,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
 
   Position? _standPosition;
   StreamSubscription<Position>? _positionStream;
+  String _standLocation = '';
 
   final List<Map<String, dynamic>> _requests = [
     {'id': 'RD401','vehicle': 'बाईक','from': 'हडपसर गाडीतळ','to': 'स्वारगेट','km': 9.0,'fare': 133,'buyer': 'रमेश पाटील','phone': '9800000011','kmAway': 0.6,'status': 'new'},
@@ -49,20 +50,14 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
 
   List<Map<String, dynamic>> get _visible {
     if (!_ready || _exhausted) return [];
-    final list = _requests
-        .where((r) => r['status'] == 'new' && (r['kmAway'] as double) <= RideRates.riderRadiusKm)
-        .toList();
+    final list = _requests.where((r) => r['status'] == 'new' && (r['kmAway'] as double) <= RideRates.riderRadiusKm).toList();
     list.sort((a, b) => (a['kmAway'] as double).compareTo(b['kmAway'] as double));
     return list;
   }
 
   void _toast(String msg, {Color color = Colors.green, bool recharge = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor: color,
-        action: recharge ? SnackBarAction(label: 'रिचार्ज करा', textColor: Colors.white, onPressed: _showRecharge) : null,
-      ),
+      SnackBar(content: Text(msg), backgroundColor: color, action: recharge ? SnackBarAction(label: 'रिचार्ज करा', textColor: Colors.white, onPressed: _showRecharge) : null),
     );
   }
 
@@ -75,13 +70,23 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
         return;
       }
     }
-    _standPosition = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-    );
+    _standPosition = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
+
+    // ✅ area नाव मिळव
+    String areaName = 'सध्याचे लोकेशन';
+    try {
+      final placemarks = await placemarkFromCoordinates(_standPosition!.latitude, _standPosition!.longitude);
+      if (placemarks.isNotEmpty) {
+        final p = placemarks.first;
+        final parts = [p.subLocality, p.locality, p.administrativeArea].where((e) => e != null && e!.isNotEmpty).toList();
+        if (parts.isNotEmpty) areaName = parts.join(', ');
+      }
+    } catch (_) {}
+
+    if (mounted) setState(() => _standLocation = areaName);
+
     _positionStream?.cancel();
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 250),
-    ).listen((Position position) {
+    _positionStream = Geolocator.getPositionStream(locationSettings: const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 250)).listen((Position position) {
       if (_standPosition == null) return;
       double distance = Geolocator.distanceBetween(_standPosition!.latitude, _standPosition!.longitude, position.latitude, position.longitude);
       if (distance >= 250) _onMovedFar();
@@ -92,6 +97,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     _positionStream?.cancel();
     _positionStream = null;
     _standPosition = null;
+    _standLocation = '';
   }
 
   void _startReminder() {
@@ -109,7 +115,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Set Your Stand'),
-        content: const Text('तुम्ही आत्ता जिथे आहात ते लोकेशन तुमचा Stand म्हणून निश्चित केले जाईल. तुम्ही 250 मीटरहून जास्त हलल्यास स्टेटस आपोआप OFF होईल.'),
+        content: const Text('तुम्ही आत्ता जिथे आहात ते लोकेशन तुमचा Stand म्हणून निश्चित केले जाईल. 250 मीटरहून जास्त हलल्यास स्टेटस आपोआप OFF होईल.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('रद्द')),
           ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Set Your Stand')),
@@ -120,7 +126,7 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     await _startGpsTracking();
     _timer?.cancel();
     setState(() { _ready = true; _reminderShown = false; });
-    _toast('तुमचे स्टँड निश्चित केले. GPS सुरू आहे.');
+    _toast('स्टँड: $_standLocation. GPS सुरू आहे.');
   }
 
   void _onMovedFar() {
@@ -260,9 +266,17 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
               else { _stopGpsTracking(); setState(() => _ready = false); }
             },
             title: Text(_ready ? 'Ready To Ride: ON' : 'Ready To Ride: OFF', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark)),
-            subtitle: Text(_ready ? 'GPS ट्रॅकिंग सुरू. 250 मीटर हालचाल झाल्यास स्टेटस आपोआप OFF होईल.' : 'ON करताना तुमचे सध्याचे लोकेशन Stand म्हणून निश्चित होईल.', style: const TextStyle(fontSize: 12)),
+            subtitle: Text(_ready ? 'GPS सुरू · स्टँड: $_standLocation' : 'ON करताना सध्याचे लोकेशन Stand म्हणून निश्चित होईल.', style: const TextStyle(fontSize: 12)),
           ),
-          if (_ready) const Padding(padding: EdgeInsets.only(top: 4), child: Row(children: [Icon(Icons.gps_fixed, size: 14, color: Colors.green), SizedBox(width: 4), Text('GPS सक्रिय आहे (खरा ट्रॅकिंग)', style: TextStyle(fontSize: 11, color: Colors.green, fontWeight: FontWeight.bold))])),
+          if (_ready && _standLocation.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Row(children: [
+                const Icon(Icons.location_on, size: 14, color: Colors.green),
+                const SizedBox(width: 4),
+                Expanded(child: Text('📍 $_standLocation', style: const TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold))),
+              ]),
+            ),
         ])),
         if (_reminderShown) _reminderCard(),
         _walletCard(),
