@@ -199,13 +199,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               color: _isFavourite ? Colors.redAccent : AppColors.white,
             ),
           ),
-          IconButton(
-            tooltip: 'Cart',
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen()));
-            },
-            icon: const Icon(Icons.shopping_cart_outlined),
-          ),
+          Badge(
+  isLabelVisible: BuyerShoppingData.cartCount > 0,
+  label: Text(
+    BuyerShoppingData.cartCount > 99 ? '99+' : '${BuyerShoppingData.cartCount}',
+    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+  ),
+  backgroundColor: AppColors.successGreen,
+  child: IconButton(
+    tooltip: 'Cart',
+    onPressed: () {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())).then((_) {
+        if (mounted) setState(() {});
+      });
+    },
+    icon: const Icon(Icons.shopping_cart_outlined),
+  ),
+),
         ],
       ),
       body: SingleChildScrollView(
