@@ -9,54 +9,16 @@ class PromoterCatalogScreen extends StatefulWidget {
 }
 
 class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
-  // === प्रमोटर कॅटलॉग — max 50 ===
   final List<Map<String, dynamic>> _catalogItems = [];
 
-  // === उपलब्ध प्रॉडक्ट्स (डमी — फक्त "प्रमोशन ON") ===
   final List<Map<String, dynamic>> _availableProducts = [
-    {
-      'id': 'p1',
-      'name': 'हातमाग साडी',
-      'price': 1200,
-      'seller': 'श्री गणेश किराणा',
-      'image': null,
-      'isPromoterAdd': true,
-    },
-    {
-      'id': 'p2',
-      'name': 'बासमती तांदूळ (5 kg)',
-      'price': 450,
-      'seller': 'श्री गणेश किराणा',
-      'image': null,
-      'isPromoterAdd': true,
-    },
-    {
-      'id': 'p3',
-      'name': 'इलेक्ट्रिक केतली',
-      'price': 899,
-      'seller': 'राज इलेक्ट्रॉनिक्स',
-      'image': null,
-      'isPromoterAdd': true,
-    },
-    {
-      'id': 'p4',
-      'name': 'कॉटन कुर्ता',
-      'price': 599,
-      'seller': 'अमोल कपडे भांडार',
-      'image': null,
-      'isPromoterAdd': true,
-    },
-    {
-      'id': 'p5',
-      'name': 'स्टील थाळी सेट',
-      'price': 349,
-      'seller': 'स्वाद हॉटेल',
-      'image': null,
-      'isPromoterAdd': true,
-    },
+    {'id': 'p1', 'name': 'हातमाग साडी', 'price': 1200, 'seller': 'श्री गणेश किराणा', 'image': null, 'isPromoterAdd': true},
+    {'id': 'p2', 'name': 'बासमती तांदूळ (5 kg)', 'price': 450, 'seller': 'श्री गणेश किराणा', 'image': null, 'isPromoterAdd': true},
+    {'id': 'p3', 'name': 'इलेक्ट्रिक केतली', 'price': 899, 'seller': 'राज इलेक्ट्रॉनिक्स', 'image': null, 'isPromoterAdd': true},
+    {'id': 'p4', 'name': 'कॉटन कुर्ता', 'price': 599, 'seller': 'अमोल कपडे भांडार', 'image': null, 'isPromoterAdd': true},
+    {'id': 'p5', 'name': 'स्टील थाळी सेट', 'price': 349, 'seller': 'स्वाद हॉटेल', 'image': null, 'isPromoterAdd': true},
   ];
 
-  // === आधीच जोडलेले प्रॉडक्ट्स वगळून उपलब्ध ===
   List<Map<String, dynamic>> get _filteredAvailable {
     final existingIds = _catalogItems.map((e) => e['id']).toSet();
     return _availableProducts.where((p) => !existingIds.contains(p['id'])).toList();
@@ -103,10 +65,7 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
                   return ListTile(
                     leading: Container(
                       width: 50, height: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.lightGrey,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(8)),
                       child: const Icon(Icons.shopping_bag_outlined, color: AppColors.textLight),
                     ),
                     title: Text(p['name'], style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -131,6 +90,7 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
     );
   }
 
+  // === एकच प्रॉडक्ट शेअर ===
   void _shareProduct(Map<String, dynamic> item) {
     final link = 'https://amole.in/promoter/AMOLE-P123/${item['id']}';
     showDialog(
@@ -166,6 +126,77 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
     );
   }
 
+  // ✅ संपूर्ण कॅटलॉग शेअर
+  void _shareEntireCatalog() {
+    if (_catalogItems.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('आधी कॅटलॉगमध्ये प्रॉडक्ट्स जोडा!'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+
+    final link = 'https://amole.in/promoter/AMOLE-P123';
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.share, color: Colors.purple),
+            SizedBox(width: 8),
+            Text('संपूर्ण कॅटलॉग शेअर करा'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.purple.shade200),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.inventory_2, color: Colors.purple),
+                  const SizedBox(width: 8),
+                  Text('${_catalogItems.length} प्रॉडक्ट्स', style: const TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text('तुमचा संपूर्ण प्रमोटर कॅटलॉग ही लिंक वापरून शेअर करा:', style: TextStyle(fontSize: 13)),
+            const SizedBox(height: 8),
+            SelectableText(link, style: const TextStyle(color: Colors.blue, fontSize: 12)),
+            const SizedBox(height: 8),
+            const Text(
+              'लिंक उघडल्यावर सर्व प्रॉडक्ट्स एकत्र दिसतील.',
+              style: TextStyle(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('बंद करा')),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('कॅटलॉग लिंक कॉपी झाली! WhatsApp/Instagram वर शेअर करा.'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            icon: const Icon(Icons.share, size: 16),
+            label: const Text('शेअर करा'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,6 +205,14 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
         title: const Text('माझा प्रमोटर कॅटलॉग'),
         backgroundColor: Colors.purple,
         foregroundColor: Colors.white,
+        actions: [
+          // ✅ संपूर्ण कॅटलॉग शेअर
+          IconButton(
+            icon: const Icon(Icons.share, color: Colors.white),
+            tooltip: 'संपूर्ण कॅटलॉग शेअर करा',
+            onPressed: _shareEntireCatalog,
+          ),
+        ],
       ),
       floatingActionButton: _catalogItems.length >= 50
           ? null
@@ -185,19 +224,40 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
             ),
       body: Column(
         children: [
-          // Header — count
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             color: Colors.purple.shade50,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('एकूण प्रॉडक्ट्स', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Expanded(
+                  child: Text('एकूण प्रॉडक्ट्स', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
                 Text('${_catalogItems.length} / 50', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple.shade700)),
               ],
             ),
           ),
+          // ✅ संपूर्ण कॅटलॉग शेअर — जर प्रॉडक्ट्स असतील
+          if (_catalogItems.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _shareEntireCatalog,
+                  icon: const Icon(Icons.share, color: Colors.white),
+                  label: Text(
+                    'संपूर्ण कॅटलॉग शेअर करा (${_catalogItems.length} प्रॉडक्ट्स)',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+              ),
+            ),
           Expanded(
             child: _catalogItems.isEmpty
                 ? const Center(
@@ -227,10 +287,7 @@ class _PromoterCatalogScreenState extends State<PromoterCatalogScreen> {
                           children: [
                             Container(
                               width: 60, height: 60,
-                              decoration: BoxDecoration(
-                                color: AppColors.lightGrey,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                              decoration: BoxDecoration(color: AppColors.lightGrey, borderRadius: BorderRadius.circular(8)),
                               child: const Icon(Icons.shopping_bag_outlined, color: AppColors.textLight),
                             ),
                             const SizedBox(width: 12),
