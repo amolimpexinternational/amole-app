@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/ads_data.dart';
 import 'admin_edit_ad_screen.dart';
+import 'admin_create_ad_screen.dart';
 
 class AdminLiveAdsScreen extends StatefulWidget {
   final String? locationKeyword;
@@ -22,7 +23,25 @@ class _AdminLiveAdsScreenState extends State<AdminLiveAdsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
-      appBar: AppBar(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white, title: Text(widget.title)),
+      appBar: AppBar(
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: Colors.white,
+        title: Text(widget.title),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminCreateAdScreen()));
+              if (mounted) setState(() {});
+            },
+            icon: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+            label: const Text(
+              '+ नवीन जाहिरात बनवा',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Column(
         children: [
           Container(
