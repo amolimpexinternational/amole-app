@@ -392,8 +392,9 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
             const Text('तुमच्या 10 km मधली दुकाने', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        // ✅ Cart icon सेंटरकडे
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
-          // === Cart icon + Badge (हिरवा) ===
           Badge(
             isLabelVisible: cartCount > 0,
             label: Text(
@@ -402,11 +403,18 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
             ),
             backgroundColor: AppColors.successGreen,
             child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
               icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => CartScreen(
+                      deliveryCharge: _deliveryCharge(),
+                      orderTitle: widget.title ?? 'ZatPat',
+                    ),
+                  ),
                 ).then((_) => setState(() {}));
               },
             ),
