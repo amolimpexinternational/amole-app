@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import 'franchise_create_ad_screen.dart';
 
 class FranchiseAdScreen extends StatefulWidget {
   const FranchiseAdScreen({super.key});
@@ -9,36 +10,47 @@ class FranchiseAdScreen extends StatefulWidget {
 }
 
 class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
+  int _selectedTab = 0;
+
   final List<Map<String, dynamic>> _ads = [
     {
-      'seller': 'गणेश किराणा मार्ट', 'title': 'दिवाळी Sale — 20% सूट',
+      'seller': 'गणेश किराणा मार्ट', 'role': 'Seller',
+      'title': 'दिवाळी Sale — 20% सूट',
       'description': 'दिवाळीनिमित्त सर्व किराणा वस्तूंवर 20% सूट. ऑफर 7 दिवसांसाठी.',
       'budget': '₹500', 'days': '7 दिवस', 'status': 'प्रतीक्षेत',
       'targetArea': 'पुणे जिल्हा', 'targetAge': '18-45', 'targetGender': 'सर्व',
       'image': null,
     },
     {
-      'seller': 'राज इलेक्ट्रॉनिक्स', 'title': 'नवीन Mobile Accessories',
+      'seller': 'राज इलेक्ट्रॉनिक्स', 'role': 'Promoter',
+      'title': 'नवीन Mobile Accessories',
       'description': 'नवीन मोबाईल ऍक्सेसरीज उपलब्ध. 10% सूट.',
       'budget': '₹300', 'days': '5 दिवस', 'status': 'प्रतीक्षेत',
       'targetArea': 'हडपसर', 'targetAge': '18-35', 'targetGender': 'सर्व',
       'image': null,
     },
     {
-      'seller': 'श्री मेडिकल', 'title': 'Generic Medicines उपलब्ध',
+      'seller': 'श्री मेडिकल', 'role': 'Seller',
+      'title': 'Generic Medicines उपलब्ध',
       'description': 'सर्व जेनेरिक औषधे उपलब्ध. 5% सूट.',
       'budget': '₹200', 'days': '3 दिवस', 'status': 'मंजूर',
       'targetArea': 'कोथरूड', 'targetAge': 'सर्व', 'targetGender': 'सर्व',
       'image': null,
     },
     {
-      'seller': 'प्रिया फॅशन', 'title': 'नवीन Collection आले',
-      'description': 'नवीन कलेक्शन आले आहे. 15% सूट.',
-      'budget': '₹400', 'days': '10 दिवस', 'status': 'नाकारले',
-      'targetArea': 'पुणे जिल्हा', 'targetAge': '18-45', 'targetGender': 'स्त्री',
+      'seller': 'हडपसर फ्रँचाइजी', 'role': 'Franchise',
+      'title': 'हडपसर स्पेशल ऑफर',
+      'description': 'हडपसर भागातील ग्राहकांसाठी खास ऑफर.',
+      'budget': '₹400', 'days': '10 दिवस', 'status': 'मंजूर',
+      'targetArea': 'हडपसर', 'targetAge': '18-45', 'targetGender': 'सर्व',
       'image': null,
     },
   ];
+
+  List<Map<String, dynamic>> get _pendingAds =>
+      _ads.where((a) => a['status'] == 'प्रतीक्षेत').toList();
+  List<Map<String, dynamic>> get _liveAds =>
+      _ads.where((a) => a['status'] == 'मंजूर').toList();
 
   Color _statusColor(String s) {
     switch (s) {
@@ -50,20 +62,18 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
   }
 
   // === संपूर्ण जाहिरात Preview ===
-  void _previewAd(int index) {
-    final ad = _ads[index];
+  void _previewAd(Map<String, dynamic> ad) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => DraggableScrollableSheet(
+      builder: (ctx) => DraggableScrollableSheet(
         initialChildSize: 0.85,
         minChildSize: 0.5,
         maxChildSize: 0.95,
         expand: false,
         builder: (ctx, scrollCtrl) => Column(
           children: [
-            // === Header ===
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -78,7 +88,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                     tooltip: 'Edit',
                     onPressed: () {
                       Navigator.pop(ctx);
-                      _editAd(index);
+                      _editAd(ad);
                     },
                   ),
                   IconButton(
@@ -94,7 +104,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                 controller: scrollCtrl,
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // === जाहिरात कशी दिसते (Ad Preview) ===
+                  // जाहिरात कशी दिसते
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -138,8 +148,13 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                           children: [
                             const Icon(Icons.storefront, color: Colors.white70, size: 14),
                             const SizedBox(width: 4),
-                            Text(ad['seller'], style: const TextStyle(color: Colors.white70, fontSize: 12)),
-                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                '${ad['seller']} (${ad['role']})',
+                                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                             const Icon(Icons.calendar_today, color: Colors.white70, size: 14),
                             const SizedBox(width: 4),
                             Text(ad['days'], style: const TextStyle(color: Colors.white70, fontSize: 12)),
@@ -150,22 +165,20 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // === जाहिरात तपशील ===
                   _section('जाहिरात तपशील', [
                     _infoRow('शीर्षक', ad['title']),
                     _infoRow('वर्णन', ad['description']),
+                    _infoRow('कोणी टाकली', '${ad['seller']} (${ad['role']})'),
                     _infoRow('Budget', ad['budget']),
                     _infoRow('कालावधी', ad['days']),
                   ]),
 
-                  // === टार्गेटिंग ===
                   _section('🎯 टार्गेटिंग', [
                     _infoRow('क्षेत्र', ad['targetArea']),
                     _infoRow('वयोगट', ad['targetAge']),
                     _infoRow('लिंग', ad['targetGender']),
                   ]),
 
-                  // === स्थिती ===
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -185,7 +198,6 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
               ),
             ),
 
-            // === Approve/Reject ===
             if (ad['status'] == 'प्रतीक्षेत')
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -204,6 +216,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                           foregroundColor: Colors.red,
                           side: const BorderSide(color: Colors.red),
                           padding: const EdgeInsets.symmetric(vertical: 14),
+                          minimumSize: const Size(0, 44),
                         ),
                         child: const Text('❌ नाकारा'),
                       ),
@@ -215,12 +228,13 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                           setState(() => ad['status'] = 'मंजूर');
                           Navigator.pop(ctx);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('✅ जाहिरात मंजूर झाली'), backgroundColor: AppColors.successGreen),
+                            const SnackBar(content: Text('✅ जाहिरात मंजूर झाली — Live'), backgroundColor: AppColors.successGreen),
                           );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.successGreen,
                           padding: const EdgeInsets.symmetric(vertical: 14),
+                          minimumSize: const Size(0, 44),
                         ),
                         child: const Text('✅ मंजूर करा', style: TextStyle(color: Colors.white)),
                       ),
@@ -234,9 +248,8 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
     );
   }
 
-  // === संपूर्ण जाहिरात Edit ===
-  void _editAd(int index) {
-    final ad = _ads[index];
+  // === जाहिरात Edit ===
+  void _editAd(Map<String, dynamic> ad) {
     final titleCtrl = TextEditingController(text: ad['title']);
     final descCtrl = TextEditingController(text: ad['description']);
     final budgetCtrl = TextEditingController(text: ad['budget']);
@@ -305,85 +318,197 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
     );
   }
 
-  void _deleteAd(int index) {
-    setState(() => _ads.removeAt(index));
+  void _deleteAd(Map<String, dynamic> ad) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('जाहिरात हटवायची?'),
+        content: Text('"${ad['title']}" कायमची हटवली जाईल.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('रद्द')),
+          ElevatedButton(
+            onPressed: () {
+              setState(() => _ads.remove(ad));
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('🗑️ जाहिरात हटवली'), backgroundColor: Colors.red),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('हटवा', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(Map<String, dynamic> ad, {required bool isPending}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: Text(ad['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark))),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(color: _statusColor(ad['status']).withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
+                child: Text(ad['status'], style: TextStyle(color: _statusColor(ad['status']), fontSize: 12, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text('🏪 ${ad['seller']} (${ad['role']})', style: const TextStyle(fontSize: 13, color: AppColors.textLight)),
+          const SizedBox(height: 4),
+          Row(children: [
+            Text('💰 ${ad['budget']}', style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
+            const SizedBox(width: 16),
+            Text('📅 ${ad['days']}', style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
+            const SizedBox(width: 16),
+            Expanded(child: Text('🎯 ${ad['targetArea']}', style: const TextStyle(fontSize: 13, color: AppColors.textLight), overflow: TextOverflow.ellipsis)),
+          ]),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              if (isPending)
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _previewAd(ad),
+                    icon: const Icon(Icons.visibility, size: 16, color: Colors.white),
+                    label: const Text('Preview', style: TextStyle(color: Colors.white, fontSize: 12)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      minimumSize: const Size(0, 36),
+                    ),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _editAd(ad),
+                    icon: const Icon(Icons.edit, size: 16, color: Colors.white),
+                    label: const Text('Edit', style: TextStyle(color: Colors.white, fontSize: 12)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      minimumSize: const Size(0, 36),
+                    ),
+                  ),
+                ),
+              const SizedBox(width: 6),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryBlue),
+                onPressed: () => _editAd(ad),
+                tooltip: 'Edit',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                onPressed: () => _deleteAd(ad),
+                tooltip: 'Delete',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final ads = _selectedTab == 0 ? _pendingAds : _liveAds;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
-        title: const Text('Ad Approvals', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        foregroundColor: Colors.white,
+        title: const Text('जाहिरात विभाग', style: TextStyle(fontWeight: FontWeight.bold)),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              await Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()));
+              if (mounted) setState(() {});
+            },
+            icon: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
+            label: const Text(
+              '+ नवीन जाहिरात बनवा',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(46),
+          child: Container(
+            color: AppColors.primaryBlue,
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selectedTab = 0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: _selectedTab == 0 ? AppColors.cyan : Colors.transparent, width: 3)),
+                      ),
+                      child: Text(
+                        'Approval Pending (${_pendingAds.length})',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _selectedTab == 0 ? Colors.white : Colors.white60,
+                          fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selectedTab = 1),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        border: Border(bottom: BorderSide(color: _selectedTab == 1 ? AppColors.cyan : Colors.transparent, width: 3)),
+                      ),
+                      child: Text(
+                        'Live जाहिराती (${_liveAds.length})',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _selectedTab == 1 ? Colors.white : Colors.white60,
+                          fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.normal,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-      body: _ads.isEmpty
-          ? const Center(child: Text('कोणतीही जाहिरात नाही'))
+      body: ads.isEmpty
+          ? Center(
+              child: Text(
+                _selectedTab == 0 ? 'कोणतीही पेंडिंग जाहिरात नाही' : 'कोणतीही Live जाहिरात नाही',
+                style: const TextStyle(color: AppColors.textLight),
+              ),
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: _ads.length,
-              itemBuilder: (context, index) {
-                final ad = _ads[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 14),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(child: Text(ad['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark))),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(color: _statusColor(ad['status']).withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
-                            child: Text(ad['status'], style: TextStyle(color: _statusColor(ad['status']), fontSize: 12, fontWeight: FontWeight.bold)),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text('🏪 ${ad['seller']}', style: const TextStyle(fontSize: 13, color: AppColors.textLight)),
-                      const SizedBox(height: 4),
-                      Row(children: [
-                        Text('💰 ${ad['budget']}', style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-                        const SizedBox(width: 16),
-                        Text('📅 ${ad['days']}', style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-                      ]),
-                      const SizedBox(height: 12),
-                      // === ३ बटनं: Preview / Edit / Delete ===
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () => _previewAd(index),
-                              icon: const Icon(Icons.visibility, size: 16, color: Colors.white),
-                              label: const Text('Preview', style: TextStyle(color: Colors.white, fontSize: 12)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryBlue,
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          IconButton(
-                            icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryBlue),
-                            onPressed: () => _editAd(index),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                            onPressed: () => _deleteAd(index),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
+              itemCount: ads.length,
+              itemBuilder: (context, index) => _buildCard(ads[index], isPending: _selectedTab == 0),
             ),
     );
   }
