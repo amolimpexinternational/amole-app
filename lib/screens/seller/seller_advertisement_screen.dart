@@ -852,4 +852,12 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
             child: DropdownButton<String>(
               isExpanded: true,
               value: value,
-              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14))
+              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14)))).toList(),
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
