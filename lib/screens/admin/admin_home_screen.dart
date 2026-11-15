@@ -20,7 +20,7 @@ import 'admin_create_ad_screen.dart';
 import 'admin_send_notification_screen.dart';
 import 'admin_settlement_screen.dart';
 import 'admin_live_ads_screen.dart';
-import '../buyer/promoter_catalog_screen.dart'; // आठवडी बाजारासाठी
+import '../buyer/promoter_catalog_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -169,12 +169,11 @@ class _AdminDashboard extends StatelessWidget {
               _kpi(context, 'आजची विक्री', '₹0', 'एकूण व्यवसाय', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
               _kpi(context, 'महिन्याची विक्री', '₹0', 'एकूण व्यवसाय', Icons.account_balance_wallet_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AdminRevenueScreen()))),
               _kpi(context, 'जाहिरात विभाग', '५', 'जाहिराती बघा', Icons.campaign_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminLiveAdsScreen()))),
-              
-_kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'ऑफर तयार करा', Icons.local_offer_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: false)))),
-              
-              // === मुद्दा १०: Most Viral काढून आठवडी बाजार टाकला ===
+
+              _kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'ऑफर तयार करा', Icons.local_offer_outlined, Colors.pink, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: false)))),
+
               _kpi(context, 'आठवडी बाजार', '३', 'वस्तू जोडा', Icons.storefront, Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
-              
+
               _kpi(context, 'Daily Settlement', '', 'Seller-निहाय, तारीखनिहाय', Icons.account_balance_outlined, Colors.brown, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminSettlementScreen()))),
             ],
           ),
@@ -199,11 +198,9 @@ _kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'ऑफ�
                 _quickAction(context, 'नवीन Channel Partner', Icons.hub_outlined, Colors.indigo, const AdminChannelPartnersScreen()),
                 _quickAction(context, 'नवीन Franchise', Icons.storefront_outlined, AppColors.primaryBlue, const AdminAddFranchiseScreen()),
                 _quickAction(context, 'नवीन Seller', Icons.store_outlined, Colors.teal, const AdminAddSellerScreen()),
-                _quickAction(context, 'जाहिरात तयार करा', Icons.campaign_outlined, Colors.orange, const AdminCreateAdScreen()),
+                // ❌ काढलं: 'जाहिरात तयार करा' → AdminCreateAdScreen
                 _quickAction(context, 'नोटिफिकेशन पाठवा', Icons.notifications_active_outlined, Colors.pink, const AdminSendNotificationScreen()),
                 _quickAction(context, 'Approvals', Icons.fact_check_outlined, Colors.deepPurple, const AdminApprovalsScreen()),
-                
-                // === मुद्दा ११: आठवडी बाजार Quick Action ===
                 _quickAction(context, 'आठवडी बाजार', Icons.storefront, Colors.teal, const PromoterCatalogScreen()),
               ],
             ),
