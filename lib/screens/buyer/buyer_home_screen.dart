@@ -2,6 +2,7 @@ import 'promoter_dashboard_screen.dart';
 import 'weekly_market_screen.dart';
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
+import '../../data/buyer_shopping_data.dart';
 import 'buyer_search_screen.dart';
 import 'global_shopping_home_screen.dart';
 import 'buyer_profile_screen.dart';
@@ -50,7 +51,6 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
     {'label': 'फूड ऑर्डर\nकरा', 'icon': Icons.restaurant_outlined, 'action': 'food'},
     {'label': 'इन्स्टंट लोकल\nडिलिव्हरी', 'icon': Icons.bolt_outlined, 'action': 'instant'},
     {'label': 'राईड बुक\nकरा', 'icon': Icons.two_wheeler_outlined, 'action': 'ride'},
-    
     {'label': 'डिलिव्हरी /\nलॉजिस्टिक्स सेवा', 'icon': Icons.local_shipping_outlined, 'action': 'logistics'},
     {'label': 'शेतकरी', 'icon': Icons.agriculture_outlined, 'action': 'farmers'},
   ];
@@ -66,7 +66,6 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
       case 'instant':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const PincodeShopsScreen()));
         break;
-      
       case 'ride':
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ComingSoonScreen(title: 'राईड बुक करा')));
         break;
@@ -80,6 +79,8 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
   }
 
   Widget _buildHomeTab() {
+    final cartCount = BuyerShoppingData.cartCount;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,15 +114,26 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          tooltip: 'Cart',
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                          iconSize: 20,
-                          icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const CartScreen()),
+                        // ✅ Cart icon + हिरवा badge
+                        Badge(
+                          isLabelVisible: cartCount > 0,
+                          label: Text(
+                            cartCount > 99 ? '99+' : '$cartCount',
+                            style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                          ),
+                          backgroundColor: AppColors.successGreen,
+                          child: IconButton(
+                            tooltip: 'Cart',
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                            iconSize: 20,
+                            icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const CartScreen()),
+                            ).then((_) {
+                              if (mounted) setState(() {});
+                            }),
                           ),
                         ),
                         const SizedBox(width: 2),
@@ -165,18 +177,17 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // === खालची रांग: 245 pts, ऑर्डर, search ===
+                // === खालची रांग: रिवॉर्ड पॉइंट + ऑर्डर + Search bar ===
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // 245 pts
+                    // ✅ रिवॉर्ड पॉइंट
                     GestureDetector(
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const RewardWalletScreen()),
                       ),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.amber.shade600,
                           borderRadius: BorderRadius.circular(20),
@@ -187,7 +198,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                             Icon(Icons.stars, color: Colors.white, size: 14),
                             SizedBox(width: 3),
                             Text(
-                              '245 pts',
+                              'रिवॉर्ड पॉइंट',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -206,7 +217,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                         MaterialPageRoute(builder: (_) => const OrderTrackingScreen()),
                       ),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                         decoration: BoxDecoration(
                           color: AppColors.cyan,
                           borderRadius: BorderRadius.circular(20),
@@ -229,32 +240,35 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    // Search
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(20),
+                    // ✅ Search bar (आडवं)
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const BuyerSearchScreen()),
                         ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.search, color: Colors.white, size: 14),
-                            SizedBox(width: 3),
-                            Text(
-                              'शोधा',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 11,
+                        child: Container(
+                          height: 34,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            children: const [
+                              Icon(Icons.search, color: AppColors.primaryBlue, size: 18),
+                              SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  'शोधा...',
+                                  style: TextStyle(
+                                    color: AppColors.textLight,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -296,7 +310,7 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
             ),
           ),
 
-          // === नवीन: आठवडी बाजार बॅनर ===
+          // === आठवडी बाजार बॅनर ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
             child: Container(
@@ -379,9 +393,9 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
               ),
             ),
           ),
-          
+
           const AdFeedWidget(),
-          
+
           const SizedBox(height: 8),
           const SizedBox(height: 16),
         ],
@@ -404,8 +418,8 @@ class _BuyerHomeScreenState extends State<BuyerHomeScreen> {
           } else if (index == 3) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()));
           } else if (index == 4) {
-  Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
-} else {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()));
+          } else {
             setState(() => _currentIndex = index);
           }
         },
