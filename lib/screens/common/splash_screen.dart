@@ -64,12 +64,13 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // ✅ लोगो गोलाकार
                   Container(
                     width: 164,
                     height: 164,
                     decoration: BoxDecoration(
                       color: AppColors.white,
-                      borderRadius: BorderRadius.circular(32),
+                      shape: BoxShape.circle, // ✅ गोल
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.25),
@@ -78,9 +79,14 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ],
                     ),
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      fit: BoxFit.contain,
+                    child: ClipOval(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 28),
