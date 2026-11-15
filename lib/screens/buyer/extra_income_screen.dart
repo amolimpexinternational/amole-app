@@ -162,29 +162,32 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
           ),
           const SizedBox(height: 12),
 
-          // === ७ आडवे टॅब ===
-          SizedBox(
-            height: 130,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: _options.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (context, index) {
-                return _buildHorizontalOptionCard(_options[index]);
-              },
+          // ✅ ७ टॅब — Grid मध्ये (सगळे एकत्र दिसतील)
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisExtent: 120,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
+            itemCount: _options.length,
+            itemBuilder: (context, index) {
+              return _buildHorizontalOptionCard(_options[index]);
+            },
           ),
         ],
       ),
     );
   }
 
+  // ✅ Grid cell — width नाही, padding कमी
   Widget _buildHorizontalOptionCard(Map<String, dynamic> option) {
     return GestureDetector(
       onTap: () => _showOptionInfo(option),
       child: Container(
-        width: 115,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -195,17 +198,17 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 24,
+              radius: 22,
               backgroundColor: (option['color'] as Color).withOpacity(0.15),
-              child: Icon(option['icon'] as IconData, color: option['color'] as Color, size: 24),
+              child: Icon(option['icon'] as IconData, color: option['color'] as Color, size: 22),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               option['short'] as String,
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textDark),
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textDark),
             ),
           ],
         ),
@@ -261,7 +264,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
                     context,
                     MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()),
                   );
-                  // परत आल्यावर status पुन्हा लोड कर (KYC पूर्ण झाली असेल तर)
                   _loadPromoterStatus();
                 },
                 style: ElevatedButton.styleFrom(
@@ -300,7 +302,6 @@ class _ExtraIncomeScreenState extends State<ExtraIncomeScreen> {
                     context,
                     MaterialPageRoute(builder: (_) => const PromoterDashboardScreen()),
                   );
-                  // KYC पूर्ण करून परत आल्यावर status refresh → "प्रोफाइल बघा" दिसेल
                   _loadPromoterStatus();
                 },
                 style: ElevatedButton.styleFrom(
