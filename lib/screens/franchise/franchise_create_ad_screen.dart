@@ -12,7 +12,8 @@ class FranchiseCreateAdScreen extends StatefulWidget {
 class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  String _contentType = 'Text'; // Text / Photo / Video
+  String _contentType = 'Text';
+  final _titleController = TextEditingController();
   final _textController = TextEditingController();
   final _pollQuestionController = TextEditingController();
   final _budgetController = TextEditingController();
@@ -20,29 +21,248 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
   String? _pickedFileName;
   String? _fileError;
 
-  String _location = 'तालुका';
   String _ageGroup = '२४–४०';
   String _gender = 'दोन्ही';
   String _timeSlot = 'Full Day';
   int _durationDays = 3;
 
-  static const int _maxPhotoBytes = 5 * 1024 * 1024; // 5 MB (Blueprint 6.1)
-  static const int _maxVideoSeconds = 180; // 3 min (Blueprint 6.1)
+  // === Hierarchical Location Data ===
+  final Map<String, Map<String, Map<String, List<String>>>> _locationData = {
+    'महाराष्ट्र': {
+      'पुणे': {
+        'हवेली': ['411028', '411001', '411014', '411036'],
+        'मुळशी': ['412115', '412108', '412109'],
+        'जुन्नर': ['410502', '410503', '410504'],
+        'बारामती': ['413102', '413103', '413104'],
+      },
+      'मुंबई': {
+        'अंधेरी': ['400053', '400058', '400069'],
+        'बोरिवली': ['400066', '400091', '400092'],
+        'दादर': ['400014', '400028'],
+      },
+      'नाशिक': {
+        'नाशिक': ['422001', '422002', '422003'],
+        'मालेगाव': ['423203', '423204'],
+        'सिन्नर': ['422103', '422104'],
+      },
+    },
+    'कर्नाटक': {
+      'बेंगळुरू': {
+        'बेंगळुरू उत्तर': ['560001', '560002', '560003'],
+        'बेंगळुरू दक्षिण': ['560004', '560005', '560006'],
+      },
+      'मैसूर': {
+        'मैसूर': ['570001', '570002', '570003'],
+        'नंजनगुड': ['571301', '571302'],
+      },
+    },
+    'गुजरात': {
+      'अहमदाबाद': {
+        'अहमदाबाद': ['380001', '380002', '380003'],
+        'दस्क्रोई': ['382210', '382213'],
+      },
+      'सुरत': {
+        'सुरत': ['395001', '395002', '395003'],
+        'ओलपाड': ['394540', '394541'],
+      },
+    },
+  };
+
+  final Set<String> _selectedStates = {};
+  final Set<String> _selectedDistricts = {};
+  final Set<String> _selectedTalukas = {};
+  final Set<String> _selectedPincodes = {};
+
+  static const int _maxPhotoBytes = 5 * 1024 * 1024;
 
   @override
   void dispose() {
+    _titleController.dispose();
     _textController.dispose();
     _pollQuestionController.dispose();
     _budgetController.dispose();
     super.dispose();
   }
 
-  // किंमत दर (Cost per Poll Reply) मोजण्यासाठी
   double get _costPerReply {
     if (_contentType == 'Text') return 0.10;
     if (_contentType == 'Photo') return 0.25;
     if (_contentType == 'Video') return 0.50;
     return 0.10;
+  }
+
+  List<String> _allDistricts() {
+    final list = <String>[];
+    for (final d in _locationData.values) list.addAll(d.keys);
+    return list;
+  }
+
+  List<String> _allTalukas() {
+    final list = <String>[];
+    for (final d in _locationData.values) {
+      for (final t in d.values) list.addAll(t.keys);
+    }
+    return list;
+  }
+
+  List<String> _allPincodes() {
+    final list = <String>[];
+    for (final d in _locationData.values) {
+      for (final t in d.values) {
+        for (final p in t.values) list.addAll(p);
+      }
+    }
+    return list;
+  }
+
+  void _showLocationPicker(String type) {
+    List<String> items = [];
+    Set<String> selected;
+
+    switch (type) {
+      case 'राज्य':
+        items = _locationData.keys.toList();
+        selected = _selectedStates;
+        break;
+      case 'जिल्हा':
+        items = _allDistricts();
+        selected = _selectedDistricts;
+        break;
+      case 'तालुका':
+        items = _allTalukas();
+        selected = _selectedTalukas;
+        break;
+      case 'पिनकोड':
+        items = _allPincodes();
+        selected = _selectedPincodes;
+        break;
+      default:
+        return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (ctx, scrollController) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text('$type निवडा', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setSheetState(() {
+                          if (selected.length == items.length) {
+                            selected.clear();
+                          } else {
+                            selected.clear();
+                            selected.addAll(items);
+                          }
+                        });
+                        setState(() {});
+                      },
+                      child: Text(
+                        selected.length == items.length ? 'सर्व काढा' : 'सर्व निवडा',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '${selected.length} / ${items.length} निवडले',
+                    style: const TextStyle(fontSize: 12, color: AppColors.textLight),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(height: 1),
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return CheckboxListTile(
+                      title: Text(item),
+                      value: selected.contains(item),
+                      activeColor: AppColors.primaryBlue,
+                      onChanged: (v) {
+                        setSheetState(() {
+                          if (v == true) {
+                            selected.add(item);
+                          } else {
+                            selected.remove(item);
+                          }
+                        });
+                        setState(() {});
+                      },
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14)),
+                    child: const Text('ठीक आहे', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _locationChip(String type, Set<String> selected) {
+    final count = selected.length;
+    return InkWell(
+      onTap: () => _showLocationPicker(type),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: count > 0 ? AppColors.primaryBlue.withValues(alpha: 0.08) : Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: count > 0 ? AppColors.primaryBlue.withValues(alpha: 0.4) : Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.location_on, color: count > 0 ? AppColors.primaryBlue : Colors.grey, size: 20),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                count > 0 ? '$type: $count निवडले' : '$type निवडा',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: count > 0 ? AppColors.primaryBlue : AppColors.textLight,
+                  fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+            Icon(Icons.arrow_drop_down, color: count > 0 ? AppColors.primaryBlue : Colors.grey),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _pickFile() async {
@@ -69,39 +289,300 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
     });
   }
 
-  void _submitAd() {
-    if (!_formKey.currentState!.validate()) return;
+  bool _validateBeforePreview() {
+    if (!_formKey.currentState!.validate()) return false;
 
     if (_contentType != 'Text' && _pickedFileName == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('कृपया $_contentType फाईल निवडा')),
       );
-      return;
+      return false;
     }
 
     final budget = int.tryParse(_budgetController.text.trim()) ?? 0;
     if (budget < 100) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('किमान बजेट ₹१०० असणे आवश्यक आहे (Blueprint नियम)')),
+        const SnackBar(content: Text('किमान बजेट ₹१०० असणे आवश्यक आहे')),
       );
-      return;
+      return false;
     }
 
+    final hasTarget = _selectedStates.isNotEmpty || _selectedDistricts.isNotEmpty ||
+        _selectedTalukas.isNotEmpty || _selectedPincodes.isNotEmpty;
+    if (!hasTarget) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('कृपया किमान एक ठिकाण निवडा!')),
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showPreview() {
+    if (!_validateBeforePreview()) return;
+
+    final budget = int.tryParse(_budgetController.text.trim()) ?? 0;
     final pollQuestion = _pollQuestionController.text.trim().isEmpty
-        ? 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?' // default poll (Blueprint 6.3)
+        ? 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?'
         : _pollQuestionController.text.trim();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (ctx, scrollCtrl) => Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const Icon(Icons.visibility, color: AppColors.primaryBlue),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text('जाहिरात Preview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView(
+                controller: scrollCtrl,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primaryBlue, AppColors.royalBlue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_contentType != 'Text')
+                          Container(
+                            height: 140,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    _contentType == 'Photo' ? Icons.image : Icons.videocam,
+                                    color: Colors.white70,
+                                    size: 50,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    _pickedFileName ?? '$_contentType फाईल',
+                                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (_contentType != 'Text') const SizedBox(height: 12),
+                        Text(
+                          _titleController.text,
+                          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _contentType == 'Text' ? _textController.text : 'AMOLE Sponsored',
+                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text('Poll: $pollQuestion', style: const TextStyle(color: Colors.white, fontSize: 11)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  _previewSection('📋 जाहिरात तपशील', [
+                    _previewRow('शीर्षक', _titleController.text),
+                    if (_contentType == 'Text') _previewRow('मजकूर', _textController.text),
+                    if (_contentType != 'Text') _previewRow('प्रकार', _contentType.toUpperCase()),
+                    _previewRow('पोल प्रश्न', pollQuestion),
+                    _previewRow('बजेट', '₹$budget'),
+                    _previewRow('कालावधी', '$_durationDays दिवस'),
+                    _previewRow('प्रति पोल रिप्लाय', '₹${_costPerReply.toStringAsFixed(2)}'),
+                  ]),
+
+                  _previewSection('🎯 कोणाला दिसेल?', [
+                    _previewRow('राज्य', _selectedStates.isEmpty ? '—' : _selectedStates.join(', ')),
+                    _previewRow('जिल्हे', _selectedDistricts.isEmpty ? '—' : _selectedDistricts.join(', ')),
+                    _previewRow('तालुके', _selectedTalukas.isEmpty ? '—' : _selectedTalukas.join(', ')),
+                    _previewRow('पिनकोड', _selectedPincodes.isEmpty ? '—' : _selectedPincodes.join(', ')),
+                    _previewRow('वयोगट', _ageGroup),
+                    _previewRow('लिंग', _gender),
+                    _previewRow('वेळ', _timeSlot),
+                  ]),
+
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.flash_on, color: Colors.green, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Franchise असल्यामुळे ही जाहिरात थेट Live होईल — Approval ची गरज नाही.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => Navigator.pop(ctx),
+                      icon: const Icon(Icons.edit, color: AppColors.primaryBlue),
+                      label: const Text('Edit करा', style: TextStyle(color: AppColors.primaryBlue)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: const BorderSide(color: AppColors.primaryBlue),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        minimumSize: const Size(0, 44),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _liveAd();
+                      },
+                      icon: const Icon(Icons.check_circle, color: Colors.white),
+                      label: const Text('कन्फर्म करा — Live करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.successGreen,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        minimumSize: const Size(0, 44),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _previewSection(String title, List<Widget> children) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+          const SizedBox(height: 8),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _previewRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('$label: ', style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
+        ],
+      ),
+    );
+  }
+
+  void _liveAd() {
+    final budget = int.tryParse(_budgetController.text.trim()) ?? 0;
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('✅ जाहिरात Live झाली'),
-        content: Text(
-          "प्रकार: $_contentType\n"
-          "पोल प्रश्न: $pollQuestion\n"
-          "बजेट: ₹$budget | कालावधी: $_durationDays दिवस\n"
-          "Adv Generator: तुमची Franchise (10% वाटा तुम्हाला)\n\n"
-          "Approval आवश्यक नाही — जाहिरात लगेच Live झाली आहे.",
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 28),
+            SizedBox(width: 8),
+            Text('✅ जाहिरात Live झाली'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green.shade300),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.live_tv, color: Colors.green, size: 20),
+                  SizedBox(width: 8),
+                  Text('Status: LIVE', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text('प्रकार: ${_contentType.toUpperCase()}'),
+            Text('बजेट: ₹$budget'),
+            Text('कालावधी: $_durationDays दिवस'),
+            const SizedBox(height: 8),
+            const Text(
+              'तुमची जाहिरात आता "जाहिरात विभाग" मध्ये Live आहे.',
+              style: TextStyle(fontSize: 12, color: AppColors.textLight, fontStyle: FontStyle.italic),
+            ),
+          ],
         ),
         actions: [
           ElevatedButton(
@@ -109,7 +590,8 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            child: const Text('ठीक आहे'),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.successGreen),
+            child: const Text('ठीक आहे', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -128,14 +610,13 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('Create Ad', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text('जाहिरात तयार करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // === INFO BOX ===
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -149,7 +630,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'तुमची जाहिरात लगेच Live होईल — Approval लागणार नाही. (Adv Generator: तुमची Franchise, 10% वाटा तुम्हाला)',
+                      'Franchise ची जाहिरात थेट Live होते — Approval लागत नाही.',
                       style: TextStyle(color: Colors.green.shade900, fontSize: 12.5),
                     ),
                   ),
@@ -157,7 +638,6 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               ),
             ),
 
-            // === १. कंटेंट प्रकार ===
             _sectionTitle('१. कन्टेंट प्रकार'),
             SegmentedButton<String>(
               segments: const [
@@ -175,20 +655,29 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               },
             ),
 
-            if (_contentType == 'Text') ...[
-              const SizedBox(height: 12),
+            _sectionTitle('२. जाहिरात शीर्षक'),
+            TextFormField(
+              controller: _titleController,
+              decoration: InputDecoration(
+                hintText: 'उदा. दिवाळी धमाका 20% सूट',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'शीर्षक आवश्यक' : null,
+            ),
+
+            _sectionTitle('३. कंटेंट'),
+            if (_contentType == 'Text')
               TextFormField(
                 controller: _textController,
-                maxLength: 300, // Blueprint 6.1: max 300 characters
+                maxLength: 300,
                 maxLines: 5,
                 decoration: InputDecoration(
                   hintText: 'जाहिरातीचा मजकूर लिहा (कमाल ३०० अक्षरं)',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty) ? 'मजकूर आवश्यक आहे' : null,
-              ),
-            ] else ...[
-              const SizedBox(height: 12),
+              )
+            else ...[
               Text(
                 _contentType == 'Photo' ? 'कमाल आकार: ५ MB' : 'कमाल कालावधी: ३ मिनिटे (१८० सेकंद)',
                 style: const TextStyle(fontSize: 12, color: AppColors.textLight),
@@ -202,7 +691,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    border: Border.all(color: AppColors.primaryBlue.withOpacity(0.4), style: BorderStyle.solid),
+                    border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.4)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
@@ -228,26 +717,42 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               ],
             ],
 
-            // === २. पोल प्रश्न ===
-            _sectionTitle('२. Poll प्रश्न (ऐच्छिक)'),
+            _sectionTitle('४. पोल प्रश्न (ऐच्छिक)'),
             TextFormField(
               controller: _pollQuestionController,
               decoration: InputDecoration(
-                hintText: 'रिकामं ठेवल्यास डिफॉल्ट प्रश्न वापरला जाईल: "तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?"',
+                hintText: 'रिकामं ठेवल्यास डिफॉल्ट प्रश्न वापरला जाईल',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
 
-            // === ३. ऑडियन्स टार्गेटिंग ===
-            _sectionTitle('३. ऑडियन्स टार्गेटिंग'),
-            DropdownButtonFormField<String>(
-              initialValue: _location,
-              decoration: InputDecoration(labelText: 'परिसर (Location)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
-              items: ['तालुका', 'जिल्हा', 'राज्य', 'देशभर']
-                  .map((v) => DropdownMenuItem(value: v, child: Text(v))).toList(),
-              onChanged: (v) => setState(() => _location = v!),
+            _sectionTitle('५. ऑडियन्स टार्गेटिंग'),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primaryBlue.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('🎯 जाहिरात कुठे दाखवायची?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  const SizedBox(height: 4),
+                  const Text('राज्य → जिल्हा → तालुका → पिनकोड', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
+                  const SizedBox(height: 10),
+                  _locationChip('राज्य', _selectedStates),
+                  const SizedBox(height: 8),
+                  _locationChip('जिल्हा', _selectedDistricts),
+                  const SizedBox(height: 8),
+                  _locationChip('तालुका', _selectedTalukas),
+                  const SizedBox(height: 8),
+                  _locationChip('पिनकोड', _selectedPincodes),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
+
             DropdownButtonFormField<String>(
               initialValue: _ageGroup,
               decoration: InputDecoration(labelText: 'वयोगट (Age Group)', border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
@@ -272,8 +777,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               onChanged: (v) => setState(() => _timeSlot = v!),
             ),
 
-            // === ४. बजेट व कालावधी ===
-            _sectionTitle('४. बजेट व कालावधी'),
+            _sectionTitle('६. बजेट व कालावधी'),
             TextFormField(
               controller: _budgetController,
               keyboardType: TextInputType.number,
@@ -301,7 +805,6 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               onChanged: (v) => setState(() => _durationDays = v.round()),
             ),
 
-            // === ५. किंमत तपशील ===
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.all(16),
@@ -320,14 +823,24 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
             ),
 
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _submitAd,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _showPreview,
+                icon: const Icon(Icons.visibility, color: Colors.white),
+                label: const Text('Preview बघा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
               ),
-              child: const Text('जाहिरात प्रकाशित करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              '※ Preview बघितल्यावर Edit करता येईल किंवा थेट Live करता येईल.',
+              style: TextStyle(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
           ],
