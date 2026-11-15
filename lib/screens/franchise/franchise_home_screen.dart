@@ -69,7 +69,7 @@ class FranchiseHomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -99,7 +99,7 @@ class FranchiseHomeScreen extends StatelessWidget {
 
                   const Text('आढावा', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 12),
-                  
+
                   GridView.count(
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -116,20 +116,23 @@ class FranchiseHomeScreen extends StatelessWidget {
                       _kpi(context, 'क्रिएट टॉप ऑफर', 'नवीन', 'ऑफर तयार करा', Icons.local_offer_outlined, Colors.pink, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TopOfferCreateScreen(isSeller: false)))),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 24),
                   const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                   const SizedBox(height: 12),
-                  
+
                   _quickActionTile(icon: Icons.person_add_alt_1_outlined, label: 'Add Seller', subtitle: 'थेट सेलर जोडा (OTP verified)', color: AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAddSellerScreen()))),
                   _quickActionTile(icon: Icons.verified_user_outlined, label: 'Seller Verification', subtitle: 'नवीन सेलरचं GPS verification करा', color: AppColors.successGreen, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
-                  _quickActionTile(icon: Icons.campaign_outlined, label: 'Create Ad', subtitle: 'जाहिरात लगेच Live होते, approval लागत नाही', color: AppColors.primaryOrange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()))),
-                  _quickActionTile(icon: Icons.fact_check_outlined, label: 'Ad Approvals', subtitle: 'जाहिराती आणि टॉप ऑफर्स अप्रूव्ह करा', color: Colors.deepPurple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAdScreen()))),
-                  
-                  // ✅ बदल ६: आठवडी बाजार — WeeklyMarketCatalogScreen
+
+                  // ✅ नाव बदल: 'Ad Approvals' → 'Approval Pending जाहिराती'
+                  _quickActionTile(icon: Icons.fact_check_outlined, label: 'Approval Pending जाहिराती', subtitle: 'जाहिराती आणि टॉप ऑफर्स अप्रूव्ह करा', color: Colors.deepPurple, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAdScreen()))),
+
+                  // ❌ काढलं: 'Create Ad' Quick Action (आता FranchiseAdScreen मध्ये "+ नवीन जाहिरात बनवा")
+
+                  // ✅ आठवडी बाजार — WeeklyMarketCatalogScreen
                   _quickActionTile(icon: Icons.storefront, label: 'आठवडी बाजार', subtitle: 'वस्तू जोडा आणि विक्री करा', color: Colors.teal, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()))),
-                  
-                  // ✅ बदल ८: नवीन — प्रमोटर कॅटलॉग
+
+                  // ✅ प्रमोटर कॅटलॉग
                   _quickActionTile(icon: Icons.workspace_premium, label: 'प्रमोटर कॅटलॉग', subtitle: 'प्रमोटरचा कॅटलॉग बघा', color: Colors.amber.shade700, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
                 ],
               ),
