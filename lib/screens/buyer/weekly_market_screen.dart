@@ -61,6 +61,142 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
     setState(() {});
   }
 
+  // ✅ आकर्षक हेडर
+  Widget _buildHeader() {
+    final cartCount = BuyerShoppingData.cartCount;
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF00695C), Color(0xFF00897B), Color(0xFF26C6DA)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Stack(
+        children: [
+          // === सजावट — shopping icons ===
+          Positioned(
+            right: -30,
+            top: -20,
+            child: Icon(Icons.shopping_bag_rounded,
+                size: 140, color: Colors.white.withValues(alpha: 0.07)),
+          ),
+          Positioned(
+            left: -25,
+            bottom: -30,
+            child: Icon(Icons.local_offer_rounded,
+                size: 110, color: Colors.white.withValues(alpha: 0.06)),
+          ),
+          Positioned(
+            right: 80,
+            bottom: 20,
+            child: Icon(Icons.stars_rounded,
+                size: 40, color: Colors.white.withValues(alpha: 0.12)),
+          ),
+          Positioned(
+            left: 70,
+            top: 30,
+            child: Icon(Icons.shopping_cart_rounded,
+                size: 35, color: Colors.white.withValues(alpha: 0.1)),
+          ),
+          Positioned(
+            right: 130,
+            top: 15,
+            child: Icon(Icons.celebration_rounded,
+                size: 25, color: Colors.white.withValues(alpha: 0.15)),
+          ),
+
+          // === मजकूर + Cart ===
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 48, 8, 18),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(Icons.celebration,
+                                color: Colors.amber, size: 18),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'आठवडी बाजार',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        '🎉 दर शनिवारी दुपारी ३ ते रात्री १२',
+                        style: TextStyle(
+                            color: Colors.white70, fontSize: 12),
+                      ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        'स्थानिक विक्रेत्यांची खास ऑफर',
+                        style: TextStyle(
+                            color: Colors.white60,
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                ),
+                // ✅ Cart icon सेंटरकडे
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Badge(
+                    isLabelVisible: cartCount > 0,
+                    label: Text(
+                      cartCount > 99 ? '99+' : '$cartCount',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    backgroundColor: AppColors.successGreen,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                          minWidth: 40, minHeight: 40),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const CartScreen()),
+                        ).then((_) => setState(() {}));
+                      },
+                      icon: const Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _productCard(ProductModel p) {
     final qty = _cartQty(p);
     return GestureDetector(
@@ -81,7 +217,9 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
             Container(
               height: 110,
               width: double.infinity,
-              decoration: BoxDecoration(color: Colors.teal.shade50, borderRadius: const BorderRadius.vertical(top: Radius.circular(12))),
+              decoration: BoxDecoration(
+                  color: Colors.teal.shade50,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12))),
               child: const Icon(Icons.shopping_bag, size: 45, color: Colors.teal),
             ),
             Padding(
@@ -89,14 +227,17 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   const SizedBox(height: 2),
-                  Text(p.sellerName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
+                  Text(p.sellerName, maxLines: 1, overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 10, color: AppColors.textLight)),
                   const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('₹${p.sellingPrice.toStringAsFixed(0)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal, fontSize: 14)),
+                      Text('₹${p.sellingPrice.toStringAsFixed(0)}',
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal, fontSize: 14)),
                       if (qty == 0)
                         GestureDetector(
                           onTap: () => _addToCart(p),
@@ -131,39 +272,22 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final cartCount = BuyerShoppingData.cartCount;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        foregroundColor: Colors.white,
-        title: const Text('🎪 आठवडी बाजार'),
-        actions: [
-          Badge(
-            isLabelVisible: cartCount > 0,
-            label: Text(cartCount > 99 ? '99+' : '$cartCount', style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
-            backgroundColor: AppColors.successGreen,
-            child: IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())).then((_) => setState(() {}));
-              },
-            ),
-          ),
-        ],
-      ),
-      // ✅ CustomScrollView — header + Top Offer scroll होईल
+      // ✅ AppBar काढून टाकला — हेडर आता scroll होईल
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                const OffersSliderWidget(),
-                const SizedBox(height: 8),
-              ],
+          // ✅ हेडर — scroll होतं
+          SliverToBoxAdapter(child: _buildHeader()),
+          // Offers slider
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: OffersSliderWidget(),
             ),
           ),
+          const SliverToBoxAdapter(child: SizedBox(height: 8)),
+          // Products
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             sliver: SliverGrid(
