@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
 import 'cart_screen.dart';
+import 'product_detail_screen.dart'; // ✅ नवीन import
 import '../../data/zatpat_data.dart';
 import '../../data/delivery_rates.dart';
 
@@ -197,7 +198,21 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {},
+        // ✅ उत्पादनावर क्लिक → ProductDetailScreen उघडेल
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ProductDetailScreen(
+                productName: p['name'] as String,
+                price: '₹${price.toStringAsFixed(0)}',
+                sellerName: p['seller'] as String,
+              ),
+            ),
+          ).then((_) {
+            if (mounted) setState(() {});
+          });
+        },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -392,7 +407,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
             const Text('तुमच्या 10 km मधली दुकाने', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
-        // ✅ Cart icon सेंटरकडे
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           Badge(
