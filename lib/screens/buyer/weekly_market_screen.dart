@@ -61,7 +61,7 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
     setState(() {});
   }
 
-  // ✅ आकर्षक हेडर
+  // ✅ आकर्षक हेडर — Back button + Favourite + Cart
   Widget _buildHeader() {
     final cartCount = BuyerShoppingData.cartCount;
 
@@ -107,9 +107,25 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
                 size: 25, color: Colors.white.withValues(alpha: 0.15)),
           ),
 
-          // === मजकूर + Cart ===
+          // === Back button (डाव्या कोपऱ्यात) ===
+          Positioned(
+            top: 8,
+            left: 4,
+            child: Material(
+              color: Colors.transparent,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
+                onPressed: () => Navigator.pop(context),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                tooltip: 'मागे',
+              ),
+            ),
+          ),
+
+          // === मजकूर + Favourite + Cart ===
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 48, 8, 18),
+            padding: const EdgeInsets.fromLTRB(16, 56, 8, 18),
             child: Row(
               children: [
                 Expanded(
@@ -157,7 +173,25 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
                     ],
                   ),
                 ),
-                // ✅ Cart icon सेंटरकडे
+                // ✅ Favourite icon (नवीन)
+                IconButton(
+                  icon: const Icon(Icons.favorite_border,
+                      color: Colors.white, size: 22),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Favourites — लवकरच येत आहे'),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                      minWidth: 40, minHeight: 40),
+                  tooltip: 'आवडते',
+                ),
+                const SizedBox(width: 2),
+                // ✅ Cart icon
                 Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: Badge(
@@ -274,12 +308,9 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
-      // ✅ AppBar काढून टाकला — हेडर आता scroll होईल
       body: CustomScrollView(
         slivers: [
-          // ✅ हेडर — scroll होतं
           SliverToBoxAdapter(child: _buildHeader()),
-          // Offers slider
           const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(top: 8),
@@ -287,7 +318,6 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 8)),
-          // Products
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             sliver: SliverGrid(
