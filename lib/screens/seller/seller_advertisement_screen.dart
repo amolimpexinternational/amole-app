@@ -12,32 +12,76 @@ class SellerAdvertisementScreen extends StatefulWidget {
 
 class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Basic Details
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   final TextEditingController _pollController = TextEditingController();
   final TextEditingController _budgetController = TextEditingController(text: '100');
-  
+
   // Ad Type & Content
-  String _adType = 'Photo'; // 'Text', 'Photo', 'Video'
+  String _adType = 'Photo';
   File? _mediaFile;
   bool _isMediaSelected = false;
 
   // Duration
   int _selectedDays = 3;
-  final List<int> _durationOptions = [1, 2, 3, 4, 5, 6, 7]; // Max 7 Days per rule
+  final List<int> _durationOptions = [1, 2, 3, 4, 5, 6, 7];
+
+  // === Hierarchical Location Data ===
+  final Map<String, Map<String, Map<String, List<String>>>> _locationData = {
+    'महाराष्ट्र': {
+      'पुणे': {
+        'हवेली': ['411028', '411001', '411014', '411036'],
+        'मुळशी': ['412115', '412108', '412109'],
+        'जुन्नर': ['410502', '410503', '410504'],
+        'बारामती': ['413102', '413103', '413104'],
+      },
+      'मुंबई': {
+        'अंधेरी': ['400053', '400058', '400069'],
+        'बोरिवली': ['400066', '400091', '400092'],
+        'दादर': ['400014', '400028'],
+      },
+      'नाशिक': {
+        'नाशिक': ['422001', '422002', '422003'],
+        'मालेगाव': ['423203', '423204'],
+        'सिन्नर': ['422103', '422104'],
+      },
+    },
+    'कर्नाटक': {
+      'बेंगळुरू': {
+        'बेंगळुरू उत्तर': ['560001', '560002', '560003'],
+        'बेंगळुरू दक्षिण': ['560004', '560005', '560006'],
+      },
+      'मैसूर': {
+        'मैसूर': ['570001', '570002', '570003'],
+        'नंजनगुड': ['571301', '571302'],
+      },
+    },
+    'गुजरात': {
+      'अहमदाबाद': {
+        'अहमदाबाद': ['380001', '380002', '380003'],
+        'दस्क्रोई': ['382210', '382213'],
+      },
+      'सुरत': {
+        'सुरत': ['395001', '395002', '395003'],
+        'ओलपाड': ['394540', '394541'],
+      },
+    },
+  };
+
+  final Set<String> _selectedStates = {};
+  final Set<String> _selectedDistricts = {};
+  final Set<String> _selectedTalukas = {};
+  final Set<String> _selectedPincodes = {};
 
   // Target Audience
-  String _locationTarget = 'तालुका';
-  final List<String> _locationOptions = ['तालुका', 'जिल्हा', 'राज्य', 'देशभर'];
-  
   List<String> _selectedAgeGroups = ['२४-४०'];
   final List<String> _ageOptions = ['१३-२३', '२४-४०', '४०-६०', '६०+'];
-  
+
   String _genderTarget = 'सर्व';
   final List<String> _genderOptions = ['सर्व', 'पुरुष', 'स्त्री'];
-  
+
   String _timeSlot = 'Full Day';
   final List<String> _timeOptions = ['सकाळी ७-१२', 'दुपारी १२-५', 'संध्याकाळी ५-१०', 'रात्र १०-७', 'Full Day'];
 
@@ -54,6 +98,181 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
     super.dispose();
   }
 
+  // === Location Helpers ===
+  List<String> _allDistricts() {
+    final list = <String>[];
+    for (final d in _locationData.values) list.addAll(d.keys);
+    return list;
+  }
+
+  List<String> _allTalukas() {
+    final list = <String>[];
+    for (final d in _locationData.values) {
+      for (final t in d.values) list.addAll(t.keys);
+    }
+    return list;
+  }
+
+  List<String> _allPincodes() {
+    final list = <String>[];
+    for (final d in _locationData.values) {
+      for (final t in d.values) {
+        for (final p in t.values) list.addAll(p);
+      }
+    }
+    return list;
+  }
+
+  void _showLocationPicker(String type) {
+    List<String> items = [];
+    Set<String> selected;
+
+    switch (type) {
+      case 'राज्य':
+        items = _locationData.keys.toList();
+        selected = _selectedStates;
+        break;
+      case 'जिल्हा':
+        items = _allDistricts();
+        selected = _selectedDistricts;
+        break;
+      case 'तालुका':
+        items = _allTalukas();
+        selected = _selectedTalukas;
+        break;
+      case 'पिनकोड':
+        items = _allPincodes();
+        selected = _selectedPincodes;
+        break;
+      default:
+        return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => DraggableScrollableSheet(
+          initialChildSize: 0.7,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (ctx, scrollController) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text('$type निवडा', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setSheetState(() {
+                          if (selected.length == items.length) {
+                            selected.clear();
+                          } else {
+                            selected.clear();
+                            selected.addAll(items);
+                          }
+                        });
+                        setState(() {});
+                      },
+                      child: Text(
+                        selected.length == items.length ? 'सर्व काढा' : 'सर्व निवडा',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '${selected.length} / ${items.length} निवडले',
+                    style: const TextStyle(fontSize: 12, color: AppColors.textLight),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(height: 1),
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return CheckboxListTile(
+                      title: Text(item),
+                      value: selected.contains(item),
+                      activeColor: AppColors.primaryBlue,
+                      onChanged: (v) {
+                        setSheetState(() {
+                          if (v == true) {
+                            selected.add(item);
+                          } else {
+                            selected.remove(item);
+                          }
+                        });
+                        setState(() {});
+                      },
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, padding: const EdgeInsets.symmetric(vertical: 14)),
+                    child: const Text('ठीक आहे', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _locationChip(String type, Set<String> selected) {
+    final count = selected.length;
+    return InkWell(
+      onTap: () => _showLocationPicker(type),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: count > 0 ? AppColors.primaryBlue.withOpacity(0.08) : AppColors.lightGrey,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: count > 0 ? AppColors.primaryBlue.withOpacity(0.4) : Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.location_on, color: count > 0 ? AppColors.primaryBlue : Colors.grey, size: 20),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                count > 0 ? '$type: $count निवडले' : '$type निवडा',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: count > 0 ? AppColors.primaryBlue : AppColors.textLight,
+                  fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+            Icon(Icons.arrow_drop_down, color: count > 0 ? AppColors.primaryBlue : Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickMedia(ImageSource source) async {
     final picker = ImagePicker();
     if (_adType == 'Photo') {
@@ -65,7 +284,6 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
     }
   }
 
-  // किंमत दर (Cost per Poll Reply) मोजण्यासाठी
   double get _costPerReply {
     if (_adType == 'Text') return 0.10;
     if (_adType == 'Photo') return 0.25;
@@ -73,27 +291,249 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
     return 0.10;
   }
 
-  void _submitAd() {
-    FocusScope.of(context).unfocus();
-
+  bool _validateBeforePreview() {
     if (_adType != 'Text' && !_isMediaSelected) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('कृपया $_adType निवडा'), backgroundColor: AppColors.errorRed),
       );
-      return;
+      return false;
     }
-
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return false;
 
     final budget = double.tryParse(_budgetController.text) ?? 0;
     if (budget < 100) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('किमान बजेट ₹100 असणे आवश्यक आहे'), backgroundColor: AppColors.errorRed),
       );
-      return;
+      return false;
     }
 
-    // नियमानुसार जर Franchise/CP/Admin असेल तर डायरेक्ट Live, पण सध्या हे Seller स्क्रीन आहे.
+    final hasTarget = _selectedStates.isNotEmpty || _selectedDistricts.isNotEmpty ||
+        _selectedTalukas.isNotEmpty || _selectedPincodes.isNotEmpty;
+    if (!hasTarget) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('कृपया किमान एक ठिकाण निवडा!'), backgroundColor: AppColors.errorRed),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  // ✅ Preview Dialog
+  void _showPreview() {
+    if (!_validateBeforePreview()) return;
+
+    final budget = int.tryParse(_budgetController.text.trim()) ?? 0;
+    final pollQuestion = _pollController.text.trim().isEmpty
+        ? 'तुम्ही या जाहिरातीत इंटरेस्टेड आहात का?'
+        : _pollController.text.trim();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (ctx, scrollCtrl) => Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const Icon(Icons.visibility, color: AppColors.primaryBlue),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text('जाहिरात Preview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: ListView(
+                controller: scrollCtrl,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // जाहिरात कशी दिसेल
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primaryBlue, AppColors.royalBlue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_adType != 'Text' && _mediaFile != null)
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.file(_mediaFile!, fit: BoxFit.cover),
+                            ),
+                          )
+                        else if (_adType != 'Text')
+                          Container(
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Center(
+                              child: Icon(Icons.campaign, color: Colors.white70, size: 60),
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+                        Text(_titleController.text, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 6),
+                        Text(
+                          _adType == 'Text' ? _descController.text : 'AMOLE Sponsored',
+                          style: const TextStyle(color: Colors.white70, fontSize: 13),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text('Poll: $pollQuestion', style: const TextStyle(color: Colors.white, fontSize: 11)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  _previewSection('📋 जाहिरात तपशील', [
+                    _previewRow('शीर्षक', _titleController.text),
+                    if (_adType == 'Text') _previewRow('मजकूर', _descController.text),
+                    if (_adType != 'Text') _previewRow('प्रकार', _adType.toUpperCase()),
+                    _previewRow('पोल प्रश्न', pollQuestion),
+                    _previewRow('बजेट', '₹$budget'),
+                    _previewRow('कालावधी', '$_selectedDays दिवस (7 दिवसांनंतर आपोआप बंद)'),
+                    _previewRow('प्रति पोल रिप्लाय', '₹${_costPerReply.toStringAsFixed(2)}'),
+                    _previewRow('Adv Generator', _advGenerator),
+                  ]),
+
+                  _previewSection('🎯 कोणाला दिसेल?', [
+                    _previewRow('राज्य', _selectedStates.isEmpty ? '—' : _selectedStates.join(', ')),
+                    _previewRow('जिल्हे', _selectedDistricts.isEmpty ? '—' : _selectedDistricts.join(', ')),
+                    _previewRow('तालुके', _selectedTalukas.isEmpty ? '—' : _selectedTalukas.join(', ')),
+                    _previewRow('पिनकोड', _selectedPincodes.isEmpty ? '—' : _selectedPincodes.join(', ')),
+                    _previewRow('वयोगट', _selectedAgeGroups.join(', ')),
+                    _previewRow('लिंग', _genderTarget),
+                    _previewRow('वेळ', _timeSlot),
+                  ]),
+
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.orange.shade200),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.info_outline, color: Colors.orange, size: 20),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'तुमची जाहिरात प्रथम फ्रँचायझीकडे अप्रूव्हलसाठी जाईल. मंजूर झाल्यावरच ती Live होईल.',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => Navigator.pop(ctx),
+                      icon: const Icon(Icons.edit, color: AppColors.primaryBlue),
+                      label: const Text('Edit करा', style: TextStyle(color: AppColors.primaryBlue)),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        side: const BorderSide(color: AppColors.primaryBlue),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        minimumSize: const Size(0, 44),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _submitAd();
+                      },
+                      icon: const Icon(Icons.check_circle, color: Colors.white),
+                      label: const Text('अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        minimumSize: const Size(0, 44),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _previewSection(String title, List<Widget> children) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.lightGrey.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+          const SizedBox(height: 8),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _previewRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('$label: ', style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+          Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
+        ],
+      ),
+    );
+  }
+
+  // ✅ Approval साठी पाठवा
+  void _submitAd() {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -236,7 +676,7 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
                     ),
                   ),
                 const SizedBox(height: 12),
-                
+
                 TextFormField(
                   controller: _titleController,
                   maxLength: 30,
@@ -247,15 +687,41 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
                 TextFormField(
                   controller: _descController,
                   maxLines: 3,
-                  maxLength: 300, // Text limit rule
+                  maxLength: 300,
                   decoration: _inputStyle('जाहिरातीबद्दल थोडक्यात माहिती... (Max 300 अक्षरे)'),
                   validator: (v) => v!.isEmpty ? 'वर्णन आवश्यक आहे' : null,
                 ),
 
                 // === ३. टार्गेट ऑडियन्स ===
                 _buildSectionTitle('३. टार्गेट ऑडियन्स (कोणाला दाखवायची?)'),
-                _buildDropdown('एरिया (Location)', _locationTarget, _locationOptions, (val) => setState(() => _locationTarget = val!)),
-                const SizedBox(height: 10),
+
+                // ✅ Hierarchical Location
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBlue.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.primaryBlue.withOpacity(0.2)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('🎯 जाहिरात कुठे दाखवायची?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const SizedBox(height: 4),
+                      const Text('राज्य → जिल्हा → तालुका → पिनकोड', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
+                      const SizedBox(height: 10),
+                      _locationChip('राज्य', _selectedStates),
+                      const SizedBox(height: 8),
+                      _locationChip('जिल्हा', _selectedDistricts),
+                      const SizedBox(height: 8),
+                      _locationChip('तालुका', _selectedTalukas),
+                      const SizedBox(height: 8),
+                      _locationChip('पिनकोड', _selectedPincodes),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
                 _buildDropdown('वेळ (Time Slot)', _timeSlot, _timeOptions, (val) => setState(() => _timeSlot = val!)),
                 const SizedBox(height: 10),
                 _buildDropdown('जेंडर (Gender)', _genderTarget, _genderOptions, (val) => setState(() => _genderTarget = val!)),
@@ -293,8 +759,6 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
                 // === ५. ॲड जनरेटर ===
                 _buildSectionTitle('५. Adv Generator (जाहिरात निर्माता)'),
                 _buildDropdown('जाहिरात कोणी बनवली?', _advGenerator, _generatorOptions, (val) => setState(() => _advGenerator = val!)),
-                const SizedBox(height: 4),
-                const Text('नियम: निवडलेल्या जनरेटरला १०% वाटा मिळेल.', style: TextStyle(fontSize: 11, color: AppColors.textLight)),
 
                 // === ६. बजेट आणि कालावधी ===
                 _buildSectionTitle('६. बजेट आणि कालावधी'),
@@ -346,19 +810,27 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
                 ),
 
                 const SizedBox(height: 32),
+                // ✅ Preview बटन
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _submitAd,
+                  child: ElevatedButton.icon(
+                    onPressed: _showPreview,
+                    icon: const Icon(Icons.visibility, color: Colors.white),
+                    label: const Text('Preview बघा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryBlue,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    child: const Text('अप्रूव्हलसाठी पाठवा', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 8),
+                const Text(
+                  '※ Preview बघितल्यावर Edit करता येईल किंवा अप्रूव्हलसाठी पाठवता येईल.',
+                  style: TextStyle(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -380,12 +852,4 @@ class _SellerAdvertisementScreenState extends State<SellerAdvertisementScreen> {
             child: DropdownButton<String>(
               isExpanded: true,
               value: value,
-              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14)))).toList(),
-              onChanged: onChanged,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
+              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 14))
