@@ -11,7 +11,6 @@ class WeeklyMarketCatalogScreen extends StatefulWidget {
 }
 
 class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
-  // === आठवडी बाजार कॅटलॉग — max 5 प्रॉडक्ट ===
   final List<Map<String, dynamic>> _catalogItems = [];
   bool _isCatalogOn = false;
 
@@ -43,7 +42,6 @@ class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
             children: [
               const Text('आठवडी बाजारात प्रॉडक्ट जोडा', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
-              
               Center(
                 child: GestureDetector(
                   onTap: () async {
@@ -72,12 +70,10 @@ class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
               TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'प्रॉडक्टचे नाव', border: OutlineInputBorder())),
               const SizedBox(height: 12),
               TextField(controller: priceCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'किंमत (₹)', border: OutlineInputBorder())),
               const SizedBox(height: 20),
-              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -118,12 +114,15 @@ class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
         backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
         actions: [
-          // ON/OFF
+          // ✅ नाव बदललं — "आठवडी बाजारात सहभागी व्हा" ON/OFF
           Padding(
             padding: const EdgeInsets.only(right: 8),
             child: Row(
               children: [
-                Text(_isCatalogOn ? 'ON' : 'OFF', style: const TextStyle(color: Colors.white, fontSize: 12)),
+                Text(
+                  _isCatalogOn ? 'आठवडी बाजारात सहभागी व्हा: ON' : 'आठवडी बाजारात सहभागी व्हा: OFF',
+                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                ),
                 Switch(
                   value: _isCatalogOn,
                   onChanged: (v) => setState(() => _isCatalogOn = v),
@@ -144,7 +143,6 @@ class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
             ),
       body: Column(
         children: [
-          // Header
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
@@ -157,7 +155,6 @@ class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
               ],
             ),
           ),
-          // ON/OFF ची माहिती
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(12),
@@ -176,8 +173,8 @@ class _WeeklyMarketCatalogScreenState extends State<WeeklyMarketCatalogScreen> {
                 Expanded(
                   child: Text(
                     _isCatalogOn
-                        ? 'कॅटलॉग ON — आठवडी बाजार भरल्यावर हा कॅटलॉग सार्वजनिक होईल.'
-                        : 'कॅटलॉग OFF — आठवडी बाजारात सहभागी होण्यासाठी ON करा.',
+                        ? 'आठवडी बाजारात सहभागी — आठवडी बाजार भरल्यावर हा कॅटलॉग सार्वजनिक होईल.'
+                        : 'आठवडी बाजारात सहभागी नाही — सहभागी होण्यासाठी ON करा.',
                     style: const TextStyle(fontSize: 12),
                   ),
                 ),
