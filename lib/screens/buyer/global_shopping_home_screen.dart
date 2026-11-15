@@ -376,12 +376,13 @@ class _GlobalShoppingHomeScreenState
     );
   }
 
+  // === ✅ Header — buyer home सारखा + Home button ===
   Widget _buildTopHeader() {
     final cartCount = BuyerShoppingData.cartCount;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(8, 10, 4, 10),
+      padding: const EdgeInsets.fromLTRB(12, 14, 12, 16),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [AppColors.primaryBlue, AppColors.royalBlue],
@@ -392,6 +393,7 @@ class _GlobalShoppingHomeScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // === वरची रांग: Home + AMOLE + cart, favourite, notification, profile ===
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -400,7 +402,7 @@ class _GlobalShoppingHomeScreenState
                 children: [
                   IconButton(
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
+                    constraints: const BoxConstraints(minWidth: 28, minHeight: 32),
                     visualDensity: VisualDensity.compact,
                     iconSize: 20,
                     tooltip: 'मुख्य स्क्रीन',
@@ -417,165 +419,187 @@ class _GlobalShoppingHomeScreenState
                     'AMOLE',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ],
               ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RewardWalletScreen(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.shade600,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.stars, color: Colors.white, size: 16),
-                            SizedBox(width: 4),
-                            Text(
-                              '245 pts',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Badge(
+                    isLabelVisible: cartCount > 0,
+                    label: Text(
+                      cartCount > 99 ? '99+' : '$cartCount',
+                      style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(width: 6),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const OrderTrackingScreen()),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: AppColors.cyan,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.shopping_bag_outlined, color: AppColors.royalBlue, size: 16),
-                            SizedBox(width: 4),
-                            Text(
-                              'ऑर्डर',
-                              style: TextStyle(
-                                color: AppColors.royalBlue,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    IconButton(
+                    backgroundColor: AppColors.successGreen,
+                    child: IconButton(
+                      tooltip: 'Cart',
                       padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
-                      visualDensity: VisualDensity.compact,
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                       iconSize: 20,
-                      tooltip: 'Search',
-                      icon: const Icon(Icons.search, color: Colors.white),
+                      icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const BuyerSearchScreen(initialFilter: 'products'),
-                          ),
-                        );
-                      },
-                    ),
-                    // === Cart icon + Badge (हिरवा) ===
-                    Badge(
-                      isLabelVisible: cartCount > 0,
-                      label: Text(
-                        cartCount > 99 ? '99+' : '$cartCount',
-                        style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                      ),
-                      backgroundColor: AppColors.successGreen,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
-                        visualDensity: VisualDensity.compact,
-                        iconSize: 20,
-                        tooltip: 'Cart',
-                        icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const CartScreen()),
-                          ).then((_) {
-                            if (mounted) setState(() {});
-                          });
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
-                      visualDensity: VisualDensity.compact,
-                      iconSize: 20,
-                      tooltip: 'My Favourite',
-                      icon: const Icon(Icons.favorite_border, color: Colors.white),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
                         ).then((_) {
                           if (mounted) setState(() {});
                         });
                       },
                     ),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
-                      visualDensity: VisualDensity.compact,
-                      iconSize: 20,
-                      tooltip: 'Notification',
-                      icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()),
-                        );
-                      },
+                  ),
+                  const SizedBox(width: 2),
+                  IconButton(
+                    tooltip: 'My Favourite',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    iconSize: 20,
+                    icon: const Icon(Icons.favorite_border, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
+                      ).then((_) {
+                        if (mounted) setState(() {});
+                      });
+                    },
+                  ),
+                  const SizedBox(width: 2),
+                  IconButton(
+                    tooltip: 'Notification',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    iconSize: 20,
+                    icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BuyerNotificationScreen()),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 2),
+                  IconButton(
+                    tooltip: 'Profile',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    iconSize: 20,
+                    icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BuyerProfileScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // === खालची रांग: रिवॉर्ड पॉइंट + ऑर्डर + Search bar ===
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RewardWalletScreen()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade600,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.stars, color: Colors.white, size: 14),
+                      SizedBox(width: 3),
+                      Text(
+                        'रिवॉर्ड पॉइंट',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const OrderTrackingScreen()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.cyan,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.shopping_bag_outlined, color: AppColors.royalBlue, size: 14),
+                      SizedBox(width: 3),
+                      Text(
+                        'ऑर्डर',
+                        style: TextStyle(
+                          color: AppColors.royalBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              // ✅ Search bar (आडवं)
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const BuyerSearchScreen(initialFilter: 'products'),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: 34,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    IconButton(
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(minWidth: 30, minHeight: 32),
-                      visualDensity: VisualDensity.compact,
-                      iconSize: 20,
-                      tooltip: 'Profile',
-                      icon: const Icon(Icons.account_circle_outlined, color: Colors.white),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const BuyerProfileScreen()),
-                        );
-                      },
+                    child: Row(
+                      children: const [
+                        Icon(Icons.search, color: AppColors.primaryBlue, size: 18),
+                        SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'शोधा...',
+                            style: TextStyle(
+                              color: AppColors.textLight,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -595,7 +619,6 @@ class _GlobalShoppingHomeScreenState
     final ratio = (cardW / cardH).clamp(0.5, 1.0).toDouble();
 
     return Scaffold(
-      // === bottomNavigationBar काढून टाकलं ===
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
