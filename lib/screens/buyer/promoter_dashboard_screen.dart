@@ -28,7 +28,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
 
   String _standLocation = '';
 
-  // === डमी: मी जोडलेले buyer ===
   final List<Map<String, String>> _referredBuyers = [
     {'name': 'अनिल जोशी', 'phone': '9876543210', 'date': '10 Nov 2026', 'purchases': '₹1,200'},
     {'name': 'संगीता राणे', 'phone': '9876543211', 'date': '08 Nov 2026', 'purchases': '₹3,500'},
@@ -77,7 +76,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
     }
   }
 
-  // === GPS लोकेशन घेणे ===
   Future<void> _selectMyStand() async {
     setState(() => _standLoading = true);
     try {
@@ -130,7 +128,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
 
   Future<void> _toggleDeliveryBoy(bool value) async {
     if (value && _standLocation.isEmpty) {
-      // आधी स्टँड निवडा
       await _selectMyStand();
       if (_standLocation.isEmpty) return;
     }
@@ -142,57 +139,58 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
     }
   }
 
-  // === आठवडी बाजार ON/OFF ===
-  Future<void> _toggleAathwadiBazar(bool value) async {
-    if (value && !_isJoinedAathwadiBazar) {
-      // ON केल्यावर → ₹50 फी dialog
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('शनिवारच्या आठवडी बाजारात सहभागी व्हा'),
-          content: const Text(
-            'सहभागासाठी ₹50 फी लागेल. फी तुमच्या Expenses Wallet मधून कापली जाईल.\n\n'
-            'फी भरल्यावर तुमचा कॅटलॉग शनिवारच्या बाजारात प्रसिद्ध होईल. '
-            'बाजार संपल्यावर कॅटलॉग आपोआप डिलीट होईल.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('रद्द'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.pop(ctx);
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('isJoinedAathwadiBazar', true);
-                setState(() => _isJoinedAathwadiBazar = true);
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('₹50 कपात. तुम्ही आठवडी बाजारात सहभागी झालात! कॅटलॉग बनवा.'),
-                      backgroundColor: AppColors.successGreen,
-                    ),
-                  );
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-              child: const Text('₹50 भरा आणि कॅटलॉग बनवा'),
-            ),
-          ],
-        ),
+  // ✅ आठवडी बाजार — Dialog (टॉगल काढलं, card क्लिक केल्यावर)
+  Future<void> _joinAathwadiBazar() async {
+    if (_isJoinedAathwadiBazar) {
+      // आधीच सहभागी — catalog उघडा
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()),
       );
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isJoinedAathwadiBazar', value);
-      setState(() => _isJoinedAathwadiBazar = value);
+      return;
     }
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('शनिवारच्या आठवडी बाजारात सहभागी व्हा'),
+        content: const Text(
+          'सहभागासाठी ₹50 फी लागेल. फी तुमच्या Expenses Wallet मधून कापली जाईल.\n\n'
+          'फी भरल्यावर तुमचा कॅटलॉग शनिवारच्या बाजारात प्रसिद्ध होईल. '
+          'बाजार संपल्यावर कॅटलॉग आपोआप डिलीट होईल.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('रद्द'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('isJoinedAathwadiBazar', true);
+              setState(() => _isJoinedAathwadiBazar = true);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('₹50 कपात. तुम्ही आठवडी बाजारात सहभागी झालात! कॅटलॉग बनवा.'),
+                    backgroundColor: AppColors.successGreen,
+                  ),
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
+            child: const Text('₹50 भरा आणि कॅटलॉग बनवा'),
+          ),
+        ],
+      ),
+    );
   }
 
-  // === App refer dialog ===
   void _showReferDialog() {
     const referCode = 'AMOLE-P123';
     const referLink = 'https://amole.in/ref/AMOLE-P123';
@@ -220,7 +218,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
               style: TextStyle(fontSize: 13, color: AppColors.textLight),
             ),
             const SizedBox(height: 16),
-            // Refer Code
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -254,7 +251,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            // Refer Link
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -287,7 +283,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             const SizedBox(height: 16),
             const Text('शेअर करा:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
             const SizedBox(height: 10),
-            // Share options
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -326,7 +321,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
     );
   }
 
-  // === मी जोडलेले buyer dialog ===
   void _showReferredBuyers() {
     showModalBottomSheet(
       context: context,
@@ -425,7 +419,7 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // === Earnings Card (Blue gradient) ===
+          // === Earnings Card ===
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -513,7 +507,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             },
           ),
 
-          // === Stand location (Delivery Boy ON असेल तेव्हा) ===
           if (_isDeliveryBoy)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -536,44 +529,49 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
               ),
             ),
 
-          // === आठवडी बाजार ON/OFF ===
-          Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
-            ),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  backgroundColor: Color(0x1A00897B),
-                  child: Icon(Icons.storefront, color: Colors.teal),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('शनिवारच्या आठवडी बाजारात सहभागी व्हा', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                      Text(
-                        _isJoinedAathwadiBazar ? '₹50 भरले ✓ - बाजारात प्रसिद्ध' : '₹50 फी - ON केल्यावर कॅटलॉग बनवा',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textLight),
-                      ),
-                    ],
+          // ✅ आठवडी बाजार — टॉगल काढलं, card क्लिक → dialog
+          GestureDetector(
+            onTap: _joinAathwadiBazar,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+              ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    backgroundColor: Color(0x1A00897B),
+                    child: Icon(Icons.storefront, color: Colors.teal),
                   ),
-                ),
-                Switch(
-                  value: _isJoinedAathwadiBazar,
-                  onChanged: _toggleAathwadiBazar,
-                  activeThumbColor: Colors.teal,
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('शनिवारच्या आठवडी बाजारात सहभागी व्हा',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        Text(
+                          _isJoinedAathwadiBazar
+                              ? '₹50 भरले ✓ - बाजारात प्रसिद्ध'
+                              : '₹50 फी - क्लिक करून सहभागी व्हा',
+                          style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    _isJoinedAathwadiBazar ? Icons.check_circle : Icons.arrow_forward_ios,
+                    color: _isJoinedAathwadiBazar ? AppColors.successGreen : Colors.teal,
+                    size: 18,
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // === प्रमोशन कॅटलॉग ===
           _sectionCard(
             icon: Icons.inventory_2,
             color: AppColors.primaryBlue,
@@ -583,7 +581,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
           ),
 
-          // === जाहिरात बनवा ===
           _sectionCard(
             icon: Icons.campaign,
             color: Colors.deepOrange,
@@ -593,7 +590,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerAdvertisementScreen())),
           ),
 
-          // === App refer करा ===
           _sectionCard(
             icon: Icons.share,
             color: AppColors.successGreen,
@@ -603,7 +599,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: _showReferDialog,
           ),
 
-          // === मी जोडलेले buyer ===
           _sectionCard(
             icon: Icons.people_alt,
             color: Colors.purple,
@@ -613,7 +608,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: _showReferredBuyers,
           ),
 
-          // === नवीन सेलर/सर्व्हिस प्रोव्हायडर जोडा ===
           _sectionCard(
             icon: Icons.person_add,
             color: Colors.indigo,
@@ -623,7 +617,6 @@ class _PromoterDashboardScreenState extends State<PromoterDashboardScreen> {
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRegistrationScreen())),
           ),
 
-          // === मी रजिस्टर केलेले सेलर ===
           _sectionCard(
             icon: Icons.people,
             color: Colors.brown,
