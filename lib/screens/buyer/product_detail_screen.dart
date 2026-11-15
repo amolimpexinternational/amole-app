@@ -33,16 +33,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String get _seller => _product?.sellerName ?? widget.sellerName;
 
   double get _unitPrice {
-    if (_product != null) {
-      return _product!.sellingPrice;
-    }
+    if (_product != null) return _product!.sellingPrice;
     return double.tryParse(widget.price.replaceAll('₹', '').replaceAll(',', '')) ?? 0;
   }
 
   double get _mrp => _product?.mrp ?? _unitPrice;
-
   double get _discount => _product?.discount ?? 0;
-
   int get _stock => _product?.stock ?? 20;
 
   String get _description => _product?.description.isNotEmpty == true
@@ -69,7 +65,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   };
 
   bool get _isFavourite => BuyerShoppingData.isFavourite(_productId);
-
   bool get _isInCart => BuyerShoppingData.cartItems.any((item) => item['id'] == _productId);
 
   void _addToCart({bool goToCart = false}) {
@@ -123,10 +118,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(width: 10),
           ],
           Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textDark),
-            ),
+            child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textDark)),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -187,12 +179,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
-        title: const Text('उत्पादनाची माहिती'),
+        title: const Text('उत्पादनाची माहिती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: AppColors.white,
+        // ✅ Icons कडेला न जाता सेंटरकडे येण्यासाठी
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
           IconButton(
             tooltip: 'My Favourite',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
             onPressed: _toggleFavourite,
             icon: Icon(
               _isFavourite ? Icons.favorite : Icons.favorite_border,
@@ -200,22 +196,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             ),
           ),
           Badge(
-  isLabelVisible: BuyerShoppingData.cartCount > 0,
-  label: Text(
-    BuyerShoppingData.cartCount > 99 ? '99+' : '${BuyerShoppingData.cartCount}',
-    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-  ),
-  backgroundColor: AppColors.successGreen,
-  child: IconButton(
-    tooltip: 'Cart',
-    onPressed: () {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())).then((_) {
-        if (mounted) setState(() {});
-      });
-    },
-    icon: const Icon(Icons.shopping_cart_outlined),
-  ),
-),
+            isLabelVisible: BuyerShoppingData.cartCount > 0,
+            label: Text(
+              BuyerShoppingData.cartCount > 99 ? '99+' : '${BuyerShoppingData.cartCount}',
+              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: AppColors.successGreen,
+            child: IconButton(
+              tooltip: 'Cart',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())).then((_) {
+                  if (mounted) setState(() {});
+                });
+              },
+              icon: const Icon(Icons.shopping_cart_outlined),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
