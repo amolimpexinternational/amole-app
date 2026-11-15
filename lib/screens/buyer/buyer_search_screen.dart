@@ -7,6 +7,7 @@ import '../../models/product_model.dart';
 import 'buyer_public_social_profile_screen.dart';
 import 'seller_profile_screen.dart';
 import 'product_detail_screen.dart';
+import 'cart_screen.dart';
 
 class BuyerSearchScreen extends StatefulWidget {
   final String initialFilter;
@@ -199,7 +200,9 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
             MaterialPageRoute(
               builder: (_) => ProductDetailScreen(product: product),
             ),
-          );
+          ).then((_) {
+            if (mounted) setState(() {});
+          });
         },
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -378,26 +381,52 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
                           ),
                         ),
                         const SizedBox(width: 6),
+                        // ✅ Add to Cart बटन — हिरवं बदलतं
                         Expanded(
                           flex: 2,
-                          child: ElevatedButton(
-                            onPressed: product.stock > 0
-                                ? () => _addProductToCart(product)
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  AppColors.primaryOrange,
-                              foregroundColor: AppColors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 10,
-                              ),
-                            ),
-                            child: const Text(
-                              'Add to Cart',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                          child: cartQuantity > 0
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const CartScreen(),
+                                      ),
+                                    ).then((_) {
+                                      if (mounted) setState(() {});
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.successGreen,
+                                    foregroundColor: AppColors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 10,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Cart मध्ये आहे ✓',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                )
+                              : ElevatedButton(
+                                  onPressed: product.stock > 0
+                                      ? () => _addProductToCart(product)
+                                      : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryOrange,
+                                    foregroundColor: AppColors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 10,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Add to Cart',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                         ),
                       ],
                     ),
@@ -772,7 +801,6 @@ class _BuyerSearchScreenState extends State<BuyerSearchScreen> {
                           'सेवा',
                           Icons.handyman_outlined,
                         ),
-                        
                       ],
                     ),
                   ),
