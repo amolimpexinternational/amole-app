@@ -1,0 +1,481 @@
+
+
+📄 STAGE_3_FULL_PROMPT.md — पूर्ण (नवीन section सह):
+
+```markdown
+# STAGE 3 — AMOLE APP FULL BACKEND PROMPT
+(सर्व Stage 3 काम एकत्र — Firebase + Payment + Shipping + Maps + Location + Order Split)
+
+---
+
+## ०. महत्त्वाची सूचना (प्रत्यक्ष काम करताना)
+
+### ०.१ पूर्ण माहिती द्या
+- प्रत्येक तंत्रज्ञान / package / सेवा याबद्दल **संपूर्ण माहिती** द्या — फक्त नाव नको.
+- **काय आहे, का वापरायचं, कसं काम करतं, खर्च किती, पर्याय काय** — सर्व स्पष्ट सांगा.
+- **कोड देण्यापूर्वी** — त्या भागाची **रचना** समजावून सांगा.
+
+### ०.२ पर्याय सुचवा
+- जेव्हा एखादं तंत्रज्ञान / package / सेवा निवडायची असेल — **त्यावेळी उपलब्ध असलेले सर्व चांगले पर्याय** सांगा.
+- **फक्त एकच पर्याय नको** — **तुलना** करून सांगा (फायदे, तोटे, खर्च, वेग).
+- **सध्याच्या वेळी** जे **सर्वात योग्य** आहे ते सुचवा — **जुनं चिकटून राहू नका**.
+- **नवीन तंत्रज्ञान** आलं असेल तर **ते सुद्धा सांगा** — जरी आधीच्या prompt मध्ये नसेल तरी.
+
+### ०.३ बदल करण्याची परवानगी
+- या prompt मधील **कोणताही भाग** — **गरजेनुसार बदलता येईल**.
+- जर **चांगला पर्याय** सापडला — **सुचवा** — **User OK** म्हणाल तर **बदला**.
+- **User ला विचारूनच** बदल करा — स्वतःहून नको.
+
+### ०.४ User ची भूमिका
+- User **coding शिकत आहे** — **सोप्या भाषेत** समजावा.
+- **प्रत्येक step** — **User OK** म्हणाल तेव्हाच पुढे.
+- **एका वेळी एक बदल** — एकत्र नको.
+
+---
+
+## १. संदर्भ
+Amole App — Flutter (Dart) + Firebase. Stage 2 (Demo) पूर्ण. आता Stage 3 (Real Backend).
+सर्व dummy data काढून Firestore + Cloud Functions वापरा. UI बदलू नका — फक्त data layer बदला.
+
+---
+
+## २. FIREBASE SETUP (सर्वात आधी)
+
+### २.१ Firebase Packages (pubspec.yaml मध्ये आधीच आहेत)
+- firebase_core: ^4.11.0
+- firebase_auth: ^6.5.3
+- cloud_firestore: ^6.6.0
+- firebase_storage
+- firebase_messaging (FCM)
+- cloud_functions
+- google_sign_in
+
+### २.२ Firebase.initializeApp()
+- `main.dart` मध्ये `WidgetsFlutterBinding.ensureInitialized()` + `await Firebase.initializeApp()`
+- `firebase_options.dart` generate करा (`flutterfire configure`)
+
+### २.३ Firebase Authentication
+- **Phone OTP** — `FirebaseAuth.instance.verifyPhoneNumber()`
+- OTP verify → `signInWithCredential()`
+- User ची role + sellerType Firestore मध्ये सेव्ह
+- Session persist — `SharedPreferences` + Firebase Auth state
+
+### २.४ Firestore Collections
+```
+
+users/ {uid, name, mobile, role, sellerType, address, pincode, district, taluka, createdAt}
+sellers/ {uid, shopName, owner, mobile, category, zatpat, global, hotel, service, cargo, aadhar, pan, bank, kycStatus, franchiseId, cpId, district, taluka, pincode, lat, lng, isOnline, standLocation, wallet}
+franchises/ {uid, name, owner, mobile, district, taluka, pincode, kycStatus, cpId, wallet}
+channel_partners/ {uid, name, mobile, district, wallet}
+promoters/ {uid, name, mobile, aadhar, pan, address, kycStatus, franchiseId, catalogItems, earnings, referralCode}
+buyers/ {uid, name, mobile, pincode, district, taluka, rewardPoints, referredBy, orderIds}
+products/ {productId, sellerId, name, price, mrp, discount, stock, category, keywords, brand, sku, image, weight, dimensions, deliveryAvailable, isPromoterAdd, module}
+orders/ {orderId, buyerId, module, sellerId, items[], itemTotal, deliveryCharge, rewardUsed, grandTotal, paymentMethod, paymentStatus, status, awbNumber, deliveryBoyId, createdAt, deliveredAt, settlementStatus, returnWindowEndsAt}
+order_groups/ {groupId, buyerId, orderIds[], grandTotal, createdAt}
+ads/ {adId, sellerId, franchiseId, title, desc, image, video, budget, targetArea, targetAge, targetGender, status, approvalStatus, fee, paidAt}
+offers/ {offerId, sellerId, title, desc, image, productLink, isPaid, fee, validity, module, status, approvalStatus, targetLocations[], createdAt}
+weekly_market/ {marketId, cpId, adminId, date, startTime, endTime, district, taluka, status}
+weekly_market_catalogs/ {catalogId, sellerId/promoterId/franchiseId/cpId/adminId, products[], isOn, feePaid, marketId, createdAt, expiryAt}
+ads_watched/ {watchId, buyerId, adId, pollAnswer, rewardEarned, watchedAt}
+transactions/ {txnId, orderId, buyerId, sellerId, amount, commission, status, createdAt}
+wallets/ {walletId, userId, balance, type ('main'|'expenses'|'reward'|'rider'|'cargo'), transactions[]}
+notifications/ {notifId, userId, title, body, type, isRead, createdAt}
+chats/ {chatId, participants[], messages[], lastMessage, updatedAt}
+lucky_draw/ {drawId, date, tickets[], winners[], totalAmount, distributedAmount}
+
+```
+
+---
+
+## ३. PAYMENT — Cashfree Easy Split
+
+### ३.१ पैसे कसे जातात
+- Buyer पेमेंट → **संपूर्ण रक्कम Amole कंपनीकडे**.
+- Return window (7 दिवस) संपल्यावर → **Seller ला पेमेंट** (Amazon सारखं).
+- Delivery charge वजा करून.
+
+### ३.२ Commission Split (Stage 3 real)
+- Company: 10%
+- Promoter: 5% (reward points मध्ये)
+- Referral: 0.25%
+- Franchise: 1%
+- CP: 0.25%
+- Seller: बाकी
+
+### ३.३ Cashfree Integration
+- `cashfree_pg` package (किंवा `cashfree_payouts`)
+- Order create → payment session → callback
+- Cloud Function मध्ये payment verify
+- Firestore मध्ये `paymentStatus: 'paid'` + `transactions` document
+
+### ३.४ Settlement (7 दिवसांनंतर)
+- Cloud Function (cron — दररोज):
+  - `orders` where `status == 'delivered'` AND `returnWindowEndsAt < now` AND `settlementStatus == 'pending'`
+  - प्रत्येकासाठी:
+    - Company 10% ठेवा
+    - Delivery charge वजा करा
+    - Seller ला `payment` (Cashfree Payouts)
+    - Promoter ला 5% reward points
+    - `settlementStatus: 'settled'`
+
+---
+
+## ४. SHIPPING — Shiprocket (Global Shopping / Mom's Miracle)
+
+### ४.१ कोणत्या modules साठी
+- Global Shopping
+- Mom's Miracle
+- (फक्त — कारण ZatPat/Hotel स्थानिक)
+
+### ४.२ Flow
+1. Buyer order place करेल (Global module).
+2. Cloud Function → Shiprocket API:
+   - `auth/login` → Token
+   - `orders/create/adhoc` → Order create
+   - `courier/assign/awb` → AWB
+   - Firestore मध्ये `awbNumber` + `status: 'shipped'`
+3. Shiprocket Webhook → Cloud Function:
+   - `delivered`, `rto`, `in_transit` → Firestore update
+4. Real-time tracking buyer ला दिसेल.
+
+### ४.३ Rate Calculation
+- `serviceability` API — pickup pincode + delivery pincode + weight + COD/prepaid
+- Buyer ला checkout वर खरं shipping charge.
+
+### ४.४ NimbusPost (पर्याय)
+- जर Shiprocket महाग — NimbusPost (स्वस्त).
+
+---
+
+## ५. MAPS — Mapbox
+
+### ५.१ का Mapbox (Google पेक्षा स्वस्त)
+- 50,000 loads/महिना फ्री
+- 1,00,000 geocoding फ्री
+- Directions — $2/1000 (Google पेक्षा 60% स्वस्त)
+
+### ५.२ कुठे वापर
+- Buyer ride booking — pickup/drop map
+- Delivery boy — distance calculation
+- Seller — shop location
+- Parcel — pickup/drop
+
+### ५.३ Mapbox Integration
+- `mapbox_gl` किंवा `mapbox_maps_flutter` package
+- Access token — `Mapbox` website
+- Directions API — distance + duration
+
+---
+
+## ६. LOCATION — Tracelet (250m)
+
+### ६.१ कोणासाठी
+- Delivery Boy
+- Rider (Taxi/Rikshaw)
+- Parcel Cargo
+- Service Provider
+
+### ६.२ कसे काम करतं
+- Driver "Status ON" करेल → **Select My Stand** → GPS location + area नाव.
+- `tracelet` package — `distanceFilter: 250` (250m हालचाल).
+- 250m हालचाल झाली → auto offline.
+- 15 मिनिटांनी पुन्हा notification → "Status ON करा".
+- `.bak` केलेला `rider_stand_service.dart` — **परत आणा** + `tracelet` जोडा.
+
+### ६.३ खर्च
+- Tracelet — मोफत + open-source
+- Battery — अत्यंत कमी (motion detection)
+
+---
+
+## ७. ORDER SPLIT (Mixed Cart)
+
+### ७.१ नियम
+- एका cart मध्ये वेगवेगळ्या modules ची उत्पादनं असू शकतात.
+- Checkout झाल्यावर **module नुसार orders विभागतील**.
+- प्रत्येक order ला **स्वतंत्र order_id + tracking**.
+- पेमेंट **एकच** (एकत्र) — पण settlement **module निहाय**.
+
+### ७.२ Module Detection
+- `products` मध्ये `module` field असेल:
+  - `global_shopping`, `zatpat`, `hotel_food`, `moms_miracle`, `services`, `parcel`
+- जर नसेल — seller/product वरून detect.
+
+### ७.३ Checkout Flow
+1. Buyer "ऑर्डर करा" दाबेल.
+2. `cartItems` वाचा.
+3. Module नुसार groups.
+4. प्रत्येक group साठी `orders` document.
+5. एकूण रक्कम Cashfree ने घ्या.
+6. `order_groups` document.
+7. Cart clear.
+8. `OrderTrackingScreen` — सर्व orders module निहाय.
+
+### ७.४ Tracking (Module निहाय)
+- **Global / Mom's:** Shiprocket AWB → real-time.
+- **ZatPat / Hotel:** Delivery boy → FCM notification → accept → `deliveryBoyId` → buyer ला नंबर.
+- **Services / Parcel:** Provider → accept → पूर्ण → feedback.
+
+---
+
+## ८. DELIVERY BOY ASSIGNMENT
+
+### ८.१ कोणासाठी
+- ZatPat
+- Hotel Food
+- Parcel Cargo (लहान)
+
+### ८.२ Flow
+1. Buyer order → module detect.
+2. जवळचे delivery boys शोधा:
+   - `isOnline: true` + `standLocation` + 10 km.
+   - GeoFlutterFire / Geohash.
+3. FCM notification सर्वांना.
+4. पहिला accept करणारा → `deliveryBoyId` save.
+5. Buyer ला delivery boy चा नंबर.
+6. Delivery boy status → `out_for_delivery` → `delivered`.
+
+---
+
+## ९. GPS — 250m Auto Offline
+
+### ९.१ Tracelet Setup
+- `flutter pub add tracelet`
+- `distanceFilter: 250.0`
+- Callback → Firestore `isOnline: false`.
+- 15 मिनिटांनी notification.
+
+### ९.२ Stand Location
+- Driver "Set Stand" → GPS + `placemarkFromCoordinates` → area नाव.
+- `standLocation` Firestore मध्ये.
+- Buyer ला "Delivery boy [area] येथे आहे".
+
+---
+
+## १०. REWARD POINTS (Real)
+
+### १०.१ नियम
+- 1 pt = ₹1
+- 3 महिन्यांत expire
+- Checkout मध्ये वापरता येईल
+- Transfer होत नाहीत
+
+### १०.२ कसे मिळतात
+- खरेदीवर 2% (buyer reward)
+- Referral — 0.25% (lifetime)
+- Ad poll answer → reward
+- Lucky draw winner → reward
+
+### १०.३ Firestore
+- `buyers/{uid}.rewardPoints`
+- `transactions` — प्रत्येक earn/spend.
+
+---
+
+## ११. LUCKY DRAW (Real)
+
+### ११.१ नियम
+- तिकीट ₹5
+- Draw — दररोज 4:00 PM
+- Cutoff — 3:50 PM
+- Winner — priority based (90 days purchase history)
+- 50% company, 50% winners (20% participants) — reward points मध्ये
+
+### ११.२ Firestore
+- `lucky_draw/{drawId}` — tickets, winners, amounts
+- Cloud Function — दररोज 4PM draw.
+
+---
+
+## १२. WEEKLY MARKET (Real)
+
+### १२.१ नियम
+- दर शनिवारी 3-12 PM
+- CP/Admin create करतील (तारीख, वेळ, परिसर)
+- Seller/Promoter/Franchise/CP/Admin — catalog तयार करतील
+- ON/OFF toggle
+- ₹50 fee (promoter साठी) — seller फ्री
+- 30 दिवस auto delete
+
+### १२.२ Firestore
+- `weekly_market` — market schedule
+- `weekly_market_catalogs` — catalogs
+- Cloud Function — Saturday 3PM → ON, 12AM → OFF.
+
+---
+
+## १३. PROMOTER SYSTEM (Real)
+
+### १३.१ KYC
+- आधार, पॅन, पत्ता (compulsory)
+- Franchise verify करेल.
+
+### १३.२ Catalog
+- Max 50 products
+- फक्त "प्रमोशन ON" सेलर products
+- Unique link — share करता येईल
+- 5% commission (reward points मध्ये)
+
+### १३.३ Firestore
+- `promoters` — KYC, catalog, earnings
+- `products/{id}.isPromoterAdd` — सेलरने ON केलं.
+
+---
+
+## १४. ADS & OFFERS (Real)
+
+### १४.१ Ads
+- Seller → Franchise → CP → Admin approval
+- Franchise/CP/Admin — थेट live
+- Budget, target audience, poll question
+- Cost per poll reply (₹0.10 text, ₹0.25 photo, ₹0.50 video)
+- Revenue split — Buyer 35%, Franchise 15%, CP 5%, Referrer 5%, Ad Generator 10%, Company 30%
+
+### १४.२ Offers
+- Free offer — seller च्या जिल्ह्यात
+- Paid offer (Top Offer) — target locations (state/district/taluka)
+- Approval — franchise/CP/admin
+- Fee compulsory (paid साठी)
+
+### १४.३ Firestore
+- `ads` — approval status
+- `offers` — target locations
+- `ads_watched` — poll answers, rewards.
+
+---
+
+## १५. CHAT / NOTIFICATIONS (Real)
+
+### १५.१ Chat
+- Buyer ↔ Seller (एकतर्फी — seller पाठवतो)
+- Buyer ↔ Delivery boy (दोनतर्फी — order दरम्यान)
+- `chats` collection + FCM.
+
+### १५.२ Notifications
+- FCM — order status, ad approval, weekly market, lucky draw
+- `notifications` collection — read/unread.
+
+---
+
+## १६. REAL KYC DATA
+
+### १६.१ Seller KYC
+- आधार, पॅन, बँक, पत्ता, फोटो, सेल्फी, GPS link
+- Franchise verify करेल (GPS visit, 72 hrs).
+
+### १६.२ Franchise KYC
+- आधार, पॅन, बँक, पत्ता
+- CP verify करेल.
+
+### १६.३ Promoter KYC
+- आधार, पॅन, पत्ता
+- Franchise verify करेल.
+
+### १६.४ Firestore
+- `sellers/{uid}.kycStatus` — `'pending' | 'verified' | 'rejected'`
+- Franchise/CP/Admin screens — KYC edit.
+
+---
+
+## १७. PARCEL CARGO (Real)
+
+### १७.१ नियम
+- 2 टन pickup ते container — खरे दर
+- GPS stand location
+- Wallet recharge (₹100 पटीत)
+- Accept → ₹fee कपात.
+
+### १७.२ Firestore
+- `parcel_data` — vehicles, rates
+- `parcel_requests` — orders.
+
+---
+
+## १८. MANUFACTURER & FARMERS (Real)
+
+### १८.१ Manufacturer
+- B2B — IndiaMart सारखं
+- Paid profile
+- Requirement → notification → ₹50 fee → buyer detail.
+
+### १८.२ Farmers
+- शेतकरी → products → Global Shopping मध्ये.
+
+---
+
+## १९. LIVE ADS / VIRAL POSTS (Real)
+
+- Admin live ads — `ads` collection.
+- Viral posts — `posts` collection (7 दिवस TTL).
+
+---
+
+## २०. DASHBOARD & ANALYTICS (Real)
+
+- Admin — revenue, sellers, buyers, orders
+- Franchise — area sellers, buyers, revenue
+- CP — district franchises, revenue
+- Seller — orders, revenue, customers
+- Promoter — earnings, catalog, referrals
+- सर्व Firestore queries + real-time.
+
+---
+
+## २१. TTL (7 दिवस Auto Delete)
+
+### २१.१ पोस्ट
+- `posts/{postId}.expiresAt = createdAt + 7 दिवस`
+- Cloud Function (cron) — दररोज delete.
+
+### २१.२ Weekly Market Catalog
+- `weekly_market_catalogs/{id}.expiryAt = createdAt + 30 दिवस`
+- Cloud Function — delete.
+
+### २१.३ फक्त पोस्ट + weekly market catalog
+- Seller data, orders — कायमचे.
+
+---
+
+## २२. TESTING & SAFETY
+
+- `flutter analyze` — शून्य errors.
+- User ने test करून OK केल्यावरच commit.
+- `git add .` नको — फक्त बदललेल्या files.
+- Git safety rules — जुना code नवीन code ला overwrite होऊ नये.
+- `python3 tools/make_map.py` — commit आधी.
+- `PROJECT_STATUS.md` — प्रत्येक मोठ्या बदलानंतर update.
+
+---
+
+## २३. क्रम (Stage 3 मध्ये)
+
+1. **Firebase setup** (Auth, Firestore, Storage, Functions, FCM)
+2. **Real KYC** (Seller, Franchise, Promoter) — Firestore
+3. **Payment** (Cashfree)
+4. **Order split** + **module tracking**
+5. **Shipping** (Shiprocket — Global)
+6. **Location** (Tracelet — 250m)
+7. **Maps** (Mapbox)
+8. **Delivery boy assignment** (FCM + Geo)
+9. **Reward points** (real)
+10. **Lucky draw** (Cloud Function)
+11. **Weekly market** (Cloud Function)
+12. **Promoter system** (real)
+13. **Ads & Offers** (real)
+14. **Chat / Notifications** (FCM)
+15. **Parcel / Manufacturer / Farmers** (real)
+16. **Dashboard** (real-time)
+17. **TTL** (Cloud Function)
+
+---
+
+## २४. महत्त्वाचं
+- **Dummy data काढून Firestore**.
+- **UI बदलू नका** — फक्त data layer.
+- **प्रत्येक feature एक-एक करून** — एकत्र नको.
+- **User ने test करून OK केल्यावरच** पुढचं.
+- **Git safety rules** — सर्वोच्च.
+- **नवीन तंत्रज्ञान / पर्याय** — वेळेवर सुचवा (Section ० पहा).
+```
+
+---
