@@ -178,7 +178,6 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildKpiCard(context, 'महिन्याचं Revenue', '₹38,400', Icons.trending_up, AppColors.successGreen, const CpSellerRevenueScreen()),
                         _buildKpiCard(context, 'जाहिरात विभाग', '५', Icons.campaign_outlined, Colors.orange, const CpAdsScreen()),
                         _buildKpiCard(context, 'क्रिएट टॉप ऑफर', 'नवीन', Icons.local_offer_outlined, Colors.pink, const TopOfferCreateScreen(isSeller: false)),
-                        // ✅ बदल ९: आठवडी बाजार → प्रमोटर यादी
                         _buildKpiCard(context, 'प्रमोटर यादी', '३', Icons.people_alt_outlined, Colors.amber, const PromoterListScreen()),
                       ],
                     ),
@@ -191,8 +190,9 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen()))),
                         _buildQuickAction(context, 'नवीन Seller', Icons.storefront_outlined,
                             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerScreen()))),
-                        _buildQuickAction(context, 'जाहिरात तयार करा', Icons.campaign_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpCreateAdScreen()))),
+                        // ❌ काढलं: 'जाहिरात तयार करा' → CpCreateAdScreen (आता CpAdsScreen मध्ये "+ नवीन जाहिरात बनवा" आहे)
+                        _buildQuickAction(context, 'Approval Pending जाहिराती', Icons.campaign_outlined,
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()))),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -203,11 +203,10 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildQuickAction(context, 'Approvals', Icons.fact_check_outlined,
                             () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen()))),
                         _buildQuickAction(context, 'Broadcast Msg', Icons.forum_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()))),
+                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen()))),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    // ✅ बदल ७, ८: आठवडी बाजार + प्रमोटर कॅटलॉग
                     _buildQuickAction(context, 'आठवडी बाजार', Icons.storefront,
                         () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()))),
                     const SizedBox(height: 6),
