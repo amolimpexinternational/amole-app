@@ -27,7 +27,7 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
 
   Position? _standPosition;
   StreamSubscription<Position>? _positionStream;
-  String _standLocation = ''; // नवीन: area नाव
+  String _standLocation = '';
 
   final List<Map<String, dynamic>> _orders = [
     {
@@ -99,43 +99,54 @@ class _DeliveryBoyHomeScreenState extends State<DeliveryBoyHomeScreen> {
       }
     }
 
-    _standPosition = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-    );
-
-    // ✅ area नाव मिळव
-    String areaName = 'सध्याचे लोकेशन';
-    try {
-      final placemarks = await placemarkFromCoordinates(
-        _standPosition!.latitude,
-        _standPosition!.longitude,
-      );
-      if (placemarks.isNotEmpty) {
-        final p = placemarks.first;
-        final parts = [p.subLocality, p.locality, p.administrativeArea]
-            .where((e) => e != null && e!.isNotEmpty).toList();
-        if (parts.isNotEmpty) areaName = parts.join(', ');
-      }
-    } catch (_) {}
-
-    if (mounted) {
-      setState(() => _standLocation = areaName);
+    // ✅ GPS कायमची नाकारली तर स्पष्ट message
+    if (permission == LocationPermission.deniedForever) {
+      _toast('GPS परवानगी कायमची नाकारली. Settings मध्ये Allow करा.', color: Colors.red);
+      return;
     }
 
-    _positionStream?.cancel();
-    _positionStream = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 250,
-      ),
-    ).listen((Position position) {
-      if (_standPosition == null) return;
-      double distance = Geolocator.distanceBetween(
-        _standPosition!.latitude, _standPosition!.longitude,
-        position.latitude, position.longitude,
+    try {
+      _standPosition = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
       );
-      if (distance >= 250) _onMovedFar();
-    });
+
+      String areaName = 'सध्याचे लोकेशन';
+      try {
+        final placemarks = await placemarkFromCoordinates(
+          _standPosition!.latitude,
+          _standPosition!.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          final p = placemarks.first;
+          final parts = [p.subLocality, p.locality, p.administrativeArea]
+              .where((e) => e != null && e!.isNotEmpty).toList();
+          if (parts.isNotEmpty) areaName = parts.join(', ');
+        }
+      } catch (_) {}
+
+      if (mounted) {
+        setState(() => _standLocation = areaName);
+      }
+
+      _positionStream?.cancel();
+      _positionStream = Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 250,
+        ),
+      ).listen((Position position) {
+        if (_standPosition == null) return;
+        double distance = Geolocator.distanceBetween(
+          _standPosition!.latitude, _standPosition!.longitude,
+          position.latitude, position.longitude,
+        );
+        if (distance >= 250) _onMovedFar();
+      });
+    } catch (e) {
+      if (mounted) {
+        _toast('GPS सुरू करता आलं नाही: $e', color: Colors.red);
+      }
+    }
   }
 
   void _stopGpsTracking() {
