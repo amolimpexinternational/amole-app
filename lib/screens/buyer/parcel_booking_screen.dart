@@ -41,9 +41,13 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
     super.dispose();
   }
 
-  void _toast(String msg) {
+  // ✅ Success साठी हिरवा, error साठी लाल
+  void _toast(String msg, {bool success = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: success ? Colors.green : Colors.red,
+      ),
     );
   }
 
@@ -60,6 +64,13 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
           setState(() => _pickLoading = false);
           return;
         }
+      }
+
+      // ✅ GPS कायमची नाकारली तर स्पष्ट message
+      if (permission == LocationPermission.deniedForever) {
+        _toast('GPS परवानगी कायमची नाकारली. Settings मध्ये Allow करा.');
+        setState(() => _pickLoading = false);
+        return;
       }
 
       final position = await Geolocator.getCurrentPosition(
@@ -91,20 +102,36 @@ class _ParcelBookingScreenState extends State<ParcelBookingScreen> {
         _pickLoading = false;
       });
 
-      _toast('लोकेशन मिळालं ✅');
+      _toast('लोकेशन मिळालं ✅', success: true);
     } catch (e) {
       setState(() => _pickLoading = false);
       _toast('लोकेशन मिळालं नाही: $e');
     }
   }
 
-  // === Google Maps उघडा ===
+  // ✅ Google Maps — pickup GPS किंवा drop search वापरून उघडा
   Future<void> _openGoogleMaps() async {
-    final Uri uri = Uri.parse('https://www.google.com/maps');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    String url;
+
+    if (_pickLat != null && _pickLng != null) {
+      url = 'https://www.google.com/maps/search/?api=1&query=$_pickLat,$_pickLng';
+    } else if (_dropCtrl.text.trim().isNotEmpty) {
+      url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(_dropCtrl.text.trim())}';
+    } else if (_pickCtrl.text.trim().isNotEmpty) {
+      url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(_pickCtrl.text.trim())}';
     } else {
-      _toast('Google Maps उघडता आलं नाही');
+      url = 'https://www.google.com/maps';
+    }
+
+    final uri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        _toast('Google Maps उघडता आलं नाही');
+      }
+    } catch (e) {
+      _toast('Google Maps उघडता आलं नाही: $e');
     }
   }
 
