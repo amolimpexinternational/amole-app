@@ -48,9 +48,13 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
     }
   }
 
-  void _toast(String msg) {
+  // ✅ Success साठी हिरवा, error साठी लाल
+  void _toast(String msg, {bool success = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: success ? Colors.green : Colors.red,
+      ),
     );
   }
 
@@ -68,6 +72,13 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
           setState(() => _pickupLoading = false);
           return;
         }
+      }
+
+      // ✅ GPS सेवा ON आहे का तपास
+      if (permission == LocationPermission.deniedForever) {
+        _toast('GPS परवानगी कायमची नाकारली. Settings मध्ये Allow करा.');
+        setState(() => _pickupLoading = false);
+        return;
       }
 
       // लोकेशन घे
@@ -105,21 +116,43 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
         _pickupLoading = false;
       });
 
-      _toast('लोकेशन मिळालं ✅');
+      _toast('लोकेशन मिळालं ✅', success: true);
     } catch (e) {
       setState(() => _pickupLoading = false);
       _toast('लोकेशन मिळालं नाही: $e');
     }
   }
 
+  // ✅ Google Maps — pickup GPS किंवा drop search वापरून उघडा
   Future<void> _openGoogleMaps() async {
-  final Uri uri = Uri.parse('https://www.google.com/maps');
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  } else {
-    _toast('Google Maps उघडता आलं नाही');
+    String url;
+
+    if (_pickupLat != null && _pickupLng != null) {
+      // Pickup GPS coordinates available
+      url = 'https://www.google.com/maps/search/?api=1&query=$_pickupLat,$_pickupLng';
+    } else if (_dropCtrl.text.trim().isNotEmpty) {
+      // Drop location search
+      url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(_dropCtrl.text.trim())}';
+    } else if (_pickupCtrl.text.trim().isNotEmpty) {
+      // Pickup text search
+      url = 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(_pickupCtrl.text.trim())}';
+    } else {
+      // Fallback — homepage
+      url = 'https://www.google.com/maps';
+    }
+
+    final uri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        _toast('Google Maps उघडता आलं नाही');
+      }
+    } catch (e) {
+      _toast('Google Maps उघडता आलं नाही: $e');
+    }
   }
-}
+
   void _book() {
     if (_pickupCtrl.text.trim().isEmpty) {
       _toast('प्रवास कुठून सुरू करायचा ते लिहा / GPS वापरा');
@@ -263,7 +296,6 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // GPS बटन
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -287,7 +319,6 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // परिसराचे नाव (टेक्स्ट फील्ड)
                 TextField(
                   controller: _pickupCtrl,
                   decoration: InputDecoration(
@@ -319,7 +350,6 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // परिसराचे नाव (टेक्स्ट फील्ड)
                 TextField(
                   controller: _dropCtrl,
                   decoration: InputDecoration(
@@ -331,7 +361,6 @@ class _RideBookingScreenState extends State<RideBookingScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Google Maps link बटन
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
