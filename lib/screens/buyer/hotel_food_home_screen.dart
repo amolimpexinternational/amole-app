@@ -3,6 +3,7 @@ import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
 import '../../data/delivery_rates.dart';
 import 'cart_screen.dart';
+import 'buyer_favourite_screen.dart';
 
 class HotelFoodData {
   static const List<Map<String, dynamic>> hotels = [
@@ -304,27 +305,52 @@ class _HotelFoodHomeScreenState extends State<HotelFoodHomeScreen> {
                 style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
-          Badge(
-            isLabelVisible: cartCount > 0,
-            label: Text(
-              cartCount > 99 ? '99+' : '$cartCount',
-              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: AppColors.successGreen,
-            child: IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CartScreen(
-                      deliveryCharge: _hotelDeliveryCharge(),
-                      orderTitle: 'Hotel Food',
+          // ✅ Favourite icon (नवीन)
+          IconButton(
+            tooltip: 'आवडते',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            iconSize: 22,
+            icon: const Icon(Icons.favorite_border, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
+              ).then((_) {
+                if (mounted) setState(() {});
+              });
+            },
+          ),
+          const SizedBox(width: 2),
+          // ✅ Cart — 2mm shift toward center
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Badge(
+              isLabelVisible: cartCount > 0,
+              label: Text(
+                cartCount > 99 ? '99+' : '$cartCount',
+                style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: AppColors.successGreen,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                iconSize: 24,
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CartScreen(
+                        deliveryCharge: _hotelDeliveryCharge(),
+                        orderTitle: 'Hotel Food',
+                      ),
                     ),
-                  ),
-                ).then((_) => setState(() {}));
-              },
+                  ).then((_) => setState(() {}));
+                },
+              ),
             ),
           ),
         ],
@@ -399,27 +425,52 @@ class _HotelMenuScreenState extends State<HotelMenuScreen> {
                 style: const TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
-          Badge(
-            isLabelVisible: cartCount > 0,
-            label: Text(
-              cartCount > 99 ? '99+' : '$cartCount',
-              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: AppColors.successGreen,
-            child: IconButton(
-              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CartScreen(
-                      deliveryCharge: _hotelDeliveryCharge(),
-                      orderTitle: 'Hotel Food',
+          // ✅ Favourite icon (नवीन)
+          IconButton(
+            tooltip: 'आवडते',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            iconSize: 22,
+            icon: const Icon(Icons.favorite_border, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
+              ).then((_) {
+                if (mounted) setState(() {});
+              });
+            },
+          ),
+          const SizedBox(width: 2),
+          // ✅ Cart — 2mm shift toward center
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Badge(
+              isLabelVisible: cartCount > 0,
+              label: Text(
+                cartCount > 99 ? '99+' : '$cartCount',
+                style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: AppColors.successGreen,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                iconSize: 24,
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CartScreen(
+                        deliveryCharge: _hotelDeliveryCharge(),
+                        orderTitle: 'Hotel Food',
+                      ),
                     ),
-                  ),
-                ).then((_) => setState(() {}));
-              },
+                  ).then((_) => setState(() {}));
+                },
+              ),
             ),
           ),
         ],
