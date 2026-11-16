@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import '../../data/buyer_shopping_data.dart';
 import 'cart_screen.dart';
-import 'product_detail_screen.dart'; // ✅ नवीन import
+import 'product_detail_screen.dart';
 import '../../data/zatpat_data.dart';
 import '../../data/delivery_rates.dart';
+import 'buyer_favourite_screen.dart';
 
 class ZatPatHomeScreen extends StatefulWidget {
   final String? initialCategory;
@@ -114,13 +115,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
     });
   }
 
-  int _chargeForKm(double km) {
-    if (km <= 3) return 30;
-    if (km <= 5) return 45;
-    if (km <= 7) return 60;
-    return 100;
-  }
-
   int _deliveryCharge() {
     double? maxKm;
     for (final item in BuyerShoppingData.cartItems) {
@@ -198,7 +192,6 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        // ✅ उत्पादनावर क्लिक → ProductDetailScreen उघडेल
         onTap: () {
           Navigator.push(
             context,
@@ -409,28 +402,50 @@ class _ZatPatHomeScreenState extends State<ZatPatHomeScreen> {
         ),
         actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
-          Badge(
-            isLabelVisible: cartCount > 0,
-            label: Text(
-              cartCount > 99 ? '99+' : '$cartCount',
-              style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: AppColors.successGreen,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CartScreen(
-                      deliveryCharge: _deliveryCharge(),
-                      orderTitle: widget.title ?? 'ZatPat',
+          // ✅ Favourite icon (नवीन)
+          IconButton(
+            tooltip: 'आवडते',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            iconSize: 22,
+            icon: const Icon(Icons.favorite_border, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const BuyerFavouriteScreen()),
+              ).then((_) {
+                if (mounted) setState(() {});
+              });
+            },
+          ),
+          const SizedBox(width: 2),
+          // ✅ Cart — 2mm shift toward center (right: 16 instead of 8)
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Badge(
+              isLabelVisible: cartCount > 0,
+              label: Text(
+                cartCount > 99 ? '99+' : '$cartCount',
+                style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+              ),
+              backgroundColor: AppColors.successGreen,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                iconSize: 24,
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CartScreen(
+                        deliveryCharge: _deliveryCharge(),
+                        orderTitle: widget.title ?? 'ZatPat',
+                      ),
                     ),
-                  ),
-                ).then((_) => setState(() {}));
-              },
+                  ).then((_) => setState(() {}));
+                },
+              ),
             ),
           ),
         ],
