@@ -18,6 +18,14 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
     });
   }
 
+  // ✅ Cart मध्ये qty शोधण्यासाठी helper
+  int _cartQty(String id) {
+    for (final item in BuyerShoppingData.cartItems) {
+      if (item['id'] == id) return (item['qty'] as int?) ?? 0;
+    }
+    return 0;
+  }
+
   void _addToCart(Map<String, dynamic> item) {
     BuyerShoppingData.addToCart(
       id: item['id'] as String,
@@ -34,25 +42,8 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
       deliveryAvailable: item['deliveryAvailable'] as bool? ?? true,
       isReturnable: item['isReturnable'] as bool? ?? true,
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${item['name']} Cart मध्ये टाकले'),
-        duration: const Duration(seconds: 2),
-        action: SnackBarAction(
-          label: 'Cart पहा',
-          textColor: AppColors.white,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const CartScreen(),
-              ),
-            );
-          },
-        ),
-      ),
-    );
+    // ✅ Snackbar काढलं — फक्त setState (button green + badge update)
+    setState(() {});
   }
 
   void _openProduct(Map<String, dynamic> item) {
@@ -84,6 +75,8 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
         item['deliveryAvailable'] as bool? ?? true;
     final isReturnable = item['isReturnable'] as bool? ?? true;
     final id = item['id'] as String;
+    final cartQty = _cartQty(id);
+    final inCart = cartQty > 0;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -224,17 +217,39 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
                 ],
               ),
               const SizedBox(height: 10),
+              // ✅ बटन — Cart मध्ये नसेल तर orange, असेल तर green + qty
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: stock > 0
+                  onPressed: stock > 0 && !inCart
                       ? () => _addToCart(item)
-                      : null,
-                  icon: const Icon(Icons.shopping_cart_outlined),
-                  label: const Text('Cart मध्ये टाका'),
+                      : (inCart
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const CartScreen(),
+                                ),
+                              ).then((_) {
+                                if (mounted) setState(() {});
+                              });
+                            }
+                          : null),
+                  icon: Icon(
+                    inCart ? Icons.check_circle : Icons.shopping_cart_outlined,
+                  ),
+                  label: Text(
+                    inCart
+                        ? 'Cart मध्ये आहे ($cartQty) ✓'
+                        : 'Cart मध्ये टाका',
+                  ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryOrange,
+                    backgroundColor: inCart
+                        ? AppColors.successGreen
+                        : AppColors.primaryOrange,
                     foregroundColor: AppColors.white,
+                    disabledBackgroundColor: AppColors.lightGrey,
+                    disabledForegroundColor: AppColors.textLight,
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
                     ),
@@ -251,6 +266,7 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
   @override
   Widget build(BuildContext context) {
     final items = BuyerShoppingData.favouriteItems;
+    final cartCount = BuyerShoppingData.cartCount;
 
     return Scaffold(
       backgroundColor: AppColors.lightGrey,
@@ -260,18 +276,57 @@ class _BuyerFavouriteScreenState extends State<BuyerFavouriteScreen> {
         ),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: AppColors.white,
+        actionsPadding: const EdgeInsets.only(right: 8),
         actions: [
+          // Favourite icon (already on favourite screen — snackbar only)
           IconButton(
-            tooltip: 'Cart',
-            icon: const Icon(Icons.shopping_cart_outlined),
+            tooltip: 'My Favourite',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            iconSize: 22,
+            icon: const Icon(Icons.favorite_border, color: Colors.white),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const CartScreen(),
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('तुम्ही आधीच Favourite screen वर आहात'),
+                  duration: Duration(seconds: 1),
                 ),
               );
             },
+          ),
+          const SizedBox(width: 2),
+          // ✅ Cart — हिरवा badge सह
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Badge(
+              isLabelVisible: cartCount > 0,
+              label: Text(
+                cartCount > 99 ? '99+' : '$cartCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: AppColors.successGreen,
+              child: IconButton(
+                tooltip: 'Cart',
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                iconSize: 24,
+                icon: const Icon(Icons.shopping_cart_outlined, color: Colors.white),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const CartScreen(),
+                    ),
+                  ).then((_) {
+                    if (mounted) setState(() {});
+                  });
+                },
+              ),
+            ),
           ),
         ],
       ),
