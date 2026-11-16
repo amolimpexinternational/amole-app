@@ -5,6 +5,7 @@ import '../../models/product_model.dart';
 import '../../widgets/offers_slider_widget.dart';
 import 'product_detail_screen.dart';
 import 'cart_screen.dart';
+import 'buyer_favourite_screen.dart';
 
 class WeeklyMarketScreen extends StatefulWidget {
   const WeeklyMarketScreen({super.key});
@@ -173,17 +174,18 @@ class _WeeklyMarketScreenState extends State<WeeklyMarketScreen> {
                     ],
                   ),
                 ),
-                // ✅ Favourite icon (नवीन)
+                // ✅ Favourite icon — BuyerFavouriteScreen उघडेल
                 IconButton(
                   icon: const Icon(Icons.favorite_border,
                       color: Colors.white, size: 22),
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Favourites — लवकरच येत आहे'),
-                        duration: Duration(seconds: 1),
-                      ),
-                    );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const BuyerFavouriteScreen()),
+                    ).then((_) {
+                      if (mounted) setState(() {});
+                    });
                   },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(
