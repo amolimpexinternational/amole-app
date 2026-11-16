@@ -182,8 +182,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         title: const Text('उत्पादनाची माहिती', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: AppColors.white,
-        // ✅ Icons कडेला न जाता सेंटरकडे येण्यासाठी
-        actionsPadding: const EdgeInsets.only(right: 8),
+        // ✅ 1mm shift toward center (8 → 12)
+        actionsPadding: const EdgeInsets.only(right: 12),
         actions: [
           IconButton(
             tooltip: 'My Favourite',
