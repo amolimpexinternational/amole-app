@@ -61,6 +61,17 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
     }
   }
 
+  // ✅ Edit — पूर्ण screen मध्ये (Create Ad सारखं)
+  Future<void> _editAdFullScreen(Map<String, dynamic> ad) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FranchiseCreateAdScreen(initialAd: ad),
+      ),
+    );
+    if (mounted) setState(() {});
+  }
+
   // === संपूर्ण जाहिरात Preview ===
   void _previewAd(Map<String, dynamic> ad) {
     showModalBottomSheet(
@@ -88,7 +99,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                     tooltip: 'Edit',
                     onPressed: () {
                       Navigator.pop(ctx);
-                      _editAd(ad);
+                      _editAdFullScreen(ad);
                     },
                   ),
                   IconButton(
@@ -198,6 +209,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
               ),
             ),
 
+            // Approve/Reject — फक्त pending साठी
             if (ad['status'] == 'प्रतीक्षेत')
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -243,76 +255,6 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                 ),
               ),
           ],
-        ),
-      ),
-    );
-  }
-
-  // === जाहिरात Edit ===
-  void _editAd(Map<String, dynamic> ad) {
-    final titleCtrl = TextEditingController(text: ad['title']);
-    final descCtrl = TextEditingController(text: ad['description']);
-    final budgetCtrl = TextEditingController(text: ad['budget']);
-    final daysCtrl = TextEditingController(text: ad['days']);
-    final areaCtrl = TextEditingController(text: ad['targetArea']);
-    final ageCtrl = TextEditingController(text: ad['targetAge']);
-    final genderCtrl = TextEditingController(text: ad['targetGender']);
-
-    showDialog(
-      context: context,
-      builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        child: Container(
-          constraints: const BoxConstraints(maxHeight: 600),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('जाहिरात Edit करा', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _editField('शीर्षक', titleCtrl),
-                      _editField('वर्णन', descCtrl, maxLines: 3),
-                      _editField('Budget', budgetCtrl),
-                      _editField('कालावधी', daysCtrl),
-                      _editField('क्षेत्र', areaCtrl),
-                      _editField('वयोगट', ageCtrl),
-                      _editField('लिंग', genderCtrl),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(child: TextButton(onPressed: () => Navigator.pop(context), child: const Text('रद्द'))),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          ad['title'] = titleCtrl.text;
-                          ad['description'] = descCtrl.text;
-                          ad['budget'] = budgetCtrl.text;
-                          ad['days'] = daysCtrl.text;
-                          ad['targetArea'] = areaCtrl.text;
-                          ad['targetAge'] = ageCtrl.text;
-                          ad['targetGender'] = genderCtrl.text;
-                        });
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('✅ जाहिरात अद्ययावत झाली'), backgroundColor: AppColors.successGreen),
-                        );
-                      },
-                      child: const Text('जतन करा'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -377,38 +319,25 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
             Expanded(child: Text('🎯 ${ad['targetArea']}', style: const TextStyle(fontSize: 13, color: AppColors.textLight), overflow: TextOverflow.ellipsis)),
           ]),
           const SizedBox(height: 12),
+          // ✅ Preview button (primary) + Edit icon (full screen) + Delete icon
           Row(
             children: [
-              if (isPending)
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _previewAd(ad),
-                    icon: const Icon(Icons.visibility, size: 16, color: Colors.white),
-                    label: const Text('Preview', style: TextStyle(color: Colors.white, fontSize: 12)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      minimumSize: const Size(0, 36),
-                    ),
-                  ),
-                )
-              else
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _editAd(ad),
-                    icon: const Icon(Icons.edit, size: 16, color: Colors.white),
-                    label: const Text('Edit', style: TextStyle(color: Colors.white, fontSize: 12)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      minimumSize: const Size(0, 36),
-                    ),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _previewAd(ad),
+                  icon: const Icon(Icons.visibility, size: 16, color: Colors.white),
+                  label: const Text('Preview', style: TextStyle(color: Colors.white, fontSize: 12)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    minimumSize: const Size(0, 36),
                   ),
                 ),
+              ),
               const SizedBox(width: 6),
               IconButton(
                 icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryBlue),
-                onPressed: () => _editAd(ad),
+                onPressed: () => _editAdFullScreen(ad),
                 tooltip: 'Edit',
               ),
               IconButton(
@@ -434,14 +363,14 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
         foregroundColor: Colors.white,
         title: const Text('जाहिरात विभाग', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
-          TextButton.icon(
+          // ✅ "+" काढलं — फक्त "Create New Ad"
+          TextButton(
             onPressed: () async {
               await Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()));
               if (mounted) setState(() {});
             },
-            icon: const Icon(Icons.add_circle_outline, color: Colors.white, size: 20),
-            label: const Text(
-              '+ नवीन जाहिरात बनवा',
+            child: const Text(
+              'Create New Ad',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
             ),
           ),
@@ -540,22 +469,6 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
           Text('$label: ', style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
           Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark))),
         ],
-      ),
-    );
-  }
-
-  Widget _editField(String label, TextEditingController ctrl, {int maxLines = 1}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextField(
-        controller: ctrl,
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          isDense: true,
-        ),
       ),
     );
   }
