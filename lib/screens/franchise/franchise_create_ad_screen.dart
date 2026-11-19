@@ -3,7 +3,9 @@ import '../../constants/app_colors.dart';
 import 'package:file_picker/file_picker.dart';
 
 class FranchiseCreateAdScreen extends StatefulWidget {
-  const FranchiseCreateAdScreen({super.key});
+  /// Edit mode साठी — जर दिलं तर fields pre-fill होतील
+  final Map<String, dynamic>? initialAd;
+  const FranchiseCreateAdScreen({super.key, this.initialAd});
 
   @override
   State<FranchiseCreateAdScreen> createState() => _FranchiseCreateAdScreenState();
@@ -25,6 +27,8 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
   String _gender = 'दोन्ही';
   String _timeSlot = 'Full Day';
   int _durationDays = 3;
+
+  bool get _isEditMode => widget.initialAd != null;
 
   // === Hierarchical Location Data ===
   final Map<String, Map<String, Map<String, List<String>>>> _locationData = {
@@ -74,6 +78,48 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
   final Set<String> _selectedPincodes = {};
 
   static const int _maxPhotoBytes = 5 * 1024 * 1024;
+
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Edit mode — pre-fill fields
+    final ad = widget.initialAd;
+    if (ad != null) {
+      _titleController.text = (ad['title'] ?? '').toString();
+      _textController.text = (ad['description'] ?? '').toString();
+
+      // Budget: '₹500' → '500'
+      final budgetStr = (ad['budget'] ?? '')
+          .toString()
+          .replaceAll('₹', '')
+          .replaceAll(',', '')
+          .trim();
+      if (budgetStr.isNotEmpty) _budgetController.text = budgetStr;
+
+      // Days: '7 दिवस' → 7
+      final daysStr = (ad['days'] ?? '').toString();
+      final match = RegExp(r'\d+').firstMatch(daysStr);
+      if (match != null) {
+        final d = int.tryParse(match.group(0)!) ?? 3;
+        _durationDays = d.clamp(1, 7);
+      }
+
+      // Gender: 'सर्व' → 'दोन्ही'
+      final g = (ad['targetGender'] ?? '').toString();
+      if (g == 'सर्व' || g == 'दोन्ही') {
+        _gender = 'दोन्ही';
+      } else if (g == 'स्त्री') {
+        _gender = 'स्त्री';
+      } else if (g == 'पुरुष') {
+        _gender = 'पुरुष';
+      }
+
+      // Ad type detection
+      if (ad['image'] != null) {
+        _contentType = 'Photo';
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -292,7 +338,7 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
   bool _validateBeforePreview() {
     if (!_formKey.currentState!.validate()) return false;
 
-    if (_contentType != 'Text' && _pickedFileName == null) {
+    if (_contentType != 'Text' && _pickedFileName == null && !_isEditMode) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('कृपया $_contentType फाईल निवडा')),
       );
@@ -307,9 +353,12 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
       return false;
     }
 
-    final hasTarget = _selectedStates.isNotEmpty || _selectedDistricts.isNotEmpty ||
-        _selectedTalukas.isNotEmpty || _selectedPincodes.isNotEmpty;
-    if (!hasTarget) {
+    final hasTarget = _selectedStates.isNotEmpty ||
+        _selectedDistricts.isNotEmpty ||
+        _selectedTalukas.isNotEmpty ||
+        _selectedPincodes.isNotEmpty;
+    // Edit mode मध्ये जुना targetArea असू शकतो — validation skip
+    if (!_isEditMode && !hasTarget) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('कृपया किमान एक ठिकाण निवडा!')),
       );
@@ -344,8 +393,9 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                 children: [
                   const Icon(Icons.visibility, color: AppColors.primaryBlue),
                   const SizedBox(width: 8),
-                  const Expanded(
-                    child: Text('जाहिरात Preview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Text(_isEditMode ? 'Edit केलेली जाहिरात' : 'जाहिरात Preview',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ),
                   IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(ctx)),
                 ],
@@ -489,7 +539,10 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
                         _liveAd();
                       },
                       icon: const Icon(Icons.check_circle, color: Colors.white),
-                      label: const Text('कन्फर्म करा — Live करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      label: Text(
+                        _isEditMode ? 'Update करा — Live' : 'कन्फर्म करा — Live करा',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.successGreen,
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -547,11 +600,11 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 8),
-            Text('✅ जाहिरात Live झाली'),
+            const Icon(Icons.check_circle, color: Colors.green, size: 28),
+            const SizedBox(width: 8),
+            Text(_isEditMode ? '✅ जाहिरात Update झाली' : '✅ जाहिरात Live झाली'),
           ],
         ),
         content: Column(
@@ -578,9 +631,11 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
             Text('बजेट: ₹$budget'),
             Text('कालावधी: $_durationDays दिवस'),
             const SizedBox(height: 8),
-            const Text(
-              'तुमची जाहिरात आता "जाहिरात विभाग" मध्ये Live आहे.',
-              style: TextStyle(fontSize: 12, color: AppColors.textLight, fontStyle: FontStyle.italic),
+            Text(
+              _isEditMode
+                  ? 'Edit केलेली जाहिरात Live आहे.'
+                  : 'तुमची जाहिरात आता "जाहिरात विभाग" मध्ये Live आहे.',
+              style: const TextStyle(fontSize: 12, color: AppColors.textLight, fontStyle: FontStyle.italic),
             ),
           ],
         ),
@@ -610,7 +665,10 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('जाहिरात तयार करा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(
+          _isEditMode ? 'जाहिरात Edit करा' : 'जाहिरात तयार करा',
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Form(
         key: _formKey,
@@ -828,7 +886,10 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               child: ElevatedButton.icon(
                 onPressed: _showPreview,
                 icon: const Icon(Icons.visibility, color: Colors.white),
-                label: const Text('Preview बघा', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15)),
+                label: Text(
+                  _isEditMode ? 'Preview बघा — Update करा' : 'Preview बघा',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryBlue,
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -837,9 +898,11 @@ class _FranchiseCreateAdScreenState extends State<FranchiseCreateAdScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              '※ Preview बघितल्यावर Edit करता येईल किंवा थेट Live करता येईल.',
-              style: TextStyle(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
+            Text(
+              _isEditMode
+                  ? '※ Preview बघितल्यावर बदल Update होतील.'
+                  : '※ Preview बघितल्यावर Edit करता येईल किंवा थेट Live करता येईल.',
+              style: const TextStyle(fontSize: 11, color: AppColors.textLight, fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
