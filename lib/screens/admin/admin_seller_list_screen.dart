@@ -120,7 +120,6 @@ class _AdminSellerListScreenState extends State<AdminSellerListScreen> {
       ),
       body: Column(
         children: [
-          // === Stats row ===
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
@@ -156,7 +155,7 @@ class _AdminSellerListScreenState extends State<AdminSellerListScreen> {
                     itemBuilder: (ctx, i) {
                       final s = items[i];
                       final originalIndex = _sellers.indexOf(s);
-                      return _buildSellerCard(s, originalIndex);
+                      return _buildSellerCard(ctx, s, originalIndex);
                     },
                   ),
           ),
@@ -194,7 +193,8 @@ class _AdminSellerListScreenState extends State<AdminSellerListScreen> {
     );
   }
 
-  Widget _buildSellerCard(Map<String, dynamic> s, int originalIndex) {
+  Widget _buildSellerCard(
+      BuildContext ctx, Map<String, dynamic> s, int originalIndex) {
     final isVerified = s['status'] == 'Verified';
     final isActive = s['active'] as bool;
 
@@ -216,7 +216,6 @@ class _AdminSellerListScreenState extends State<AdminSellerListScreen> {
       ),
       child: Column(
         children: [
-          // === Main content — tap → edit profile ===
           InkWell(
             borderRadius:
                 const BorderRadius.vertical(top: Radius.circular(14)),
@@ -378,7 +377,6 @@ class _AdminSellerListScreenState extends State<AdminSellerListScreen> {
               ),
             ),
           ),
-          // === Toggle row ===
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
