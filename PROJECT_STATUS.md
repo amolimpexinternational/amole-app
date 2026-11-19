@@ -912,3 +912,124 @@ Global Shopping Home demo implementation is complete and has been tested by the 
 ## 24.4 अजून बाकी
 - PROJECT_MAP.md update
 - flutter analyze (नंतर)
+
+---
+
+## 25. UPDATE — NOVEMBER 2026 (मोठा बदल संच — Ads + Cart + GPS + Job + Subscription + Admin)
+
+### 25.1 Ads विभाग — सर्व ४ roles पूर्ण
+
+**Admin:**
+- `admin_create_ad_screen.dart` — Preview + Hierarchical Location (राज्य→जिल्हा→तालुका→पिनकोड) + Live Indicator
+- `admin_home_screen.dart` — Quick Actions मधून "जाहिरात तयार करा" काढलं; Weekly Market KPI → product detail dialog; Quick Actions franchise-style (१० items)
+- `admin_live_ads_screen.dart` — "Create New Ad" (no + sign) + Preview dialog + Full-screen Edit + Delete
+
+**Franchise:**
+- `franchise_create_ad_screen.dart` — `initialAd` parameter (edit mode) + Hierarchical Location + Preview → Edit → Live
+- `franchise_home_screen.dart` — "Create Ad" Quick Action काढलं; "Ad Approvals" → "Approval Pending जाहिराती"
+- `franchise_ad_screen.dart` — २ tabs (Approval Pending + Live); "Create New Ad" (no + sign); Live card मध्ये Preview (primary) + Full-screen Edit icon + Delete
+
+**Channel Partner:**
+- `cp_create_ad_screen.dart` — Hierarchical Location + Preview → Edit → Live (थेट Live)
+- `channel_partner_home_screen.dart` — Quick Actions franchise-style (८ items: Add Franchise + Franchise Verification + Add Seller + Seller Verification + Approval Pending जाहिराती + Revenue Report + आठवडी बाजार + प्रमोटर कॅटलॉग)
+- `cp_ads_screen.dart` — २ tabs + "Create New Ad" + Preview + Full-screen Edit + Delete
+
+**Seller:**
+- `seller_advertisements_screen.dart` — AMOLE Offers tab काढलं; Live जाहिरातींवर बजेट वाढवा + मुदत वाढवा (Demo)
+- `seller_advertisement_screen.dart` — Hierarchical Location + Preview → Edit → Approval (थेट Live नाही)
+
+### 25.2 Cart icon + Favourite icon — सर्व buyer screens
+
+**Standard position:** `actionsPadding: EdgeInsets.only(right: 8)` + Favourite (40x40) + Cart (40x40, badge)
+- `weekly_market_screen.dart` — Back button + Favourite + Cart (reference position) + Favourite onTap → BuyerFavouriteScreen
+- `buyer_home_screen.dart` — Icons reorder: Notification → Profile → Favourite → Cart
+- `buyer_favourite_screen.dart` — Snackbar काढलं; Green button + badge; Favourite icon + Cart
+- `zatpat_home_screen.dart` — Favourite + Cart 2mm shift (ZatPat + Kirana Mart दोन्ही)
+- `hotel_food_home_screen.dart` — Favourite + Cart 2mm shift (दोन्ही screens)
+- `product_detail_screen.dart` — Cart 1mm shift
+
+### 25.3 GPS + Google Maps
+
+**`AndroidManifest.xml`:**
+- `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `INTERNET`, `ACCESS_NETWORK_STATE`, `CAMERA`, `READ/WRITE_EXTERNAL_STORAGE`
+- `queries` — `https` scheme (Google Maps), `geo`, `tel`, `mailto`
+
+**Screens:**
+- `ride_booking_screen.dart` — Google Maps साठी pickup GPS coordinates / drop text search + green toast
+- `parcel_booking_screen.dart` — तेच + deniedForever check
+- `delivery_boy_home_screen.dart` — deniedForever check + try-catch GPS
+
+### 25.4 Job Portal — पूर्ण नवीन (३ tabs)
+
+**`job_portal_screen.dart`:**
+- **Tab 1 — नोकऱ्या शोधा:** Live job list + detail dialog (संपर्क नाही) + Apply ₹30 fee → contact दिसतो
+- **Tab 2 — माझे प्रोफाइल:** CV upload काढलं → Resume builder (KYC + शैक्षणिक + अनुभव + पगार + skills) + Profile Live Free
+- **Tab 3 — कर्मचारी शोधा:** Filters (शिक्षण + जॉब प्रोफाइल) + Candidate cards (LIVE badge) + "+ नवीन Employee Requirement Post करा" form (job details + contact email/mobile/website/social) → Live
+
+### 25.5 Seller Subscription — ४ plans
+
+**`seller_subscription_screen.dart`:**
+- Plan 1: Free — 5 products + 1 जाहिरात Free
+- Plan 2: ₹499 / 5 months — 10 products + 5 जाहिराती
+- Plan 3: ₹999 / 1 year — 20 products (Popular badge)
+- Plan 4: ₹1,500 / 1 year — 100 products
+
+### 25.6 Seller Home — Ecosystem Network
+
+**`seller_home_screen.dart`:**
+- "प्रोफाइल व्ह्यूज" KPI → **"Amole Ecosystem"**
+- Tap → chart dialog (४ stats: एकूण ग्राहक, Sellers, Promoters, Products — progress bars सह)
+
+### 25.7 Admin — ON/OFF + Expiry + Tabs
+
+**`admin_channel_partners_screen.dart`:** StatefulWidget + ON/OFF toggle + Active/Inactive badge
+**`admin_franchise_list_screen.dart`:** ४ tabs (सर्व/Active/Inactive/KYC Pending) + expiry + ON/OFF toggle
+**`admin_seller_list_screen.dart`:** ४ tabs + expiry + franchise-under + ON/OFF toggle (`ctx` parameter fix)
+**`admin_view_dashboard_screen.dart`:** पूर्ण view-only (TextFields → Text; Save button काढलं; "View Only" info box)
+
+### 25.8 Franchise + CP — Seller/Franchise/Promoter lists
+
+**`franchise_seller_list_screen.dart`:** Expiry + ON/OFF toggle + Active/Inactive badge
+**`cp_franchise_screen.dart`:** ४ tabs + expiry + ON/OFF toggle + status auto-adjust
+**`cp_seller_screen.dart`:** ४ tabs + expiry + ON/OFF toggle
+**`promoter_list_screen.dart`:** ON/OFF toggle + status badge
+
+### 25.9 नवीन / बदललेल्या files (एकूण)
+
+**Ads (६):** admin_create_ad, admin_home, admin_live_ads, franchise_create_ad, franchise_ad, franchise_home, cp_create_ad, cp_ads, channel_partner_home, seller_advertisements, seller_advertisement
+
+**Cart/Favourite (६):** weekly_market, buyer_home, buyer_favourite, zatpat_home, hotel_food_home, product_detail
+
+**GPS (४):** AndroidManifest, ride_booking, parcel_booking, delivery_boy_home
+
+**Job (१):** job_portal_screen (पूर्ण नवीन)
+
+**Subscription (१):** seller_subscription_screen
+
+**Seller Home (१):** seller_home_screen
+
+**Admin ON/OFF (४):** admin_channel_partners, admin_franchise_list, admin_seller_list, admin_view_dashboard
+
+**Franchise/CP lists (४):** franchise_seller_list, cp_franchise, cp_seller, promoter_list
+
+### 25.10 Git स्थिती
+
+- शेवटचा commit: `ce900e2` — Fix: ctx parameter in admin_seller_list
+- Branch: `main` — GitHub शी जुळतंय
+- `flutter analyze` errors: **0** ✅
+- Warnings/info: ~२०८ (deprecated, unused — Stage 3 पर्यंत नको)
+
+### 25.11 अजून बाकी
+
+- **Codespace मध्ये APK build** — `flutter build apk --release`
+- **Test** — mobile वर सर्व screens
+- **Stage 3** (Firebase) — अजून सुरू नाही
+
+### 25.12 नवीन AI साठी — महत्त्वाच्या नोंदी
+
+1. **`admin_seller_list_screen.dart`** — `_buildSellerCard` मध्ये `BuildContext ctx` parameter हवा (हे fix झालं)
+2. **`admin_franchise_list_screen.dart`** — `context` थेट वापरलंय, `ctx` नाही ✅
+3. **Favourite icon** — सर्व buyer screens मध्ये `BuyerFavouriteScreen` उघडतं
+4. **Hierarchical Location pattern** — `admin_create_ad_screen.dart` मध्ये पूर्ण example
+5. **ON/OFF toggle pattern** — `active` field + status auto-adjust
+6. **Tabs pattern** — `_selectedTab` + `_filtered` getter + `_buildTab` helper

@@ -284,3 +284,101 @@ text
 - **Commit + Push** — **सर्व फाईल्स** GitHub वर
 
 ---
+
+
+---
+
+## UPDATE — NOVEMBER 2026 (मोठा बदल संच)
+
+### सध्याची स्थिती (शेवटचा commit `ce900e2`)
+
+- ✅ `flutter analyze` errors: **0**
+- ✅ सर्व बदल GitHub वर push
+- ⏳ APK build बाकी
+- ⏳ Mobile वर test बाकी (सर्व screens)
+
+### काय पूर्ण झालं (एकूण २५+ files बदलल्या)
+
+**१. Ads विभाग — ४ roles पूर्ण (Admin, Franchise, CP, Seller)**
+- Hierarchical Location (राज्य → जिल्हा → तालुका → पिनकोड, multiple + Select All)
+- Preview → Edit → Live/Approval flow
+- Admin/Franchise/CP = थेट Live; Seller = Franchise approval
+- Tabs: Approval Pending + Live जाहिराती
+- Create New Ad (no + sign)
+- Live card: Preview (primary) + Full-screen Edit + Delete
+
+**२. Cart + Favourite icons — सर्व buyer screens standard position**
+- `actionsPadding: EdgeInsets.only(right: 8)` + Favourite (40x40) + Cart (40x40, badge)
+- Weekly Market = reference position
+- ZatPat/Kirana/Hotel = 2mm shift; Product Detail = 1mm shift
+- Favourite icon → BuyerFavouriteScreen
+
+**३. GPS + Google Maps**
+- AndroidManifest: सर्व permissions + queries
+- Ride/Parcel: pickup GPS coordinates किंवा drop text search Google Maps मध्ये
+- Green toast for success
+
+**४. Job Portal — पूर्ण नवीन (३ tabs)**
+- नोकऱ्या शोधा (Apply ₹30 → contact)
+- माझे प्रोफाइल (Resume builder, Free Live)
+- कर्मचारी शोधा (Filters + Post requirement Free)
+
+**५. Seller Subscription — ४ plans (Free / 499 / 999 / 1500)**
+
+**६. Seller Home — Amole Ecosystem chart dialog**
+
+**७. Admin — ON/OFF + Expiry + ४ tabs** (CP/Franchise/Seller lists)
+
+**८. Admin View Dashboard — पूर्ण view-only** (edit काढलं)
+
+**९. Franchise/CP — Seller/Franchise/Promoter lists मध्ये Expiry + ON/OFF**
+
+### महत्त्वाच्या नोंदी (नवीन AI साठी)
+
+1. **`admin_seller_list_screen.dart`** — `_buildSellerCard(BuildContext ctx, ...)` हवा (fix झालं)
+2. **`admin_franchise_list_screen.dart`** — `context` थेट वापरलं, `ctx` नाही
+3. **ON/OFF toggle pattern** — `active` field + status auto-adjust + snackbar
+4. **Tabs pattern** — `_selectedTab` + `_filtered` getter + `_buildTab` helper
+5. **Hierarchical Location** — `admin_create_ad_screen.dart` मध्ये पूर्ण example (copy करून इतरत्र वापरा)
+6. **Create New Ad button** — `+` sign नको, फक्त text
+7. **Live card edit** — Preview (primary) + Edit icon (full screen) + Delete icon
+8. **Row मध्ये ElevatedButton** — `minimumSize: Size(0, 44)` द्या
+
+### पुढची पायरी
+
+1. **Codespace मध्ये APK build:**
+   ```bash
+   flutter build apk --release
+   Mobile वर test:
+
+Admin — Ads/Create/Preview/Edit/Delete, Weekly Market dialog, Quick Actions
+
+Franchise — Ads (2 tabs), Seller list (expiry+toggle), Promoter list (toggle)
+
+CP — Franchise/Seller lists (4 tabs), Quick Actions
+
+Seller — Subscription (4 plans), Amole Ecosystem chart, Ads (budget/मुदत वाढवा)
+
+Buyer — Favourite (green button), Cart icons, GPS + Maps, Job portal
+
+Delivery Boy — Status ON/OFF
+
+Stage 3 (नंतर): Firebase, Cashfree, Shiprocket, Mapbox, Tracelet
+
+⚠️ महत्त्वाचे नियम (पुन्हा)
+git add . कधीही नको — फक्त बदललेल्या files
+
+User OK नंतरच commit
+
+जुनं code नव्याला overwrite होऊ नये
+
+एका वेळी एक बदल
+
+प्रत्येक बदलापूर्वी थोडक्यात सांग + OK माग
+
+flutter analyze error नसल्यावरच commit
+
+
+---
+
+### ✅ झालं सांग → मग `PROJECT_MAP.md` regenerate (`python3 tools/make_map.py`) → commit + push → APK build. 👇**
