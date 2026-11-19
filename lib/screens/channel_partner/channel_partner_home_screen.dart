@@ -7,15 +7,12 @@ import 'cp_franchise_screen.dart';
 import 'cp_seller_screen.dart';
 import 'cp_buyer_screen.dart';
 import 'cp_ads_screen.dart';
-import 'cp_create_ad_screen.dart';
 import 'cp_approvals_screen.dart';
 import 'cp_revenue_screen.dart';
 import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
 import 'promoter_list_screen.dart';
-import '../../data/ads_data.dart';
-import '../admin/admin_live_ads_screen.dart';
 import '../buyer/promoter_catalog_screen.dart';
 
 class ChannelPartnerHomeScreen extends StatelessWidget {
@@ -53,26 +50,27 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickAction(BuildContext context, String label, IconData icon, VoidCallback onTap) {
-    return Expanded(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+  // ✅ नवीन — Franchise style Card + ListTile
+  Widget _quickActionTile({
+    required IconData icon,
+    required String label,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: color),
+        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
+        trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: AppColors.primaryBlue.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: AppColors.primaryBlue, size: 26),
-              const SizedBox(height: 6),
-              Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 11, color: AppColors.textDark, fontWeight: FontWeight.w600)),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -148,6 +146,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Approval alert
                     InkWell(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen())),
                       child: Container(
@@ -164,6 +163,8 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                     ),
                     const OffersSliderWidget(),
                     const SizedBox(height: 16),
+
+                    // KPI Grid (unchanged)
                     GridView.count(
                       crossAxisCount: 2,
                       shrinkWrap: true,
@@ -181,34 +182,84 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         _buildKpiCard(context, 'प्रमोटर यादी', '३', Icons.people_alt_outlined, Colors.amber, const PromoterListScreen()),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
+
+                    // ✅ Quick Actions — Franchise style
                     const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                     const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        _buildQuickAction(context, 'नवीन Franchise', Icons.add_business_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen()))),
-                        _buildQuickAction(context, 'नवीन Seller', Icons.storefront_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerScreen()))),
-                        _buildQuickAction(context, 'Approval Pending जाहिराती', Icons.campaign_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen()))),
-                      ],
+
+                    // 1. Add Franchise
+                    _quickActionTile(
+                      icon: Icons.add_business_outlined,
+                      label: 'नवीन Franchise जोडा',
+                      subtitle: 'नवीन Franchise नोंदणी करा',
+                      color: AppColors.primaryBlue,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpFranchiseScreen())),
                     ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        _buildQuickAction(context, 'Revenue Report', Icons.bar_chart_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpRevenueScreen()))),
-                        _buildQuickAction(context, 'Approvals', Icons.fact_check_outlined,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen()))),
-                      ],
+
+                    // 2. Franchise Verification
+                    _quickActionTile(
+                      icon: Icons.verified_user_outlined,
+                      label: 'Franchise Verification',
+                      subtitle: 'Franchise KYC verify करा',
+                      color: AppColors.successGreen,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen())),
                     ),
-                    const SizedBox(height: 10),
-                    _buildQuickAction(context, 'आठवडी बाजार', Icons.storefront,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen()))),
-                    const SizedBox(height: 6),
-                    _buildQuickAction(context, 'प्रमोटर कॅटलॉग', Icons.workspace_premium,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen()))),
+
+                    // 3. Add Seller
+                    _quickActionTile(
+                      icon: Icons.storefront_outlined,
+                      label: 'नवीन Seller जोडा',
+                      subtitle: 'थेट Seller जोडा (OTP verified)',
+                      color: Colors.teal,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpSellerScreen())),
+                    ),
+
+                    // 4. Seller Verification
+                    _quickActionTile(
+                      icon: Icons.person_add_alt_1_outlined,
+                      label: 'Seller Verification',
+                      subtitle: 'नवीन Seller KYC verify करा',
+                      color: Colors.orange,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpApprovalsScreen())),
+                    ),
+
+                    // 5. Approval Pending जाहिराती
+                    _quickActionTile(
+                      icon: Icons.fact_check_outlined,
+                      label: 'Approval Pending जाहिराती',
+                      subtitle: 'जाहिराती आणि टॉप ऑफर्स अप्रूव्ह करा',
+                      color: Colors.deepPurple,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpAdsScreen())),
+                    ),
+
+                    // 6. Revenue Report
+                    _quickActionTile(
+                      icon: Icons.bar_chart_outlined,
+                      label: 'Revenue Report',
+                      subtitle: 'जिल्हा revenue चा तपशील बघा',
+                      color: AppColors.primaryBlue,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CpRevenueScreen())),
+                    ),
+
+                    // 7. आठवडी बाजार
+                    _quickActionTile(
+                      icon: Icons.storefront,
+                      label: 'आठवडी बाजार',
+                      subtitle: 'वस्तू जोडा आणि विक्री करा',
+                      color: Colors.teal,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketCatalogScreen())),
+                    ),
+
+                    // 8. प्रमोटर कॅटलॉग
+                    _quickActionTile(
+                      icon: Icons.workspace_premium,
+                      label: 'प्रमोटर कॅटलॉग',
+                      subtitle: 'प्रमोटरचा कॅटलॉग बघा',
+                      color: Colors.amber.shade700,
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PromoterCatalogScreen())),
+                    ),
+
                     const SizedBox(height: 16),
                   ],
                 ),
