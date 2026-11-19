@@ -80,7 +80,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // === HEADER (बायरसारखा २ रांगा) ===
+          // === HEADER ===
           Container(
             padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
             decoration: const BoxDecoration(
@@ -93,7 +93,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // === वरची रांग: AMOLE + subscription/notification/profile ===
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -129,10 +128,8 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // === खालची रांग: ₹18,570 + ₹250 ===
                 Row(
                   children: [
-                    // उत्पन्न
                     GestureDetector(
                       onTap: () {
                         showModalBottomSheet(
@@ -196,7 +193,6 @@ class _SellerDashboardState extends State<_SellerDashboard> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Expenses Wallet
                     GestureDetector(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ExpensesWalletScreen())),
                       child: Container(
@@ -214,9 +210,9 @@ class _SellerDashboardState extends State<_SellerDashboard> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // === नवीन ऑर्डर्स ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen())),
@@ -271,8 +267,8 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           ),
 
           const SizedBox(height: 16),
-          const OffersSliderWidget(), 
-          
+          const OffersSliderWidget(),
+
           // === आठवडी बाजार ===
           GestureDetector(
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeeklyMarketScreen())),
@@ -316,7 +312,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           const SizedBox(height: 16),
           const SellerDeliveryTiles(),
           const SizedBox(height: 4),
-          
+
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('जाहिरात विभाग', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
@@ -324,13 +320,13 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           const SizedBox(height: 8),
           const AdFeedWidget(isSeller: true),
           const SizedBox(height: 8),
-          
+
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text('माझा आढावा — 30 दिवस', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: AppColors.textDark)),
           ),
           const SizedBox(height: 12),
-          
+
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -340,7 +336,8 @@ class _SellerDashboardState extends State<_SellerDashboard> {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             children: [
-              _kpiCard('प्रोफाइल व्ह्यूज', '1,248', 'आज: 42', Icons.visibility_outlined, AppColors.primaryBlue, onTap: () => _showProfileViewers(context)),
+              // ✅ बदल: "प्रोफाइल व्ह्यूज" → "Amole Ecosystem Network"
+              _kpiCard('Amole Ecosystem', '1,248', 'नेटवर्क बघा', Icons.hub_outlined, Colors.indigo, onTap: () => _showAmoleEcosystem(context)),
               _kpiCard('विक्री झालेल्या वस्तू', '37', '3 प्रतीक्षेत', Icons.shopping_bag_outlined, Colors.orange, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerOrdersScreen()))),
               _kpiCard('महसूल', '₹18,450', 'या महिन्यात', Icons.currency_rupee_outlined, Colors.green, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SellerRevenueDetailScreen()))),
               _kpiCard('ग्राहक', '124', 'या महिन्यात', Icons.people_outlined, Colors.purple, onTap: () => _showCustomerList(context)),
@@ -369,7 +366,7 @@ class _SellerDashboardState extends State<_SellerDashboard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+              Expanded(child: Text(title, style: const TextStyle(fontSize: 12, color: AppColors.textLight), maxLines: 1, overflow: TextOverflow.ellipsis)),
               Icon(icon, color: color, size: 22),
             ]),
             Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: color)),
@@ -380,36 +377,267 @@ class _SellerDashboardState extends State<_SellerDashboard> {
     );
   }
 
-  void _showProfileViewers(BuildContext context) {
+  // ✅ नवीन: Amole Ecosystem Network dialog — ४ stats चार्ट स्वरूपात
+  void _showAmoleEcosystem(BuildContext context) {
+    // Demo data — Stage 3 मध्ये Firestore वरून रोज update होईल
+    const int totalBuyers = 8250;
+    const int totalSellers = 1420;
+    const int totalFranchise = 85;
+    const int totalPromoters = 320;
+    const int totalProducts = 5680;
+    const int totalCustomers = totalBuyers + totalSellers + totalFranchise; // 9755
+
+    final stats = [
+      {
+        'label': 'प्लॅटफॉर्म वरील एकूण ग्राहक',
+        'sublabel': 'Buyers + Sellers + Franchise',
+        'value': totalCustomers,
+        'icon': Icons.people_alt_outlined,
+        'color': AppColors.primaryBlue,
+        'percent': 1.0,
+      },
+      {
+        'label': 'एकूण Sellers',
+        'sublabel': 'नोंदणीकृत',
+        'value': totalSellers,
+        'icon': Icons.storefront_outlined,
+        'color': AppColors.successGreen,
+        'percent': totalSellers / totalCustomers,
+      },
+      {
+        'label': 'एकूण Promoters',
+        'sublabel': 'Active',
+        'value': totalPromoters,
+        'icon': Icons.workspace_premium_outlined,
+        'color': Colors.amber.shade700,
+        'percent': totalPromoters / totalCustomers,
+      },
+      {
+        'label': 'एकूण Products',
+        'sublabel': 'App वर उपलब्ध',
+        'value': totalProducts,
+        'icon': Icons.inventory_2_outlined,
+        'color': Colors.purple,
+        'percent': 1.0,
+      },
+    ];
+
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (ctx, scrollCtrl) => Column(
           children: [
-            const Text('Profile बघणारे', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            _viewerTile('अनिल जोशी', 'आज सकाळी 10:30', Icons.person_outlined),
-            _viewerTile('संगीता राणे', 'काल दुपारी 2:15', Icons.person_outlined),
-            _viewerTile('रमेश पाटील', 'काल सायं 5:00', Icons.person_outlined),
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primaryBlue, AppColors.royalBlue],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.hub, color: Colors.white, size: 26),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Amole Ecosystem Network',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'संपूर्ण प्लॅटफॉर्मचा आढावा',
+                          style: TextStyle(color: Colors.white70, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: ListView(
+                controller: scrollCtrl,
+                padding: const EdgeInsets.all(16),
+                children: [
+                  // Highlighted total
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBlue.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          'एकूण नेटवर्क ग्राहक',
+                          style: TextStyle(fontSize: 13, color: AppColors.textLight),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          totalCustomers.toString(),
+                          style: const TextStyle(
+                            fontSize: 38,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryBlue,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.update, size: 12, color: AppColors.successGreen),
+                            SizedBox(width: 4),
+                            Text(
+                              'दररोज update होते',
+                              style: TextStyle(fontSize: 11, color: AppColors.successGreen),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    '📊 Ecosystem Breakdown',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.textDark),
+                  ),
+                  const SizedBox(height: 12),
+                  // Stats चार्ट स्वरूपात
+                  ...stats.map((s) => _buildStatChartCard(
+                        label: s['label'] as String,
+                        sublabel: s['sublabel'] as String,
+                        value: s['value'] as int,
+                        icon: s['icon'] as IconData,
+                        color: s['color'] as Color,
+                        percent: (s['percent'] as double).clamp(0.0, 1.0),
+                      )),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'सर्व आकडे रोज update होतात. Stage 3 मध्ये Firestore वरून live येतील.',
+                            style: TextStyle(fontSize: 11, color: Colors.blue),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _viewerTile(String name, String time, IconData icon) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: AppColors.primaryBlue.withValues(alpha: 0.1),
-        child: Icon(icon, color: AppColors.primaryBlue, size: 20),
+  Widget _buildStatChartCard({
+    required String label,
+    required String sublabel,
+    required int value,
+    required IconData icon,
+    required Color color,
+    required double percent,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      title: Text(name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-      subtitle: Text(time, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-      dense: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: color.withValues(alpha: 0.15),
+                child: Icon(icon, color: color, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark),
+                    ),
+                    Text(
+                      sublabel,
+                      style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                value.toString(),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Progress bar (chart स्वरूप)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: percent,
+              minHeight: 8,
+              backgroundColor: color.withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
