@@ -13,6 +13,7 @@ import 'cp_accounting_screen.dart';
 import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
+import 'cp_send_notification_screen.dart';
 import 'cp_ecosystem_screen.dart';
 import 'promoter_list_screen.dart';
 import '../buyer/promoter_catalog_screen.dart';
@@ -474,6 +475,20 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => const CpSellerRevenueScreen(),
+                        ),
+                      ),
+                    ),
+
+                    // Send Notification
+                    _quickActionTile(
+                      icon: Icons.notifications_active_outlined,
+                      label: 'नोटिफिकेशन पाठवा',
+                      subtitle: 'आपल्या नेटवर्कमधील सदस्यांना सूचना पाठवा',
+                      color: AppColors.primaryBlue,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CpSendNotificationScreen(),
                         ),
                       ),
                     ),
