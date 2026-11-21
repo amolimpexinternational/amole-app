@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'franchise_create_ad_screen.dart';
@@ -14,54 +15,112 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
 
   final List<Map<String, dynamic>> _ads = [
     {
-      'seller': 'गणेश किराणा मार्ट', 'role': 'Seller',
+      'seller': 'गणेश किराणा मार्ट',
+      'role': 'Seller',
       'title': 'दिवाळी Sale — 20% सूट',
       'description': 'दिवाळीनिमित्त सर्व किराणा वस्तूंवर 20% सूट. ऑफर 7 दिवसांसाठी.',
-      'budget': '₹500', 'days': '7 दिवस', 'status': 'प्रतीक्षेत',
-      'targetArea': 'पुणे जिल्हा', 'targetAge': '18-45', 'targetGender': 'सर्व',
+      'budget': '₹500',
+      'days': '7 दिवस',
+      'status': 'प्रतीक्षेत',
+      'targetArea': 'पुणे जिल्हा',
+      'targetAge': '18-45',
+      'targetGender': 'सर्व',
       'image': null,
+      'rejectionReason': '',
     },
     {
-      'seller': 'राज इलेक्ट्रॉनिक्स', 'role': 'Promoter',
+      'seller': 'राज इलेक्ट्रॉनिक्स',
+      'role': 'Promoter',
       'title': 'नवीन Mobile Accessories',
       'description': 'नवीन मोबाईल ऍक्सेसरीज उपलब्ध. 10% सूट.',
-      'budget': '₹300', 'days': '5 दिवस', 'status': 'प्रतीक्षेत',
-      'targetArea': 'हडपसर', 'targetAge': '18-35', 'targetGender': 'सर्व',
+      'budget': '₹300',
+      'days': '5 दिवस',
+      'status': 'प्रतीक्षेत',
+      'targetArea': 'हडपसर',
+      'targetAge': '18-35',
+      'targetGender': 'सर्व',
       'image': null,
+      'rejectionReason': '',
     },
     {
-      'seller': 'श्री मेडिकल', 'role': 'Seller',
+      'seller': 'श्री मेडिकल',
+      'role': 'Seller',
       'title': 'Generic Medicines उपलब्ध',
       'description': 'सर्व जेनेरिक औषधे उपलब्ध. 5% सूट.',
-      'budget': '₹200', 'days': '3 दिवस', 'status': 'मंजूर',
-      'targetArea': 'कोथरूड', 'targetAge': 'सर्व', 'targetGender': 'सर्व',
+      'budget': '₹200',
+      'days': '3 दिवस',
+      'status': 'मंजूर',
+      'targetArea': 'कोथरूड',
+      'targetAge': 'सर्व',
+      'targetGender': 'सर्व',
       'image': null,
+      'rejectionReason': '',
     },
     {
-      'seller': 'हडपसर फ्रँचाइजी', 'role': 'Franchise',
+      'seller': 'हडपसर फ्रँचाइजी',
+      'role': 'Franchise',
       'title': 'हडपसर स्पेशल ऑफर',
       'description': 'हडपसर भागातील ग्राहकांसाठी खास ऑफर.',
-      'budget': '₹400', 'days': '10 दिवस', 'status': 'मंजूर',
-      'targetArea': 'हडपसर', 'targetAge': '18-45', 'targetGender': 'सर्व',
+      'budget': '₹400',
+      'days': '10 दिवस',
+      'status': 'मंजूर',
+      'targetArea': 'हडपसर',
+      'targetAge': '18-45',
+      'targetGender': 'सर्व',
       'image': null,
+      'rejectionReason': '',
     },
   ];
 
   List<Map<String, dynamic>> get _pendingAds =>
       _ads.where((a) => a['status'] == 'प्रतीक्षेत').toList();
+
   List<Map<String, dynamic>> get _liveAds =>
       _ads.where((a) => a['status'] == 'मंजूर').toList();
 
-  Color _statusColor(String s) {
-    switch (s) {
-      case 'प्रतीक्षेत': return Colors.orange;
-      case 'मंजूर': return Colors.green;
-      case 'नाकारले': return Colors.red;
-      default: return Colors.grey;
+  List<Map<String, dynamic>> get _rejectedAds =>
+      _ads.where((a) => a['status'] == 'नाकारले').toList();
+
+  List<Map<String, dynamic>> get _selectedAds {
+    switch (_selectedTab) {
+      case 0:
+        return _liveAds;
+      case 1:
+        return _pendingAds;
+      case 2:
+        return _rejectedAds;
+      default:
+        return [];
     }
   }
 
-  // ✅ Edit — पूर्ण screen मध्ये (Create Ad सारखं)
+  String get _emptyMessage {
+    switch (_selectedTab) {
+      case 0:
+        return 'कोणतीही Live जाहिरात नाही';
+      case 1:
+        return 'कोणतीही पेंडिंग जाहिरात नाही';
+      case 2:
+        return 'कोणतीही नाकारलेली जाहिरात नाही';
+      default:
+        return '';
+    }
+  }
+
+  Color _statusColor(String s) {
+    switch (s) {
+      case 'प्रतीक्षेत':
+        return Colors.orange;
+      case 'मंजूर':
+        return Colors.green;
+      case 'नाकारले':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Edit — पूर्ण screen मध्ये
   Future<void> _editAdFullScreen(Map<String, dynamic> ad) async {
     await Navigator.push(
       context,
@@ -72,12 +131,78 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
     if (mounted) setState(() {});
   }
 
-  // === संपूर्ण जाहिरात Preview ===
+  // Reject — कारण विचारून जाहिरात नाकारणे
+  Future<void> _rejectAd(Map<String, dynamic> ad) async {
+    final controller = TextEditingController();
+
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: const Text('जाहिरात नाकारण्याचे कारण'),
+        content: TextField(
+          controller: controller,
+          maxLines: 3,
+          decoration: const InputDecoration(
+            hintText: 'नाकारण्याचे कारण लिहा...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('रद्द'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final value = controller.text.trim();
+              if (value.isEmpty) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  const SnackBar(
+                    content: Text('कृपया नाकारण्याचे कारण लिहा'),
+                  ),
+                );
+                return;
+              }
+              Navigator.pop(ctx, value);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('नकार निश्चित करा'),
+          ),
+        ],
+      ),
+    );
+
+    controller.dispose();
+
+    if (reason == null || reason.isEmpty || !mounted) return;
+
+    setState(() {
+      ad['status'] = 'नाकारले';
+      ad['rejectionReason'] = reason;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('❌ जाहिरात नाकारली'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // संपूर्ण जाहिरात Preview
   void _previewAd(Map<String, dynamic> ad) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (ctx) => DraggableScrollableSheet(
         initialChildSize: 0.85,
         minChildSize: 0.5,
@@ -89,13 +214,25 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Icon(Icons.visibility, color: AppColors.primaryBlue),
+                  const Icon(
+                    Icons.visibility,
+                    color: AppColors.primaryBlue,
+                  ),
                   const SizedBox(width: 8),
                   const Expanded(
-                    child: Text('जाहिरात Preview', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      'जाहिरात Preview',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: AppColors.primaryBlue),
+                    icon: const Icon(
+                      Icons.edit,
+                      color: AppColors.primaryBlue,
+                    ),
                     tooltip: 'Edit',
                     onPressed: () {
                       Navigator.pop(ctx);
@@ -115,12 +252,14 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                 controller: scrollCtrl,
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // जाहिरात कशी दिसते
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppColors.primaryBlue, AppColors.royalBlue],
+                        colors: [
+                          AppColors.primaryBlue,
+                          AppColors.royalBlue,
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -138,70 +277,137 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: ad['image'] != null
-                              ? ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.file(ad['image'], fit: BoxFit.cover))
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.file(
+                                    ad['image'],
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                               : const Center(
                                   child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.center,
                                     children: [
-                                      Icon(Icons.image, color: Colors.white70, size: 50),
+                                      Icon(
+                                        Icons.image,
+                                        color: Colors.white70,
+                                        size: 50,
+                                      ),
                                       SizedBox(height: 8),
-                                      Text('जाहिरात फोटो', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                                      Text(
+                                        'जाहिरात फोटो',
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
                         ),
                         const SizedBox(height: 12),
-                        Text(ad['title'], style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text(
+                          ad['title'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         const SizedBox(height: 8),
-                        Text(ad['description'], style: const TextStyle(color: Colors.white, fontSize: 13)),
+                        Text(
+                          ad['description'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        ),
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            const Icon(Icons.storefront, color: Colors.white70, size: 14),
+                            const Icon(
+                              Icons.storefront,
+                              color: Colors.white70,
+                              size: 14,
+                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 '${ad['seller']} (${ad['role']})',
-                                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const Icon(Icons.calendar_today, color: Colors.white70, size: 14),
+                            const Icon(
+                              Icons.calendar_today,
+                              color: Colors.white70,
+                              size: 14,
+                            ),
                             const SizedBox(width: 4),
-                            Text(ad['days'], style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                            Text(
+                              ad['days'],
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
                           ],
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   _section('जाहिरात तपशील', [
                     _infoRow('शीर्षक', ad['title']),
                     _infoRow('वर्णन', ad['description']),
-                    _infoRow('कोणी टाकली', '${ad['seller']} (${ad['role']})'),
+                    _infoRow(
+                      'जाहिरात तयार करणारे',
+                      '${ad['seller']} (${ad['role']})',
+                    ),
                     _infoRow('Budget', ad['budget']),
                     _infoRow('कालावधी', ad['days']),
                   ]),
-
                   _section('🎯 टार्गेटिंग', [
                     _infoRow('क्षेत्र', ad['targetArea']),
                     _infoRow('वयोगट', ad['targetAge']),
                     _infoRow('लिंग', ad['targetGender']),
                   ]),
-
+                  if (ad['status'] == 'नाकारले')
+                    _section('नाकारण्याचे कारण', [
+                      _infoRow(
+                        'कारण',
+                        (ad['rejectionReason'] ?? '').toString().isEmpty
+                            ? 'कारण उपलब्ध नाही'
+                            : ad['rejectionReason'].toString(),
+                      ),
+                    ]),
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: _statusColor(ad['status']).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: _statusColor(ad['status'])),
+                      border: Border.all(
+                        color: _statusColor(ad['status']),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.info_outline, color: _statusColor(ad['status'])),
+                        Icon(
+                          Icons.info_outline,
+                          color: _statusColor(ad['status']),
+                        ),
                         const SizedBox(width: 8),
-                        Text('स्थिती: ${ad['status']}', style: TextStyle(color: _statusColor(ad['status']), fontWeight: FontWeight.bold)),
+                        Text(
+                          'स्थिती: ${ad['status']}',
+                          style: TextStyle(
+                            color: _statusColor(ad['status']),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -209,7 +415,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
               ),
             ),
 
-            // Approve/Reject — फक्त pending साठी
+            // Approve/Reject — फक्त Pending साठी
             if (ad['status'] == 'प्रतीक्षेत')
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -218,11 +424,8 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {
-                          setState(() => ad['status'] = 'नाकारले');
                           Navigator.pop(ctx);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('❌ जाहिरात नाकारली'), backgroundColor: Colors.red),
-                          );
+                          _rejectAd(ad);
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
@@ -240,7 +443,12 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                           setState(() => ad['status'] = 'मंजूर');
                           Navigator.pop(ctx);
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('✅ जाहिरात मंजूर झाली — Live'), backgroundColor: AppColors.successGreen),
+                            const SnackBar(
+                              content: Text(
+                                '✅ जाहिरात मंजूर झाली — Live',
+                              ),
+                              backgroundColor: AppColors.successGreen,
+                            ),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -248,7 +456,10 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           minimumSize: const Size(0, 44),
                         ),
-                        child: const Text('✅ मंजूर करा', style: TextStyle(color: Colors.white)),
+                        child: const Text(
+                          '✅ मंजूर करा',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -264,35 +475,57 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         title: const Text('जाहिरात हटवायची?'),
         content: Text('"${ad['title']}" कायमची हटवली जाईल.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('रद्द')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('रद्द'),
+          ),
           ElevatedButton(
             onPressed: () {
               setState(() => _ads.remove(ad));
               Navigator.pop(ctx);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('🗑️ जाहिरात हटवली'), backgroundColor: Colors.red),
+                const SnackBar(
+                  content: Text('🗑️ जाहिरात हटवली'),
+                  backgroundColor: Colors.red,
+                ),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('हटवा', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text(
+              'हटवा',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCard(Map<String, dynamic> ad, {required bool isPending}) {
+  Widget _buildCard(
+    Map<String, dynamic> ad, {
+    required bool isPending,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,33 +533,106 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(ad['title'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textDark))),
+              Expanded(
+                child: Text(
+                  ad['title'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: AppColors.textDark,
+                  ),
+                ),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: _statusColor(ad['status']).withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
-                child: Text(ad['status'], style: TextStyle(color: _statusColor(ad['status']), fontSize: 12, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: _statusColor(ad['status']).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  ad['status'],
+                  style: TextStyle(
+                    color: _statusColor(ad['status']),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text('🏪 ${ad['seller']} (${ad['role']})', style: const TextStyle(fontSize: 13, color: AppColors.textLight)),
+          Text(
+            '🏪 ${ad['seller']} (${ad['role']})',
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textLight,
+            ),
+          ),
           const SizedBox(height: 4),
-          Row(children: [
-            Text('💰 ${ad['budget']}', style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-            const SizedBox(width: 16),
-            Text('📅 ${ad['days']}', style: const TextStyle(fontSize: 13, color: AppColors.textDark)),
-            const SizedBox(width: 16),
-            Expanded(child: Text('🎯 ${ad['targetArea']}', style: const TextStyle(fontSize: 13, color: AppColors.textLight), overflow: TextOverflow.ellipsis)),
-          ]),
+          Row(
+            children: [
+              Text(
+                '💰 ${ad['budget']}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                '📅 ${ad['days']}',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  '🎯 ${ad['targetArea']}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textLight,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          if (ad['status'] == 'नाकारले' &&
+              (ad['rejectionReason'] ?? '').toString().isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              'नकाराचे कारण: ${ad['rejectionReason']}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.red,
+              ),
+            ),
+          ],
           const SizedBox(height: 12),
-          // ✅ Preview button (primary) + Edit icon (full screen) + Delete icon
+
+          // Preview + Edit + Delete
           Row(
             children: [
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () => _previewAd(ad),
-                  icon: const Icon(Icons.visibility, size: 16, color: Colors.white),
-                  label: const Text('Preview', style: TextStyle(color: Colors.white, fontSize: 12)),
+                  icon: const Icon(
+                    Icons.visibility,
+                    size: 16,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Preview',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -336,12 +642,20 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
               ),
               const SizedBox(width: 6),
               IconButton(
-                icon: const Icon(Icons.edit_outlined, size: 20, color: AppColors.primaryBlue),
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  size: 20,
+                  color: AppColors.primaryBlue,
+                ),
                 onPressed: () => _editAdFullScreen(ad),
                 tooltip: 'Edit',
               ),
               IconButton(
-                icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                icon: const Icon(
+                  Icons.delete_outline,
+                  size: 20,
+                  color: Colors.red,
+                ),
                 onPressed: () => _deleteAd(ad),
                 tooltip: 'Delete',
               ),
@@ -354,24 +668,35 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final ads = _selectedTab == 0 ? _pendingAds : _liveAds;
+    final ads = _selectedAds;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
         foregroundColor: Colors.white,
-        title: const Text('जाहिरात विभाग', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'जाहिरात विभाग',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         actions: [
-          // ✅ "+" काढलं — फक्त "Create New Ad"
           TextButton(
             onPressed: () async {
-              await Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseCreateAdScreen()));
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const FranchiseCreateAdScreen(),
+                ),
+              );
               if (mounted) setState(() {});
             },
             child: const Text(
               'Create New Ad',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -382,46 +707,9 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
             color: AppColors.primaryBlue,
             child: Row(
               children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _selectedTab = 0),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: _selectedTab == 0 ? AppColors.cyan : Colors.transparent, width: 3)),
-                      ),
-                      child: Text(
-                        'Approval Pending (${_pendingAds.length})',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: _selectedTab == 0 ? Colors.white : Colors.white60,
-                          fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => _selectedTab = 1),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: _selectedTab == 1 ? AppColors.cyan : Colors.transparent, width: 3)),
-                      ),
-                      child: Text(
-                        'Live जाहिराती (${_liveAds.length})',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: _selectedTab == 1 ? Colors.white : Colors.white60,
-                          fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                _buildTab('Live (${_liveAds.length})', 0),
+                _buildTab('Pending (${_pendingAds.length})', 1),
+                _buildTab('Rejected (${_rejectedAds.length})', 2),
               ],
             ),
           ),
@@ -430,15 +718,52 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
       body: ads.isEmpty
           ? Center(
               child: Text(
-                _selectedTab == 0 ? 'कोणतीही पेंडिंग जाहिरात नाही' : 'कोणतीही Live जाहिरात नाही',
+                _emptyMessage,
                 style: const TextStyle(color: AppColors.textLight),
               ),
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: ads.length,
-              itemBuilder: (context, index) => _buildCard(ads[index], isPending: _selectedTab == 0),
+              itemBuilder: (context, index) => _buildCard(
+                ads[index],
+                isPending: _selectedTab == 1,
+              ),
             ),
+    );
+  }
+
+  Widget _buildTab(String label, int index) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedTab = index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: _selectedTab == index
+                    ? AppColors.cyan
+                    : Colors.transparent,
+                width: 3,
+              ),
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: _selectedTab == index
+                  ? Colors.white
+                  : Colors.white60,
+              fontWeight: _selectedTab == index
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -453,7 +778,14 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primaryBlue,
+            ),
+          ),
           const SizedBox(height: 8),
           ...children,
         ],
@@ -466,8 +798,23 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          Text('$label: ', style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark))),
+          Text(
+            '$label: ',
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textLight,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textDark,
+              ),
+            ),
+          ),
         ],
       ),
     );
