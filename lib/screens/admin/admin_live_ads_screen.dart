@@ -172,7 +172,6 @@ class _AdminLiveAdsScreenState extends State<AdminLiveAdsScreen> {
           revenueValue: '₹0',
           viewerLabel: 'Admin',
           kpis: const [],
-          dashboardScreen: dashboardScreen,
         ),
       ),
     );

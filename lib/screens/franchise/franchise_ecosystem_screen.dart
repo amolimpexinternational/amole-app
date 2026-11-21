@@ -153,10 +153,10 @@ class _FranchiseEcosystemScreenState
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: primaryBlue.withValues(alpha: 0.12),
+          color: AppColors.primaryBlue.withValues(alpha: 0.12),
         ),
         boxShadow: [
           BoxShadow(
@@ -173,12 +173,12 @@ class _FranchiseEcosystemScreenState
             height: 42,
             width: 42,
             decoration: BoxDecoration(
-              color: primaryBlue.withValues(alpha: 0.10),
+              color: AppColors.primaryBlue.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               item['icon'],
-              color: primaryBlue,
+              color: AppColors.primaryBlue,
               size: 23,
             ),
           ),
@@ -188,7 +188,7 @@ class _FranchiseEcosystemScreenState
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: textLight,
+              color: AppColors.textLight,
             ),
           ),
           const SizedBox(height: 4),
@@ -197,7 +197,7 @@ class _FranchiseEcosystemScreenState
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: textDark,
+              color: AppColors.textDark,
             ),
           ),
           const SizedBox(height: 4),
@@ -205,7 +205,7 @@ class _FranchiseEcosystemScreenState
             item['subtitle'],
             style: const TextStyle(
               fontSize: 10,
-              color: textLight,
+              color: AppColors.textLight,
             ),
           ),
         ],
@@ -230,7 +230,7 @@ class _FranchiseEcosystemScreenState
                 style: const TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
-                  color: textDark,
+                  color: AppColors.textDark,
                 ),
               ),
               const SizedBox(height: 4),
@@ -238,7 +238,7 @@ class _FranchiseEcosystemScreenState
                 subtitle,
                 style: const TextStyle(
                   fontSize: 12,
-                  color: textLight,
+                  color: AppColors.textLight,
                 ),
               ),
             ],
@@ -256,8 +256,8 @@ class _FranchiseEcosystemScreenState
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            primaryBlue,
-            royalBlue,
+            AppColors.primaryBlue,
+            AppColors.royalBlue,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -271,7 +271,7 @@ class _FranchiseEcosystemScreenState
             children: [
               Icon(
                 Icons.account_tree_outlined,
-                color: white,
+                color: AppColors.white,
                 size: 28,
               ),
               SizedBox(width: 10),
@@ -279,7 +279,7 @@ class _FranchiseEcosystemScreenState
                 child: Text(
                   'माझे Franchise Network',
                   style: TextStyle(
-                    color: white,
+                    color: AppColors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -291,7 +291,7 @@ class _FranchiseEcosystemScreenState
           const Text(
             'तुमच्या Franchise अंतर्गत असलेल्या network ची एकूण व्याप्ती',
             style: TextStyle(
-              color: white,
+              color: AppColors.white,
               fontSize: 12,
             ),
           ),
@@ -330,7 +330,7 @@ class _FranchiseEcosystemScreenState
         Text(
           value,
           style: const TextStyle(
-            color: white,
+            color: AppColors.white,
             fontSize: 21,
             fontWeight: FontWeight.bold,
           ),
@@ -339,7 +339,7 @@ class _FranchiseEcosystemScreenState
         Text(
           title,
           style: const TextStyle(
-            color: white,
+            color: AppColors.white,
             fontSize: 11,
           ),
         ),
@@ -351,10 +351,10 @@ class _FranchiseEcosystemScreenState
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: primaryBlue.withValues(alpha: 0.10),
+          color: AppColors.primaryBlue.withValues(alpha: 0.10),
         ),
       ),
       child: Column(
@@ -365,7 +365,7 @@ class _FranchiseEcosystemScreenState
               vertical: 12,
             ),
             decoration: BoxDecoration(
-              color: lightGrey.withValues(alpha: 0.55),
+              color: AppColors.lightGrey.withValues(alpha: 0.55),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(16),
               ),
@@ -434,7 +434,7 @@ class _FranchiseEcosystemScreenState
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: lightGrey.withValues(alpha: 0.7),
+                    color: AppColors.lightGrey.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -447,7 +447,7 @@ class _FranchiseEcosystemScreenState
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: textDark,
+                        color: AppColors.textDark,
                       ),
                     ),
                   ),
@@ -493,10 +493,10 @@ class _FranchiseEcosystemScreenState
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: lightGrey,
+          color: AppColors.lightGrey,
         ),
       ),
       child: Row(
@@ -505,12 +505,12 @@ class _FranchiseEcosystemScreenState
             height: 44,
             width: 44,
             decoration: BoxDecoration(
-              color: primaryOrange.withValues(alpha: 0.10),
+              color: AppColors.primaryOrange.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
               Icons.inventory_2_outlined,
-              color: primaryOrange,
+              color: AppColors.primaryOrange,
             ),
           ),
           const SizedBox(width: 12),
@@ -523,7 +523,7 @@ class _FranchiseEcosystemScreenState
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: textDark,
+                    color: AppColors.textDark,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -531,7 +531,7 @@ class _FranchiseEcosystemScreenState
                   item['seller'],
                   style: const TextStyle(
                     fontSize: 11,
-                    color: textLight,
+                    color: AppColors.textLight,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -539,7 +539,7 @@ class _FranchiseEcosystemScreenState
                   '${item['sales']} sales',
                   style: const TextStyle(
                     fontSize: 10,
-                    color: textLight,
+                    color: AppColors.textLight,
                   ),
                 ),
               ],
@@ -550,7 +550,7 @@ class _FranchiseEcosystemScreenState
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: successGreen,
+              color: AppColors.successGreen,
             ),
           ),
         ],
@@ -574,16 +574,16 @@ class _FranchiseEcosystemScreenState
           vertical: 8,
         ),
         decoration: BoxDecoration(
-          color: selected ? primaryBlue : white,
+          color: selected ? AppColors.primaryBlue : AppColors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? primaryBlue : lightGrey,
+            color: selected ? AppColors.primaryBlue : AppColors.lightGrey,
           ),
         ),
         child: Text(
           filter,
           style: TextStyle(
-            color: selected ? white : textDark,
+            color: selected ? AppColors.white : AppColors.textDark,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),
@@ -597,10 +597,10 @@ class _FranchiseEcosystemScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: successGreen.withValues(alpha: 0.18),
+          color: AppColors.successGreen.withValues(alpha: 0.18),
         ),
       ),
       child: Column(
@@ -610,7 +610,7 @@ class _FranchiseEcosystemScreenState
             children: [
               Icon(
                 Icons.trending_up,
-                color: successGreen,
+                color: AppColors.successGreen,
                 size: 22,
               ),
               SizedBox(width: 8),
@@ -619,7 +619,7 @@ class _FranchiseEcosystemScreenState
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: textDark,
+                  color: AppColors.textDark,
                 ),
               ),
             ],
@@ -660,7 +660,7 @@ class _FranchiseEcosystemScreenState
           title,
           style: const TextStyle(
             fontSize: 10,
-            color: textLight,
+            color: AppColors.textLight,
           ),
         ),
         const SizedBox(height: 4),
@@ -669,7 +669,7 @@ class _FranchiseEcosystemScreenState
           style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
-            color: successGreen,
+            color: AppColors.successGreen,
           ),
         ),
       ],
@@ -679,7 +679,7 @@ class _FranchiseEcosystemScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightGrey,
+      backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
         title: const Text(
           'Amole Ecosystem',
@@ -687,8 +687,8 @@ class _FranchiseEcosystemScreenState
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: primaryBlue,
-        foregroundColor: white,
+        backgroundColor: AppColors.primaryBlue,
+        foregroundColor: AppColors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -807,9 +807,9 @@ class _FranchiseEcosystemScreenState
                 icon: const Icon(Icons.table_chart_outlined),
                 label: const Text('Download Excel'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: primaryBlue,
+                  foregroundColor: AppColors.primaryBlue,
                   side: const BorderSide(
-                    color: primaryBlue,
+                    color: AppColors.primaryBlue,
                   ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 13,
