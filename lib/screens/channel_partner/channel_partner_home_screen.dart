@@ -9,7 +9,7 @@ import 'cp_seller_screen.dart';
 import 'cp_buyer_screen.dart';
 import 'cp_ads_screen.dart';
 import 'cp_approvals_screen.dart';
-import 'cp_revenue_screen.dart';
+import 'cp_accounting_screen.dart';
 import 'cp_seller_revenue_screen.dart';
 import 'cp_profile_screen.dart';
 import 'cp_notification_screen.dart';
@@ -185,12 +185,14 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
+
+                  // CP Accounting Summary
                   InkWell(
                     borderRadius: BorderRadius.circular(14),
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const CpSellerRevenueScreen(),
+                        builder: (_) => const CpAccountingScreen(),
                       ),
                     ),
                     child: Container(
@@ -222,7 +224,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                'या महिन्याचं Revenue Share — सेलर-निहाय बघा →',
+                                'या महिन्याचं CP Accounting →',
                                 style: TextStyle(
                                   color: AppColors.white,
                                   fontSize: 11,
@@ -242,6 +244,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -298,6 +301,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
                     const OffersSliderWidget(),
                     const SizedBox(height: 16),
 
@@ -336,11 +340,11 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         ),
                         _buildKpiCard(
                           context,
-                          'महिन्याचं Revenue',
+                          'महिन्याचं Accounting',
                           '₹38,400',
-                          Icons.trending_up,
+                          Icons.account_balance_wallet_outlined,
                           AppColors.successGreen,
-                          const CpSellerRevenueScreen(),
+                          const CpAccountingScreen(),
                         ),
                         _buildKpiCard(
                           context,
@@ -368,6 +372,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 24),
 
                     const Text(
@@ -445,15 +450,30 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
                       ),
                     ),
 
+                    // CP Accounting
                     _quickActionTile(
-                      icon: Icons.bar_chart_outlined,
-                      label: 'Revenue Report',
-                      subtitle: 'जिल्हा revenue चा तपशील बघा',
+                      icon: Icons.account_balance_wallet_outlined,
+                      label: 'Accounting Report',
+                      subtitle: 'एकूण उत्पन्न, खर्च आणि Net Income',
                       color: AppColors.primaryBlue,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const CpRevenueScreen(),
+                          builder: (_) => const CpAccountingScreen(),
+                        ),
+                      ),
+                    ),
+
+                    // Seller-wise Revenue retained separately
+                    _quickActionTile(
+                      icon: Icons.store_mall_directory_outlined,
+                      label: 'Seller-wise Revenue',
+                      subtitle: 'प्रत्येक Seller च्या Revenue Share चा तपशील',
+                      color: Colors.indigo,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CpSellerRevenueScreen(),
                         ),
                       ),
                     ),
@@ -492,6 +512,7 @@ class ChannelPartnerHomeScreen extends StatelessWidget {
           ],
         ),
       ),
+
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primaryBlue,
