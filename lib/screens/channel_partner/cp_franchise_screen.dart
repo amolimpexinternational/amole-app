@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
 import 'cp_franchise_kyc_screen.dart';
 
 class CpFranchiseScreen extends StatefulWidget {
   const CpFranchiseScreen({super.key});
+
   @override
   State<CpFranchiseScreen> createState() => _CpFranchiseScreenState();
 }
@@ -18,6 +20,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
       'owner': 'राजेश शर्मा',
       'phone': '9876543210',
       'sellers': 24,
+      'buyers': 520,
       'status': 'Active',
       'revenue': '₹12,400',
       'expiry': '31 Mar 2027',
@@ -29,6 +32,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
       'owner': 'सुनीता पाटील',
       'phone': '9765432109',
       'sellers': 18,
+      'buyers': 480,
       'status': 'Active',
       'revenue': '₹9,800',
       'expiry': '15 Jan 2027',
@@ -40,6 +44,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
       'owner': 'अमित देशमुख',
       'phone': '9654321098',
       'sellers': 11,
+      'buyers': 430,
       'status': 'KYC Pending',
       'revenue': '₹5,200',
       'expiry': '—',
@@ -51,6 +56,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
       'owner': 'प्रिया जोशी',
       'phone': '9543210987',
       'sellers': 8,
+      'buyers': 420,
       'status': 'Active',
       'revenue': '₹4,600',
       'expiry': '10 Jun 2027',
@@ -62,6 +68,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
       'owner': 'विकास कुलकर्णी',
       'phone': '9432109876',
       'sellers': 5,
+      'buyers': 300,
       'status': 'Inactive',
       'revenue': '₹0',
       'expiry': '20 Dec 2026',
@@ -73,13 +80,15 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
   List<Map<String, dynamic>> get _filtered {
     switch (_selectedTab) {
       case 0:
-        return _franchises; // सर्व
+        return _franchises;
       case 1:
         return _franchises.where((f) => f['active'] == true).toList();
       case 2:
         return _franchises.where((f) => f['active'] == false).toList();
       case 3:
-        return _franchises.where((f) => f['status'] == 'KYC Pending').toList();
+        return _franchises
+            .where((f) => f['status'] == 'KYC Pending')
+            .toList();
       default:
         return _franchises;
     }
@@ -88,13 +97,14 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
   void _toggleFranchise(int originalIndex, bool value) {
     setState(() {
       _franchises[originalIndex]['active'] = value;
-      // Status auto-adjust
+
       if (!value) {
         _franchises[originalIndex]['status'] = 'Inactive';
       } else if (_franchises[originalIndex]['status'] == 'Inactive') {
         _franchises[originalIndex]['status'] = 'Active';
       }
     });
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -113,17 +123,20 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
     final areaController = TextEditingController();
     final ownerController = TextEditingController();
     final phoneController = TextEditingController();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (ctx) => Padding(
         padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20),
+          left: 20,
+          right: 20,
+          top: 20,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,58 +144,88 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('नवीन Franchise जोडा',
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textDark)),
+                const Text(
+                  'नवीन Franchise जोडा',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textDark,
+                  ),
+                ),
                 IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(ctx)),
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
               ],
             ),
             const SizedBox(height: 16),
-            _buildField(nameController, 'Franchise नाव', Icons.business_outlined),
+            _buildField(
+              nameController,
+              'Franchise नाव',
+              Icons.business_outlined,
+            ),
             const SizedBox(height: 12),
-            _buildField(areaController, 'क्षेत्र / तालुका', Icons.location_on_outlined),
+            _buildField(
+              areaController,
+              'क्षेत्र / तालुका',
+              Icons.location_on_outlined,
+            ),
             const SizedBox(height: 12),
-            _buildField(ownerController, 'मालकाचं नाव', Icons.person_outlined),
+            _buildField(
+              ownerController,
+              'मालकाचं नाव',
+              Icons.person_outlined,
+            ),
             const SizedBox(height: 12),
-            _buildField(phoneController, 'मोबाईल नंबर', Icons.phone_outlined,
-                isPhone: true),
+            _buildField(
+              phoneController,
+              'मोबाईल नंबर',
+              Icons.phone_outlined,
+              isPhone: true,
+            ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (nameController.text.isNotEmpty &&
-                      areaController.text.isNotEmpty) {
+                  if (nameController.text.trim().isNotEmpty &&
+                      areaController.text.trim().isNotEmpty) {
                     setState(() {
                       _franchises.insert(0, {
-                        'name': nameController.text,
-                        'area': areaController.text,
-                        'owner': ownerController.text,
-                        'phone': phoneController.text,
+                        'name': nameController.text.trim(),
+                        'area': areaController.text.trim(),
+                        'owner': ownerController.text.trim(),
+                        'phone': phoneController.text.trim(),
                         'sellers': 0,
+                        'buyers': 0,
                         'status': 'KYC Pending',
                         'revenue': '₹0',
                         'expiry': '—',
                         'active': true,
                       });
                     });
+
                     Navigator.pop(ctx);
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('✅ नवीन Franchise जोडली!'),
-                          backgroundColor: AppColors.successGreen),
+                        content: Text('✅ नवीन Franchise जोडली!'),
+                        backgroundColor: AppColors.successGreen,
+                      ),
                     );
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    padding: const EdgeInsets.symmetric(vertical: 14)),
-                child: const Text('Franchise जोडा',
-                    style: TextStyle(color: AppColors.white, fontSize: 16)),
+                  backgroundColor: AppColors.primaryBlue,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: const Text(
+                  'Franchise जोडा',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 16,
+                  ),
+                ),
               ),
             ),
           ],
@@ -191,17 +234,25 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
     );
   }
 
-  Widget _buildField(TextEditingController c, String hint, IconData icon,
-      {bool isPhone = false}) {
+  Widget _buildField(
+    TextEditingController c,
+    String hint,
+    IconData icon, {
+    bool isPhone = false,
+  }) {
     return TextField(
       controller: c,
       keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
       decoration: InputDecoration(
         hintText: hint,
         prefixIcon: Icon(icon, color: AppColors.primaryBlue),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
       ),
     );
   }
@@ -220,9 +271,13 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
       backgroundColor: AppColors.lightGrey,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
-        title: const Text('Franchise Management',
-            style: TextStyle(
-                color: AppColors.white, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Franchise Management',
+          style: TextStyle(
+            color: AppColors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         iconTheme: const IconThemeData(color: AppColors.white),
         actions: [
           Padding(
@@ -230,9 +285,13 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
             child: TextButton.icon(
               onPressed: _showAddFranchiseDialog,
               icon: const Icon(Icons.add, color: AppColors.white),
-              label: const Text('Add',
-                  style: TextStyle(
-                      color: AppColors.white, fontWeight: FontWeight.bold)),
+              label: const Text(
+                'Add',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ],
@@ -244,19 +303,22 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
               children: [
                 _buildTab(0, 'सर्व', _franchises.length),
                 _buildTab(
-                    1,
-                    'Active',
-                    _franchises.where((f) => f['active'] == true).length),
+                  1,
+                  'Active',
+                  _franchises.where((f) => f['active'] == true).length,
+                ),
                 _buildTab(
-                    2,
-                    'Inactive',
-                    _franchises.where((f) => f['active'] == false).length),
+                  2,
+                  'Inactive',
+                  _franchises.where((f) => f['active'] == false).length,
+                ),
                 _buildTab(
-                    3,
-                    'KYC Pending',
-                    _franchises
-                        .where((f) => f['status'] == 'KYC Pending')
-                        .length),
+                  3,
+                  'KYC Pending',
+                  _franchises
+                      .where((f) => f['status'] == 'KYC Pending')
+                      .length,
+                ),
               ],
             ),
           ),
@@ -270,28 +332,35 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
             color: AppColors.white,
             child: Row(
               children: [
-                _buildStat('एकूण', '${_franchises.length}', AppColors.primaryBlue),
                 _buildStat(
-                    'Active',
-                    '${_franchises.where((f) => f['active'] == true).length}',
-                    AppColors.successGreen),
+                  'एकूण',
+                  '${_franchises.length}',
+                  AppColors.primaryBlue,
+                ),
                 _buildStat(
-                    'Inactive',
-                    '${_franchises.where((f) => f['active'] == false).length}',
-                    AppColors.textLight),
+                  'Active',
+                  '${_franchises.where((f) => f['active'] == true).length}',
+                  AppColors.successGreen,
+                ),
                 _buildStat(
-                    'KYC Pending',
-                    '${_franchises.where((f) => f['status'] == 'KYC Pending').length}',
-                    AppColors.primaryOrange),
+                  'Inactive',
+                  '${_franchises.where((f) => f['active'] == false).length}',
+                  AppColors.textLight,
+                ),
+                _buildStat(
+                  'KYC Pending',
+                  '${_franchises.where((f) => f['status'] == 'KYC Pending').length}',
+                  AppColors.primaryOrange,
+                ),
               ],
             ),
           ),
           Expanded(
             child: items.isEmpty
-                ? Center(
+                ? const Center(
                     child: Text(
                       'कोणतीही Franchise नाही',
-                      style: const TextStyle(color: AppColors.textLight),
+                      style: TextStyle(color: AppColors.textLight),
                     ),
                   )
                 : ListView.builder(
@@ -299,7 +368,6 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
                     itemCount: items.length,
                     itemBuilder: (ctx, i) {
                       final f = items[i];
-                      // Original index शोध (toggle साठी)
                       final originalIndex = _franchises.indexOf(f);
                       return _buildFranchiseCard(f, originalIndex);
                     },
@@ -311,19 +379,25 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
         onPressed: _showAddFranchiseDialog,
         backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add, color: AppColors.white),
-        label: const Text('Add Franchise',
-            style: TextStyle(color: AppColors.white)),
+        label: const Text(
+          'Add Franchise',
+          style: TextStyle(color: AppColors.white),
+        ),
       ),
     );
   }
 
   Widget _buildTab(int index, String label, int count) {
     final selected = _selectedTab == index;
+
     return Expanded(
       child: GestureDetector(
         onTap: () => setState(() => _selectedTab = index),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 2),
+          padding: const EdgeInsets.symmetric(
+            vertical: 12,
+            horizontal: 2,
+          ),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
@@ -337,7 +411,8 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: selected ? Colors.white : Colors.white60,
-              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+              fontWeight:
+                  selected ? FontWeight.bold : FontWeight.normal,
               fontSize: 12,
             ),
           ),
@@ -346,7 +421,10 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
     );
   }
 
-  Widget _buildFranchiseCard(Map<String, dynamic> f, int originalIndex) {
+  Widget _buildFranchiseCard(
+    Map<String, dynamic> f,
+    int originalIndex,
+  ) {
     final isActive = f['active'] as bool;
 
     return Container(
@@ -359,16 +437,19 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
         ),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2))
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
         children: [
           // === Main content (tap → KYC screen) ===
           InkWell(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(14),
+            ),
             onTap: () async {
               final result = await Navigator.push(
                 context,
@@ -376,6 +457,7 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
                   builder: (_) => CpFranchiseKycScreen(franchise: f),
                 ),
               );
+
               if (result == true) setState(() {});
             },
             child: Padding(
@@ -383,105 +465,156 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: isActive
-                          ? AppColors.primaryBlue.withOpacity(0.1)
-                          : Colors.grey.shade200,
-                      child: Icon(Icons.store_outlined,
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: isActive
+                            ? AppColors.primaryBlue.withOpacity(0.1)
+                            : Colors.grey.shade200,
+                        child: Icon(
+                          Icons.store_outlined,
                           color: isActive
                               ? AppColors.primaryBlue
-                              : Colors.grey),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(f['name'],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                        color: AppColors.textDark)),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: _statusColor(f['status'])
-                                      .withOpacity(0.12),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(f['status'],
-                                    style: TextStyle(
-                                        color: _statusColor(f['status']),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600)),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(f['area'],
-                              style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.textLight)),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              const Icon(Icons.event_outlined,
-                                  size: 12, color: Colors.orange),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Expiry: ${f['expiry']}',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              : Colors.grey,
+                        ),
                       ),
-                    ),
-                  ]),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    f['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: AppColors.textDark,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _statusColor(f['status'])
+                                        .withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    f['status'],
+                                    style: TextStyle(
+                                      color: _statusColor(f['status']),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              f['area'],
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textLight,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.event_outlined,
+                                  size: 12,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Expiry: ${f['expiry']}',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                   const Divider(height: 20),
-                  Row(children: [
-                    const Icon(Icons.person_outline,
-                        size: 14, color: AppColors.textLight),
-                    const SizedBox(width: 4),
-                    Text(f['owner'],
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.person_outline,
+                        size: 14,
+                        color: AppColors.textLight,
+                      ),
+                      Text(
+                        f['owner'],
                         style: const TextStyle(
-                            fontSize: 13, color: AppColors.textDark)),
-                    const SizedBox(width: 16),
-                    const Icon(Icons.phone_outlined,
-                        size: 14, color: AppColors.textLight),
-                    const SizedBox(width: 4),
-                    Text(f['phone'],
+                          fontSize: 13,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.phone_outlined,
+                        size: 14,
+                        color: AppColors.textLight,
+                      ),
+                      Text(
+                        f['phone'],
                         style: const TextStyle(
-                            fontSize: 13, color: AppColors.textDark)),
-                  ]),
-                  const SizedBox(height: 8),
-                  Row(children: [
-                    _buildChip(Icons.storefront_outlined,
-                        '${f['sellers']} Sellers', AppColors.primaryBlue),
-                    const SizedBox(width: 8),
-                    _buildChip(
-                        Icons.currency_rupee, f['revenue'], AppColors.successGreen),
-                  ]),
+                          fontSize: 13,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _buildChip(
+                        Icons.storefront_outlined,
+                        '${f['sellers']} Sellers',
+                        AppColors.primaryBlue,
+                      ),
+                      _buildChip(
+                        Icons.people_outline,
+                        '${f['buyers'] ?? 0} Buyers',
+                        Colors.deepPurple,
+                      ),
+                      _buildChip(
+                        Icons.currency_rupee,
+                        'Monthly Income: ${f['revenue']}',
+                        AppColors.successGreen,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
+
           // === Divider + Toggle row ===
           const Divider(height: 1),
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 4,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -520,28 +653,53 @@ class _CpFranchiseScreenState extends State<CpFranchiseScreen> {
 
   Widget _buildStat(String label, String value, Color color) {
     return Expanded(
-        child: Column(children: [
-      Text(value,
-          style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: color)),
-      Text(label,
-          style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
-    ]));
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textLight,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildChip(IconData icon, String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8,
+        vertical: 4,
+      ),
       decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(8)),
-      child: Row(children: [
-        Icon(icon, size: 13, color: color),
-        const SizedBox(width: 4),
-        Text(label,
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
             style: TextStyle(
-                fontSize: 12, color: color, fontWeight: FontWeight.w600)),
-      ]),
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
