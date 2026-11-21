@@ -14,6 +14,7 @@ import 'franchise_kyc_screen.dart';
 import 'franchise_seller_list_screen.dart';
 import 'franchise_buyer_list_screen.dart';
 import 'franchise_revenue_screen.dart';
+import 'franchise_accounting_screen.dart';
 import 'franchise_ad_screen.dart';
 import 'franchise_create_ad_screen.dart';
 import 'franchise_add_seller_screen.dart';
@@ -126,7 +127,7 @@ class FranchiseHomeScreen extends StatelessWidget {
                   _quickActionTile(icon: Icons.person_add_alt_1_outlined, label: 'Add Seller', subtitle: 'थेट सेलर जोडा (OTP verified)', color: AppColors.primaryBlue, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseAddSellerScreen()))),
                   _quickActionTile(icon: Icons.verified_user_outlined, label: 'Seller Verification', subtitle: 'नवीन सेलरचं GPS verification करा', color: AppColors.successGreen, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FranchiseKycScreen()))),
 
-                  // नवीन सूचना पाठवा
+                  // सूचना पाठवा
                   _quickActionTile(
                     icon: Icons.notifications_active_outlined,
                     label: 'सूचना पाठवा',
@@ -136,6 +137,20 @@ class FranchiseHomeScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => const FranchiseSendNotificationScreen(),
+                      ),
+                    ),
+                  ),
+
+                  // Accounting
+                  _quickActionTile(
+                    icon: Icons.account_balance_outlined,
+                    label: 'Accounting',
+                    subtitle: 'उत्पन्न, खर्च आणि व्यवहारांचा हिशोब',
+                    color: Colors.teal,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FranchiseAccountingScreen(),
                       ),
                     ),
                   ),
