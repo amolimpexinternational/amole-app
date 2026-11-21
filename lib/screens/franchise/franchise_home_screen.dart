@@ -12,7 +12,6 @@ import 'franchise_profile_screen.dart';
 import 'franchise_kyc_screen.dart';
 import 'franchise_seller_list_screen.dart';
 import 'franchise_buyer_list_screen.dart';
-import 'franchise_revenue_screen.dart';
 import 'franchise_accounting_screen.dart';
 import 'franchise_ad_screen.dart';
 import 'franchise_create_ad_screen.dart';
@@ -260,7 +259,7 @@ class FranchiseHomeScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (_) =>
-                                const FranchiseRevenueScreen(),
+                                const FranchiseEcosystemScreen(),
                           ),
                         ),
                       ),
