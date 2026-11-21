@@ -120,15 +120,54 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
     }
   }
 
-  // Edit — पूर्ण screen मध्ये
+  // Edit — पूर्ण screen मध्ये आणि परत आलेली माहिती Update
   Future<void> _editAdFullScreen(Map<String, dynamic> ad) async {
-    await Navigator.push(
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (_) => FranchiseCreateAdScreen(initialAd: ad),
       ),
     );
-    if (mounted) setState(() {});
+
+    if (!mounted || result == null) return;
+
+    setState(() {
+      final index = _ads.indexOf(ad);
+      if (index != -1) {
+        _ads[index] = result;
+      }
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('जाहिरातीची माहिती Update झाली'),
+        backgroundColor: AppColors.successGreen,
+      ),
+    );
+  }
+
+  // नवीन Franchise जाहिरात तयार करून Live यादीत जोडणे
+  Future<void> _createNewAd() async {
+    final result = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const FranchiseCreateAdScreen(),
+      ),
+    );
+
+    if (!mounted || result == null) return;
+
+    setState(() {
+      _ads.add(result);
+      _selectedTab = 0;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('नवीन जाहिरात Live यादीत जोडली'),
+        backgroundColor: AppColors.successGreen,
+      ),
+    );
   }
 
   // Reject — कारण विचारून जाहिरात नाकारणे
@@ -681,15 +720,7 @@ class _FranchiseAdScreenState extends State<FranchiseAdScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const FranchiseCreateAdScreen(),
-                ),
-              );
-              if (mounted) setState(() {});
-            },
+            onPressed: _createNewAd,
             child: const Text(
               'Create New Ad',
               style: TextStyle(
